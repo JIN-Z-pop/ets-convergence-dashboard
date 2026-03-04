@@ -11,8 +11,8 @@
 <script>initPage('cbam');</script>
 
 <div class="page-header">
-  <h1>CBAM Impact Timeline</h1>
-  <p>EU Carbon Border Adjustment Mechanism — Timeline and Asian ETS Impact</p>
+  <h1 data-i18n="pageCbamTitle"></h1>
+  <p data-i18n="pageCbamSub"></p>
 </div>
 
 <style>
@@ -56,33 +56,7 @@
 
 <div class="timeline" id="timeline"></div>
 
-<div class="two-worlds">
-  <h3>"Two Worlds" — EU vs Asia ETS Paradigm</h3>
-  <div class="worlds-grid">
-    <div class="world-box world-eu">
-      <h4 style="color:#3182ce">EU World \u{1F1EA}\u{1F1FA}</h4>
-      <ul>
-        <li>Absolute cap (declining annually)</li>
-        <li>43%+ auctioning (rising to 100% for CBAM sectors)</li>
-        <li>\u20AC72/t carbon price — global highest</li>
-        <li>CBAM forces carbon cost on imports</li>
-        <li>\u20AC100/t penalty + next-year obligation</li>
-      </ul>
-    </div>
-    <div class="convergence-arrow">\u2194</div>
-    <div class="world-box world-asia">
-      <h4 style="color:#ed8936">Asia World \u{1F1F0}\u{1F1F7}\u{1F1E8}\u{1F1F3}\u{1F1EF}\u{1F1F5}</h4>
-      <ul>
-        <li>Intensity-based (China) or mixed cap</li>
-        <li>0-10% auctioning (mostly free)</li>
-        <li>$8-$11/t carbon prices — 1/10th of EU</li>
-        <li>CBAM creates price gap exposure</li>
-        <li>Lighter penalties (improving)</li>
-      </ul>
-    </div>
-  </div>
-  <p style="text-align:center;margin-top:16px;color:#718096;font-size:0.82em;">CBAM is the bridge forcing convergence — Asia must either raise carbon prices or pay the EU difference</p>
-</div>
+<div class="two-worlds" id="two-worlds-section"></div>
 
 <script>
 const CBAM_EVENTS = [
@@ -98,6 +72,74 @@ const CBAM_EVENTS = [
   { date: '2034-01', type: 'CBAM 100%', desc: 'CBAM sectors: 100% free allocation eliminated. Full paid.', impact: 'critical', kr: 'Korean steel: full EU-ETS price gap cost', cn: 'China 3 sectors: full EU-ETS price burden' },
   { date: '2050-01', type: 'Climate Neutral', desc: 'EU climate neutrality target year.', impact: 'high', kr: null, cn: null }
 ];
+
+// === TWO WORLDS (multilingual) ===
+const TWO_WORLDS = {
+  en: {
+    eu: [
+      'Absolute cap (declining annually)',
+      '43%+ auctioning (rising to 100% for CBAM sectors)',
+      '\u20AC72/t carbon price \u2014 global highest',
+      'CBAM forces carbon cost on imports',
+      '\u20AC100/t penalty + next-year obligation'
+    ],
+    asia: [
+      'Intensity-based (China) or mixed cap',
+      '0-10% auctioning (mostly free)',
+      '$8-$11/t carbon prices \u2014 1/10th of EU',
+      'CBAM creates price gap exposure',
+      'Lighter penalties (improving)'
+    ]
+  },
+  ja: {
+    eu: [
+      '\u7D76\u5BFE\u91CF\u30AD\u30E3\u30C3\u30D7\uFF08\u5E74\u6B21\u3067\u6E1B\u5C11\uFF09',
+      '43%\u4EE5\u4E0A\u304C\u30AA\u30FC\u30AF\u30B7\u30E7\u30F3\uFF08CBAM\u30BB\u30AF\u30BF\u30FC\u306F100%\u3078\uFF09',
+      '\u70AD\u7D20\u4FA1\u683C\u20AC72/t \u2014 \u4E16\u754C\u6700\u9AD8',
+      'CBAM\u304C\u8F38\u5165\u54C1\u306B\u70AD\u7D20\u30B3\u30B9\u30C8\u3092\u5F37\u5236',
+      '\u20AC100/t\u7F70\u91D1\uFF0B\u7FCC\u5E74\u7FA9\u52D9'
+    ],
+    asia: [
+      '\u5F37\u5EA6\u30D9\u30FC\u30B9\uFF08\u4E2D\u56FD\uFF09\u307E\u305F\u306F\u6DF7\u5408\u30AD\u30E3\u30C3\u30D7',
+      '0-10%\u30AA\u30FC\u30AF\u30B7\u30E7\u30F3\uFF08\u307B\u307C\u7121\u511F\uFF09',
+      '\u70AD\u7D20\u4FA1\u683C$8-$11/t \u2014 EU\u306E1/10',
+      'CBAM\u304C\u4FA1\u683C\u5DEE\u30EA\u30B9\u30AF\u3092\u751F\u3080',
+      '\u8EFD\u3044\u7F70\u5247\uFF08\u6539\u5584\u4E2D\uFF09'
+    ]
+  },
+  ko: {
+    eu: [
+      '\uC808\uB300\uB7C9 \uC0C1\uD55C (\uB9E4\uB144 \uAC10\uC18C)',
+      '43% \uC774\uC0C1 \uACBD\uB9E4 (CBAM \uBD80\uBB38\uC740 100%\uAE4C\uC9C0)',
+      '\uD0C4\uC18C \uAC00\uACA9 \u20AC72/t \u2014 \uC138\uACC4 \uCD5C\uACE0',
+      'CBAM\uC774 \uC218\uC785\uD488\uC5D0 \uD0C4\uC18C \uBE44\uC6A9 \uBD80\uACFC',
+      '\u20AC100/t \uBC8C\uAE08 + \uCC28\uB144 \uC758\uBB34'
+    ],
+    asia: [
+      '\uAC15\uB3C4 \uAE30\uBC18(\uC911\uAD6D) \uB610\uB294 \uD63C\uD569 \uC0C1\uD55C',
+      '0-10% \uACBD\uB9E4 (\uB300\uBD80\uBD84 \uBB34\uC0C1)',
+      '\uD0C4\uC18C \uAC00\uACA9 $8-$11/t \u2014 EU\uC758 1/10',
+      'CBAM\uC774 \uAC00\uACA9 \uACA9\uCC28 \uB178\uCD9C \uBC1C\uC0DD',
+      '\uAC00\uBCBC\uC6B4 \uBC8C\uCE59 (\uAC1C\uC120 \uC911)'
+    ]
+  },
+  zh: {
+    eu: [
+      '\u7EDD\u5BF9\u603B\u91CF\u4E0A\u9650\uFF08\u9010\u5E74\u9012\u51CF\uFF09',
+      '43%\u4EE5\u4E0A\u62CD\u5356\uFF08CBAM\u90E8\u95E8\u5347\u81F3100%\uFF09',
+      '\u78B3\u4EF7\u20AC72/t \u2014 \u5168\u7403\u6700\u9AD8',
+      'CBAM\u5BF9\u8FDB\u53E3\u5546\u54C1\u5F81\u6536\u78B3\u6210\u672C',
+      '\u20AC100/t\u7F5A\u91D1 + \u6B21\u5E74\u4E49\u52A1'
+    ],
+    asia: [
+      '\u5F3A\u5EA6\u63A7\u5236\uFF08\u4E2D\u56FD\uFF09\u6216\u6DF7\u5408\u4E0A\u9650',
+      '0-10%\u62CD\u5356\uFF08\u4EE5\u514D\u8D39\u4E3A\u4E3B\uFF09',
+      '\u78B3\u4EF7$8-$11/t \u2014 EU\u76841/10',
+      'CBAM\u4EA7\u751F\u4EF7\u683C\u5DEE\u8DDD\u98CE\u9669',
+      '\u8F83\u8F7B\u5904\u7F5A\uFF08\u6539\u5584\u4E2D\uFF09'
+    ]
+  }
+};
 
 function renderTimeline() {
   const container = document.getElementById('timeline');
@@ -119,7 +161,28 @@ function renderTimeline() {
   }).join('');
 }
 
+function renderTwoWorlds() {
+  const lang = getLang();
+  const tw = TWO_WORLDS[lang] || TWO_WORLDS.en;
+  document.getElementById('two-worlds-section').innerHTML = `
+    <h3>${t('twoWorlds')}</h3>
+    <div class="worlds-grid">
+      <div class="world-box world-eu">
+        <h4 style="color:#3182ce">${t('euWorld')} \u{1F1EA}\u{1F1FA}</h4>
+        <ul>${tw.eu.map(li => `<li>${li}</li>`).join('')}</ul>
+      </div>
+      <div class="convergence-arrow">\u2194</div>
+      <div class="world-box world-asia">
+        <h4 style="color:#ed8936">${t('asiaWorld')} \u{1F1F0}\u{1F1F7}\u{1F1E8}\u{1F1F3}\u{1F1EF}\u{1F1F5}</h4>
+        <ul>${tw.asia.map(li => `<li>${li}</li>`).join('')}</ul>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:16px;color:#718096;font-size:0.82em;">${t('cbamNote')}</p>`;
+}
+
 renderTimeline();
+renderTwoWorlds();
+window.addEventListener('langchange', () => { renderTwoWorlds(); });
 document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
 </script>
 </body>
