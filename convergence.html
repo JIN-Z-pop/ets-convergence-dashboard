@@ -11,30 +11,24 @@
 <script>initPage('convergence');</script>
 
 <div class="page-header">
-  <h1>Convergence & Divergence Map</h1>
-  <p>Where 4 ETS systems stand today — and where they're heading by 2030</p>
+  <h1 data-i18n="pageConvTitle"></h1>
+  <p data-i18n="pageConvSub"></p>
 </div>
 
 <div class="chart-wrap"><div class="chart-box" id="scatter-chart"></div></div>
 
 <div class="chart-wrap" style="display:flex;gap:15px;flex-wrap:wrap;">
   <div class="chart-box" style="flex:1;min-width:300px;" id="conv-box">
-    <h3 style="color:#48bb78;margin-bottom:12px;font-size:1em;">\u2192 5 Convergence Axes</h3>
+    <h3 id="conv-title" style="color:#48bb78;margin-bottom:12px;font-size:1em;"></h3>
     <div id="conv-list"></div>
   </div>
   <div class="chart-box" style="flex:1;min-width:300px;" id="div-box">
-    <h3 style="color:#e53e3e;margin-bottom:12px;font-size:1em;">\u2190 5 Divergence Axes</h3>
+    <h3 id="div-title" style="color:#e53e3e;margin-bottom:12px;font-size:1em;"></h3>
     <div id="div-list"></div>
   </div>
 </div>
 
-<div class="analysis-box">
-  <h3>Key Insights</h3>
-  <p><strong>5A. Price Convergence Pressure:</strong> CBAM creates an economic incentive for Asian ETS to raise carbon prices toward EU levels. However, the 10x gap ($8-11 vs $79) means convergence will be gradual — likely reaching $25-40 range by 2030 for Korea/China.</p>
-  <p><strong>5B. Institutional Convergence:</strong> All 4 systems are moving toward BM-based allocation (away from grandfathering). MRV standards are harmonizing around ISO 14064 / IPCC guidelines. This is the strongest convergence axis.</p>
-  <p><strong>5C. Structural Divergence:</strong> The absolute cap (EU/Korea) vs intensity cap (China) divide remains fundamental. China's GDP-linked cap means total emissions can still rise. Japan's voluntary approach adds another paradigm.</p>
-  <p><strong>5D. CBAM as Bridge:</strong> CBAM is the single most powerful convergence force. It effectively exports EU carbon pricing to trading partners. Korea and China are responding with ETS reforms, but the speed and depth of reform varies significantly.</p>
-</div>
+<div class="analysis-box" id="insights-box"></div>
 
 <style>
 .axis-item { padding:10px 14px; margin-bottom:8px; border-radius:6px; font-size:0.85em; line-height:1.5; }
@@ -60,7 +54,7 @@ const PREDICTED_2030 = [
 ];
 
 function renderScatter() {
-  const makeTrace = (data, dash, suffix) => data.map(d => ({
+  const makeTrace = (data, dash) => data.map(d => ({
     x: [d.age], y: [d.price],
     mode: 'markers+text',
     name: d.label,
@@ -75,10 +69,9 @@ function renderScatter() {
     showlegend: false
   }));
 
-  const currentTraces = makeTrace(CURRENT, false, '');
-  const predictTraces = makeTrace(PREDICTED_2030, true, ' 2030');
+  const currentTraces = makeTrace(CURRENT, false);
+  const predictTraces = makeTrace(PREDICTED_2030, true);
 
-  // Arrow annotations connecting current → 2030
   const arrows = CURRENT.map((c, i) => {
     const p = PREDICTED_2030[i];
     return {
@@ -89,17 +82,16 @@ function renderScatter() {
     };
   });
 
-  const layout = darkLayout('ETS Position Map: System Age vs Carbon Price', {
+  const layout = darkLayout(t('chartScatter'), {
     xaxis: { title: 'System Age (years)', gridcolor: THEME.border, tickfont: { color: THEME.muted }, range: [0, 28] },
     yaxis: { title: 'Carbon Price (USD/tCO\u2082)', gridcolor: THEME.border, tickfont: { color: THEME.muted }, range: [-5, 100] },
     margin: { l: 60, r: 30, t: 50, b: 60 },
     annotations: [
       ...arrows,
-      { x: 14, y: 95, text: 'Bubble size = Covered emissions (relative)', showarrow: false, font: { color: THEME.dimmed, size: 10 } },
-      { x: 14, y: 88, text: 'Solid = Current (2026) | Faded = Predicted (2030)', showarrow: false, font: { color: THEME.dimmed, size: 10 } }
+      { x: 14, y: 95, text: t('bubbleNote'), showarrow: false, font: { color: THEME.dimmed, size: 10 } },
+      { x: 14, y: 88, text: t('solidFaded'), showarrow: false, font: { color: THEME.dimmed, size: 10 } }
     ],
     shapes: [
-      // Convergence zone
       { type: 'rect', x0: 5, x1: 28, y0: 20, y1: 90, fillcolor: '#48bb7808', line: { width: 0 } }
     ]
   });
@@ -107,34 +99,123 @@ function renderScatter() {
   Plotly.newPlot('scatter-chart', [...currentTraces, ...predictTraces], layout, plotlyConfig);
 }
 
-// === CONVERGENCE & DIVERGENCE AXES ===
-const CONV_AXES = [
-  { title: '1. CBAM Pressure', desc: 'EU carbon border tax forces Asian ETS to raise prices or pay the gap. Single strongest convergence driver.' },
-  { title: '2. BM Allocation Migration', desc: 'All 4 systems moving from Grandfathering toward Benchmark-based allocation. EU/Korea already there, China intensity-BM, Japan planned.' },
-  { title: '3. Sector Expansion', desc: 'China expanding from power-only to 4 sectors. Korea expanding BM sectors. Japan planning mandatory participation. EU adding buildings/transport (ETS2).' },
-  { title: '4. MRV Digitalization', desc: 'Common push toward CEMS, digital reporting, automated verification. China leads in CEMS deployment; EU leads in standardization.' },
-  { title: '5. NDC-ETS Linkage', desc: 'All 4 countries strengthening link between NDC targets and ETS cap/ambition. Paris Agreement Article 6 enables future market linkage.' }
-];
+// === CONVERGENCE & DIVERGENCE AXES (multilingual) ===
+const CONV_AXES = {
+  en: [
+    { title: '1. CBAM Pressure', desc: 'EU carbon border tax forces Asian ETS to raise prices or pay the gap. Single strongest convergence driver.' },
+    { title: '2. BM Allocation Migration', desc: 'All 4 systems moving from Grandfathering toward Benchmark-based allocation. EU/Korea already there, China intensity-BM, Japan planned.' },
+    { title: '3. Sector Expansion', desc: 'China expanding from power-only to 4 sectors. Korea expanding BM sectors. Japan planning mandatory participation. EU adding buildings/transport (ETS2).' },
+    { title: '4. MRV Digitalization', desc: 'Common push toward CEMS, digital reporting, automated verification. China leads in CEMS deployment; EU leads in standardization.' },
+    { title: '5. NDC-ETS Linkage', desc: 'All 4 countries strengthening link between NDC targets and ETS cap/ambition. Paris Agreement Article 6 enables future market linkage.' }
+  ],
+  ja: [
+    { title: '1. CBAM\u5727\u529B', desc: 'EU\u70AD\u7D20\u56FD\u5883\u7A0E\u304C\u30A2\u30B8\u30A2ETS\u306B\u4FA1\u683C\u5F15\u4E0A\u3052\u307E\u305F\u306F\u30AE\u30E3\u30C3\u30D7\u652F\u6255\u3044\u3092\u5F37\u5236\u3002\u6700\u3082\u5F37\u529B\u306A\u5358\u4E00\u306E\u53CE\u6582\u529B\u3002' },
+    { title: '2. BM\u5272\u5F53\u3078\u306E\u79FB\u884C', desc: '4\u5236\u5EA6\u3059\u3079\u3066\u304C\u904E\u53BB\u6392\u51FA\u91CF\u57FA\u6E96\u304B\u3089BM\u30D9\u30FC\u30B9\u5272\u5F53\u306B\u79FB\u884C\u4E2D\u3002EU/\u97D3\u56FD\u306F\u5230\u9054\u6E08\u3001\u4E2D\u56FD\u306F\u5F37\u5EA6BM\u3001\u65E5\u672C\u306F\u8A08\u753B\u4E2D\u3002' },
+    { title: '3. \u30BB\u30AF\u30BF\u30FC\u62E1\u5927', desc: '\u4E2D\u56FD\u304C\u96FB\u529B\u306E\u307F\u304B\u30894\u30BB\u30AF\u30BF\u30FC\u306B\u62E1\u5927\u3002\u97D3\u56FD\u304CBM\u30BB\u30AF\u30BF\u30FC\u62E1\u5927\u3002\u65E5\u672C\u304C\u7FA9\u52D9\u53C2\u52A0\u8A08\u753B\u3002EU\u304C\u5EFA\u7269\u30FB\u904B\u8F38\u8FFD\u52A0\uFF08ETS2\uFF09\u3002' },
+    { title: '4. MRV\u30C7\u30B8\u30BF\u30EB\u5316', desc: 'CEMS\u3001\u30C7\u30B8\u30BF\u30EB\u5831\u544A\u3001\u81EA\u52D5\u691C\u8A3C\u3078\u306E\u5171\u901A\u63A8\u9032\u3002\u4E2D\u56FD\u304CCEMS\u5C0E\u5165\u3067\u30EA\u30FC\u30C9\u3001EU\u304C\u6A19\u6E96\u5316\u3067\u30EA\u30FC\u30C9\u3002' },
+    { title: '5. NDC-ETS\u9023\u643A', desc: '4\u30AB\u56FD\u3059\u3079\u3066\u304CNDC\u76EE\u6A19\u3068ETS\u30AD\u30E3\u30C3\u30D7\u306E\u9023\u643A\u3092\u5F37\u5316\u3002\u30D1\u30EA\u5354\u5B9A6\u6761\u304C\u5C06\u6765\u306E\u5E02\u5834\u9023\u643A\u3092\u53EF\u80FD\u306B\u3002' }
+  ],
+  ko: [
+    { title: '1. CBAM \uC555\uB825', desc: 'EU \uD0C4\uC18C\uAD6D\uACBD\uC138\uAC00 \uC544\uC2DC\uC544 ETS\uC5D0 \uAC00\uACA9 \uC778\uC0C1 \uB610\uB294 \uACA9\uCC28 \uC9C0\uBD88\uC744 \uAC15\uC81C. \uAC00\uC7A5 \uAC15\uB825\uD55C \uB2E8\uC77C \uC218\uB834 \uB3D9\uB825.' },
+    { title: '2. BM \uD560\uB2F9 \uC804\uD658', desc: '4\uAC1C \uC81C\uB3C4 \uBAA8\uB450 \uACFC\uAC70\uBC30\uCD9C\uB7C9 \uAE30\uC900\uC5D0\uC11C BM \uAE30\uBC18 \uD560\uB2F9\uC73C\uB85C \uC774\uB3D9 \uC911. EU/\uD55C\uAD6D\uC740 \uB3C4\uB2EC, \uC911\uAD6D\uC740 \uAC15\uB3C4 BM, \uC77C\uBCF8\uC740 \uACC4\uD68D \uC911.' },
+    { title: '3. \uBD80\uBB38 \uD655\uB300', desc: '\uC911\uAD6D\uC774 \uC804\uB825\uC5D0\uC11C 4\uAC1C \uBD80\uBB38\uC73C\uB85C \uD655\uB300. \uD55C\uAD6D\uC774 BM \uBD80\uBB38 \uD655\uB300. \uC77C\uBCF8\uC774 \uC758\uBB34 \uCC38\uC5EC \uACC4\uD68D. EU\uAC00 \uAC74\uBB3C\u00B7\uAD50\uD1B5 \uCD94\uAC00(ETS2).' },
+    { title: '4. MRV \uB514\uC9C0\uD138\uD654', desc: 'CEMS, \uB514\uC9C0\uD138 \uBCF4\uACE0, \uC790\uB3D9 \uAC80\uC99D\uC73C\uB85C\uC758 \uACF5\uD1B5 \uCD94\uC9C4. \uC911\uAD6D\uC774 CEMS \uBC30\uCE58 \uC120\uB3C4, EU\uAC00 \uD45C\uC900\uD654 \uC120\uB3C4.' },
+    { title: '5. NDC-ETS \uC5F0\uACC4', desc: '4\uAC1C\uAD6D \uBAA8\uB450 NDC \uBAA9\uD45C\uC640 ETS \uC0C1\uD55C\uC758 \uC5F0\uACC4 \uAC15\uD654. \uD30C\uB9AC\uD611\uC815 \uC81C6\uC870\uAC00 \uBBF8\uB798 \uC2DC\uC7A5 \uC5F0\uACC4\uB97C \uAC00\uB2A5\uD558\uAC8C \uD568.' }
+  ],
+  zh: [
+    { title: '1. CBAM\u538B\u529B', desc: 'EU\u78B3\u8FB9\u5883\u7A0E\u8FEB\u4F7F\u4E9A\u6D32ETS\u63D0\u4EF7\u6216\u652F\u4ED8\u5DEE\u989D\u3002\u6700\u5F3A\u5927\u7684\u5355\u4E00\u8D8B\u540C\u52A8\u529B\u3002' },
+    { title: '2. BM\u5206\u914D\u8FC1\u79FB', desc: '\u56DB\u4E2A\u5236\u5EA6\u90FD\u5728\u4ECE\u5386\u53F2\u6392\u653E\u6CD5\u5411BM\u57FA\u51C6\u5206\u914D\u8FC1\u79FB\u3002EU/\u97E9\u56FD\u5DF2\u5230\u4F4D\uFF0C\u4E2D\u56FD\u5F3A\u5EA6BM\uFF0C\u65E5\u672C\u8BA1\u5212\u4E2D\u3002' },
+    { title: '3. \u90E8\u95E8\u6269\u5C55', desc: '\u4E2D\u56FD\u4ECE\u7535\u529B\u6269\u5C55\u81F34\u4E2A\u90E8\u95E8\u3002\u97E9\u56FD\u6269\u5927BM\u90E8\u95E8\u3002\u65E5\u672C\u8BA1\u5212\u5F3A\u5236\u53C2\u4E0E\u3002EU\u589E\u52A0\u5EFA\u7B51\u00B7\u4EA4\u901A(ETS2)\u3002' },
+    { title: '4. MRV\u6570\u5B57\u5316', desc: '\u5171\u540C\u63A8\u8FDBCEMS\u3001\u6570\u5B57\u62A5\u544A\u3001\u81EA\u52A8\u6838\u67E5\u3002\u4E2D\u56FD\u5728CEMS\u90E8\u7F72\u9886\u5148\uFF0CEU\u5728\u6807\u51C6\u5316\u9886\u5148\u3002' },
+    { title: '5. NDC-ETS\u8054\u52A8', desc: '\u56DB\u56FD\u90FD\u5728\u52A0\u5F3ANDC\u76EE\u6807\u4E0EETS\u4E0A\u9650\u7684\u8054\u52A8\u3002\u5DF4\u9ECE\u534F\u5B9A\u7B2C6\u6761\u4E3A\u672A\u6765\u5E02\u573A\u8FDE\u63A5\u63D0\u4F9B\u53EF\u80FD\u3002' }
+  ]
+};
 
-const DIV_AXES = [
-  { title: '1. Absolute vs Intensity Cap', desc: 'EU/Korea: absolute cap (total emissions decline). China: intensity cap (per-GDP, total can rise). Japan: voluntary. Fundamental structural divide.' },
-  { title: '2. 10x Price Gap', desc: 'EU ~$79/t vs Korea ~$8/t vs China ~$11/t. Order of magnitude difference reflects different economic priorities and carbon cost tolerance.' },
-  { title: '3. Auction Rate Gap', desc: 'EU 43% → 100% (CBAM sectors). Korea 10%. China/Japan 0%. Free allocation dominance in Asia reduces price discovery efficiency.' },
-  { title: '4. Market Liquidity', desc: 'EU-ETS: deep, liquid, derivatives market. Korea: thin trading. China: compliance-driven spikes. Japan: no market yet. Liquidity gap impedes price convergence.' },
-  { title: '5. Legal Enforcement', desc: 'EU: \u20AC100/t penalty + mandatory surrender. Korea: 3x price penalty. China: improving but lighter. Japan: "name and shame" only. Enforcement credibility varies widely.' }
-];
+const DIV_AXES = {
+  en: [
+    { title: '1. Absolute vs Intensity Cap', desc: 'EU/Korea: absolute cap (total emissions decline). China: intensity cap (per-GDP, total can rise). Japan: voluntary. Fundamental structural divide.' },
+    { title: '2. 10x Price Gap', desc: 'EU ~$79/t vs Korea ~$8/t vs China ~$11/t. Order of magnitude difference reflects different economic priorities and carbon cost tolerance.' },
+    { title: '3. Auction Rate Gap', desc: 'EU 43% \u2192 100% (CBAM sectors). Korea 10%. China/Japan 0%. Free allocation dominance in Asia reduces price discovery efficiency.' },
+    { title: '4. Market Liquidity', desc: 'EU-ETS: deep, liquid, derivatives market. Korea: thin trading. China: compliance-driven spikes. Japan: no market yet. Liquidity gap impedes price convergence.' },
+    { title: '5. Legal Enforcement', desc: 'EU: \u20AC100/t penalty + mandatory surrender. Korea: 3x price penalty. China: improving but lighter. Japan: "name and shame" only. Enforcement credibility varies widely.' }
+  ],
+  ja: [
+    { title: '1. \u7D76\u5BFE\u91CF vs \u5F37\u5EA6\u30AD\u30E3\u30C3\u30D7', desc: 'EU/\u97D3\u56FD\uFF1A\u7D76\u5BFE\u91CF\uFF08\u7DCF\u6392\u51FA\u91CF\u6E1B\u5C11\uFF09\u3002\u4E2D\u56FD\uFF1A\u5F37\u5EA6\uFF08GDP\u5F53\u305F\u308A\u3001\u7DCF\u91CF\u306F\u5897\u52A0\u53EF\u80FD\uFF09\u3002\u65E5\u672C\uFF1A\u81EA\u4E3B\u7684\u3002\u6839\u672C\u7684\u306A\u69CB\u9020\u7684\u5206\u65AD\u3002' },
+    { title: '2. 10\u500D\u306E\u4FA1\u683C\u5DEE', desc: 'EU ~$79/t vs \u97D3\u56FD ~$8/t vs \u4E2D\u56FD ~$11/t\u3002\u6841\u9055\u3044\u306E\u5DEE\u306F\u3001\u7570\u306A\u308B\u7D4C\u6E08\u7684\u512A\u5148\u9806\u4F4D\u3068\u70AD\u7D20\u30B3\u30B9\u30C8\u8A31\u5BB9\u5EA6\u3092\u53CD\u6620\u3002' },
+    { title: '3. \u30AA\u30FC\u30AF\u30B7\u30E7\u30F3\u7387\u306E\u5DEE', desc: 'EU 43%\u219290%+\uFF08CBAM\u30BB\u30AF\u30BF\u30FC\uFF09\u3002\u97D3\u56FD10%\u3002\u4E2D\u56FD/\u65E5\u672C 0%\u3002\u30A2\u30B8\u30A2\u306E\u7121\u511F\u5272\u5F53\u512A\u52E2\u304C\u4FA1\u683C\u767A\u898B\u52B9\u7387\u3092\u4F4E\u4E0B\u3002' },
+    { title: '4. \u5E02\u5834\u6D41\u52D5\u6027', desc: 'EU-ETS\uFF1A\u6DF1\u3044\u6D41\u52D5\u6027\u3001\u30C7\u30EA\u30D0\u30C6\u30A3\u30D6\u5E02\u5834\u3002\u97D3\u56FD\uFF1A\u8584\u3044\u53D6\u5F15\u3002\u4E2D\u56FD\uFF1A\u5C65\u884C\u671F\u30B9\u30D1\u30A4\u30AF\u3002\u65E5\u672C\uFF1A\u5E02\u5834\u672A\u5F62\u6210\u3002\u6D41\u52D5\u6027\u683C\u5DEE\u304C\u4FA1\u683C\u53CE\u6582\u3092\u963B\u5BB3\u3002' },
+    { title: '5. \u6CD5\u7684\u57F7\u884C\u529B', desc: 'EU\uFF1A\u20AC100/t\u7F70\u91D1\uFF0B\u7FCC\u5E74\u7FA9\u52D9\u3002\u97D3\u56FD\uFF1A3\u500D\u4FA1\u683C\u7F70\u91D1\u3002\u4E2D\u56FD\uFF1A\u6539\u5584\u4E2D\u3060\u304C\u8EFD\u3081\u3002\u65E5\u672C\uFF1A\u300C\u516C\u8868\u300D\u306E\u307F\u3002\u57F7\u884C\u306E\u4FE1\u983C\u6027\u306B\u5927\u304D\u306A\u5DEE\u3002' }
+  ],
+  ko: [
+    { title: '1. \uC808\uB300\uB7C9 vs \uAC15\uB3C4 \uC0C1\uD55C', desc: 'EU/\uD55C\uAD6D: \uC808\uB300\uB7C9(\uCD1D\uBC30\uCD9C\uB7C9 \uAC10\uC18C). \uC911\uAD6D: \uAC15\uB3C4(GDP\uB2F9, \uCD1D\uB7C9 \uC99D\uAC00 \uAC00\uB2A5). \uC77C\uBCF8: \uC790\uBC1C\uC801. \uADFC\uBCF8\uC801 \uAD6C\uC870\uC801 \uBD84\uB2E8.' },
+    { title: '2. 10\uBC30 \uAC00\uACA9 \uACA9\uCC28', desc: 'EU ~$79/t vs \uD55C\uAD6D ~$8/t vs \uC911\uAD6D ~$11/t. \uC790\uB9BF\uC218 \uCC28\uC774\uB294 \uC11C\uB85C \uB2E4\uB978 \uACBD\uC81C\uC801 \uC6B0\uC120\uC21C\uC704\uC640 \uD0C4\uC18C \uBE44\uC6A9 \uC218\uC6A9\uB3C4\uB97C \uBC18\uC601.' },
+    { title: '3. \uACBD\uB9E4\uC728 \uACA9\uCC28', desc: 'EU 43%\u219290%+(CBAM \uBD80\uBB38). \uD55C\uAD6D 10%. \uC911\uAD6D/\uC77C\uBCF8 0%. \uC544\uC2DC\uC544\uC758 \uBB34\uC0C1 \uD560\uB2F9 \uC9C0\uBC30\uAC00 \uAC00\uACA9 \uBC1C\uACAC \uD6A8\uC728\uC131\uC744 \uC800\uD558.' },
+    { title: '4. \uC2DC\uC7A5 \uC720\uB3D9\uC131', desc: 'EU-ETS: \uAE4A\uC740 \uC720\uB3D9\uC131, \uD30C\uC0DD\uC0C1\uD488 \uC2DC\uC7A5. \uD55C\uAD6D: \uC587\uC740 \uAC70\uB798. \uC911\uAD6D: \uC774\uD589\uAE30 \uAE09\uB4F1. \uC77C\uBCF8: \uC2DC\uC7A5 \uBBF8\uD615\uC131. \uC720\uB3D9\uC131 \uACA9\uCC28\uAC00 \uAC00\uACA9 \uC218\uB834 \uC800\uD574.' },
+    { title: '5. \uBC95\uC801 \uC9D1\uD589\uB825', desc: 'EU: \u20AC100/t \uBC8C\uAE08 + \uCC28\uB144 \uC758\uBB34. \uD55C\uAD6D: 3\uBC30 \uAC00\uACA9 \uBC8C\uAE08. \uC911\uAD6D: \uAC1C\uC120 \uC911\uC774\uB098 \uAC00\uBCBC\uC6C0. \uC77C\uBCF8: \'\uACF5\uD45C\'\uB9CC. \uC9D1\uD589 \uC2E0\uB8B0\uC131\uC5D0 \uD070 \uCC28\uC774.' }
+  ],
+  zh: [
+    { title: '1. \u7EDD\u5BF9\u91CF vs \u5F3A\u5EA6\u4E0A\u9650', desc: 'EU/\u97E9\u56FD\uFF1A\u7EDD\u5BF9\u91CF\uFF08\u603B\u6392\u653E\u91CF\u4E0B\u964D\uFF09\u3002\u4E2D\u56FD\uFF1A\u5F3A\u5EA6\uFF08\u4EBAGDP\uFF0C\u603B\u91CF\u53EF\u5347\uFF09\u3002\u65E5\u672C\uFF1A\u81EA\u613F\u3002\u6839\u672C\u6027\u7ED3\u6784\u5206\u6B67\u3002' },
+    { title: '2. 10\u500D\u4EF7\u683C\u5DEE', desc: 'EU ~$79/t vs \u97E9\u56FD ~$8/t vs \u4E2D\u56FD ~$11/t\u3002\u91CF\u7EA7\u5DEE\u5F02\u53CD\u6620\u4E0D\u540C\u7684\u7ECF\u6D4E\u4F18\u5148\u7EA7\u548C\u78B3\u6210\u672C\u627F\u53D7\u529B\u3002' },
+    { title: '3. \u62CD\u5356\u7387\u5DEE\u8DDD', desc: 'EU 43%\u219290%+(CBAM\u90E8\u95E8)\u3002\u97E9\u56FD10%\u3002\u4E2D\u56FD/\u65E5\u672C 0%\u3002\u4E9A\u6D32\u514D\u8D39\u5206\u914D\u4E3B\u5BFC\u964D\u4F4E\u4EF7\u683C\u53D1\u73B0\u6548\u7387\u3002' },
+    { title: '4. \u5E02\u573A\u6D41\u52A8\u6027', desc: 'EU-ETS\uFF1A\u6DF1\u5EA6\u6D41\u52A8\u6027\uFF0C\u884D\u751F\u54C1\u5E02\u573A\u3002\u97E9\u56FD\uFF1A\u4EA4\u6613\u6E05\u6DE1\u3002\u4E2D\u56FD\uFF1A\u5C65\u7EA6\u671F\u98D9\u5347\u3002\u65E5\u672C\uFF1A\u5C1A\u65E0\u5E02\u573A\u3002\u6D41\u52A8\u6027\u5DEE\u8DDD\u963B\u788D\u4EF7\u683C\u8D8B\u540C\u3002' },
+    { title: '5. \u6CD5\u5F8B\u6267\u884C\u529B', desc: 'EU\uFF1A\u20AC100/t\u7F5A\u91D1+\u6B21\u5E74\u4E49\u52A1\u3002\u97E9\u56FD\uFF1A3\u500D\u4EF7\u683C\u7F5A\u91D1\u3002\u4E2D\u56FD\uFF1A\u6539\u5584\u4E2D\u4F46\u8F83\u8F7B\u3002\u65E5\u672C\uFF1A\u4EC5\u201C\u516C\u793A\u201D\u3002\u6267\u6CD5\u53EF\u4FE1\u5EA6\u5DEE\u5F02\u5DE8\u5927\u3002' }
+  ]
+};
+
+// === KEY INSIGHTS (multilingual) ===
+const INSIGHTS = {
+  en: [
+    '<strong>5A. Price Convergence Pressure:</strong> CBAM creates an economic incentive for Asian ETS to raise carbon prices toward EU levels. However, the 10x gap ($8-11 vs $79) means convergence will be gradual \u2014 likely reaching $25-40 range by 2030 for Korea/China.',
+    '<strong>5B. Institutional Convergence:</strong> All 4 systems are moving toward BM-based allocation (away from grandfathering). MRV standards are harmonizing around ISO 14064 / IPCC guidelines. This is the strongest convergence axis.',
+    '<strong>5C. Structural Divergence:</strong> The absolute cap (EU/Korea) vs intensity cap (China) divide remains fundamental. China\'s GDP-linked cap means total emissions can still rise. Japan\'s voluntary approach adds another paradigm.',
+    '<strong>5D. CBAM as Bridge:</strong> CBAM is the single most powerful convergence force. It effectively exports EU carbon pricing to trading partners. Korea and China are responding with ETS reforms, but the speed and depth of reform varies significantly.'
+  ],
+  ja: [
+    '<strong>5A. \u4FA1\u683C\u53CE\u6582\u5727\u529B\uFF1A</strong> CBAM\u306F\u30A2\u30B8\u30A2ETS\u306E\u70AD\u7D20\u4FA1\u683C\u3092EU\u6C34\u6E96\u306B\u5F15\u304D\u4E0A\u3052\u308B\u7D4C\u6E08\u7684\u30A4\u30F3\u30BB\u30F3\u30C6\u30A3\u30D6\u3092\u751F\u3080\u3002\u3057\u304B\u305710\u500D\u306E\u683C\u5DEE\uFF08$8-11 vs $79\uFF09\u306F\u53CE\u6582\u304C\u7DE9\u3084\u304B\u3067\u3042\u308B\u3053\u3068\u3092\u610F\u5473\u3057\u3001\u97D3\u56FD\u30FB\u4E2D\u56FD\u306F2030\u5E74\u307E\u3067\u306B$25-40\u7A0B\u5EA6\u306B\u5230\u9054\u3059\u308B\u898B\u8FBC\u307F\u3002',
+    '<strong>5B. \u5236\u5EA6\u7684\u53CE\u6582\uFF1A</strong> 4\u5236\u5EA6\u3059\u3079\u3066\u304CBM\u30D9\u30FC\u30B9\u306E\u5272\u5F53\uFF08\u904E\u53BB\u6392\u51FA\u91CF\u57FA\u6E96\u304B\u3089\u306E\u8131\u5374\uFF09\u306B\u5411\u304B\u3063\u3066\u3044\u308B\u3002MRV\u57FA\u6E96\u306FISO 14064 / IPCC\u6307\u91DD\u306B\u6CBF\u3063\u3066\u8ABF\u548C\u5316\u304C\u9032\u3080\u3002\u3053\u308C\u304C\u6700\u3082\u5F37\u529B\u306A\u53CE\u6582\u8EF8\u3002',
+    '<strong>5C. \u69CB\u9020\u7684\u5206\u5C90\uFF1A</strong> \u7D76\u5BFE\u91CF\u898F\u5236\uFF08EU/\u97D3\u56FD\uFF09vs \u5F37\u5EA6\u898F\u5236\uFF08\u4E2D\u56FD\uFF09\u306E\u5206\u65AD\u306F\u4F9D\u7136\u3068\u3057\u3066\u6839\u672C\u7684\u3002\u4E2D\u56FD\u306EGDP\u9023\u52D5\u30AD\u30E3\u30C3\u30D7\u306F\u7DCF\u6392\u51FA\u91CF\u306E\u5897\u52A0\u3092\u8A31\u5BB9\u3059\u308B\u3002\u65E5\u672C\u306E\u81EA\u4E3B\u7684\u30A2\u30D7\u30ED\u30FC\u30C1\u306F\u3055\u3089\u306B\u5225\u306E\u30D1\u30E9\u30C0\u30A4\u30E0\u3092\u52A0\u3048\u308B\u3002',
+    '<strong>5D. CBAM\u306F\u67B6\u3051\u6A4B\uFF1A</strong> CBAM\u306F\u6700\u3082\u5F37\u529B\u306A\u5358\u4E00\u306E\u53CE\u6582\u529B\u3002EU\u306E\u70AD\u7D20\u4FA1\u683C\u3092\u5B9F\u8CEA\u7684\u306B\u8CBF\u6613\u76F8\u624B\u56FD\u306B\u8F38\u51FA\u3059\u308B\u3002\u97D3\u56FD\u3068\u4E2D\u56FD\u306FETS\u6539\u9769\u3067\u5BFE\u5FDC\u3057\u3066\u3044\u308B\u304C\u3001\u6539\u9769\u306E\u901F\u5EA6\u3068\u6DF1\u5EA6\u306F\u5927\u304D\u304F\u7570\u306A\u308B\u3002'
+  ],
+  ko: [
+    '<strong>5A. \uAC00\uACA9 \uC218\uB834 \uC555\uB825:</strong> CBAM\uC740 \uC544\uC2DC\uC544 ETS\uC758 \uD0C4\uC18C \uAC00\uACA9\uC744 EU \uC218\uC900\uC73C\uB85C \uC62C\uB9AC\uB294 \uACBD\uC81C\uC801 \uC778\uC13C\uD2F0\uBE0C\uB97C \uB9CC\uB4E0\uB2E4. \uADF8\uB7EC\uB098 10\uBC30 \uACA9\uCC28($8-11 vs $79)\uB294 \uC218\uB834\uC774 \uC644\uB9CC\uD560 \uAC83\uC784\uC744 \uC758\uBBF8\uD558\uBA70, \uD55C\uAD6D\u00B7\uC911\uAD6D\uC740 2030\uB144\uAE4C\uC9C0 $25-40 \uBC94\uC704\uC5D0 \uB3C4\uB2EC\uD560 \uC804\uB9DD.',
+    '<strong>5B. \uC81C\uB3C4\uC801 \uC218\uB834:</strong> 4\uAC1C \uC81C\uB3C4 \uBAA8\uB450 BM \uAE30\uBC18 \uD560\uB2F9(\uACFC\uAC70\uBC30\uCD9C\uB7C9 \uAE30\uC900\uC5D0\uC11C \uD0C8\uD53C)\uC73C\uB85C \uC774\uB3D9 \uC911. MRV \uAE30\uC900\uC740 ISO 14064 / IPCC \uAC00\uC774\uB4DC\uB77C\uC778\uC5D0 \uB530\uB77C \uC870\uD654 \uC9C4\uD589. \uAC00\uC7A5 \uAC15\uB825\uD55C \uC218\uB834 \uCD95.',
+    '<strong>5C. \uAD6C\uC870\uC801 \uBD84\uAE30:</strong> \uC808\uB300\uB7C9 \uADDC\uC81C(EU/\uD55C\uAD6D) vs \uAC15\uB3C4 \uADDC\uC81C(\uC911\uAD6D)\uC758 \uBD84\uB2E8\uC740 \uC5EC\uC804\uD788 \uADFC\uBCF8\uC801. \uC911\uAD6D\uC758 GDP \uC5F0\uB3D9 \uC0C1\uD55C\uC740 \uCD1D \uBC30\uCD9C\uB7C9 \uC99D\uAC00\uB97C \uD5C8\uC6A9. \uC77C\uBCF8\uC758 \uC790\uBC1C\uC801 \uC811\uADFC\uC740 \uB610 \uB2E4\uB978 \uD328\uB7EC\uB2E4\uC784\uC744 \uCD94\uAC00.',
+    '<strong>5D. CBAM\uC740 \uB2E4\uB9AC:</strong> CBAM\uC740 \uAC00\uC7A5 \uAC15\uB825\uD55C \uB2E8\uC77C \uC218\uB834 \uB3D9\uB825. EU \uD0C4\uC18C \uAC00\uACA9\uC744 \uC0AC\uC2E4\uC0C1 \uBB34\uC5ED \uC0C1\uB300\uAD6D\uC5D0 \uC218\uCD9C. \uD55C\uAD6D\uACFC \uC911\uAD6D\uC740 ETS \uAC1C\uD601\uC73C\uB85C \uB300\uC751\uD558\uB098, \uAC1C\uD601 \uC18D\uB3C4\uC640 \uAE4A\uC774\uB294 \uD06C\uAC8C \uB2E4\uB984.'
+  ],
+  zh: [
+    '<strong>5A. \u4EF7\u683C\u8D8B\u540C\u538B\u529B\uFF1A</strong> CBAM\u4E3A\u4E9A\u6D32ETS\u521B\u9020\u4E86\u63D0\u9AD8\u78B3\u4EF7\u5411EU\u6C34\u5E73\u9760\u62E2\u7684\u7ECF\u6D4E\u6FC0\u52B1\u3002\u4F4610\u500D\u5DEE\u8DDD($8-11 vs $79)\u610F\u5473\u7740\u8D8B\u540C\u5C06\u6E10\u8FDB\u2014\u2014\u97E9\u56FD/\u4E2D\u56FD\u9884\u8BA12030\u5E74\u524D\u8FBE\u5230$25-40\u533A\u95F4\u3002',
+    '<strong>5B. \u5236\u5EA6\u8D8B\u540C\uFF1A</strong> \u56DB\u4E2A\u5236\u5EA6\u90FD\u5728\u5411BM\u57FA\u51C6\u5206\u914D\uFF08\u8131\u79BB\u5386\u53F2\u6392\u653E\u6CD5\uFF09\u8FC8\u8FDB\u3002MRV\u6807\u51C6\u56F4\u7ED5ISO 14064 / IPCC\u6307\u5357\u8D8B\u4E8E\u7EDF\u4E00\u3002\u8FD9\u662F\u6700\u5F3A\u7684\u8D8B\u540C\u8F74\u3002',
+    '<strong>5C. \u7ED3\u6784\u6027\u5206\u6B67\uFF1A</strong> \u7EDD\u5BF9\u603B\u91CF\u63A7\u5236(EU/\u97E9\u56FD) vs \u5F3A\u5EA6\u63A7\u5236(\u4E2D\u56FD)\u7684\u5206\u6B67\u4ECD\u7136\u6839\u672C\u3002\u4E2D\u56FDGDP\u6302\u94A9\u7684\u4E0A\u9650\u610F\u5473\u7740\u603B\u6392\u653E\u91CF\u4ECD\u53EF\u4E0A\u5347\u3002\u65E5\u672C\u7684\u81EA\u613F\u65B9\u5F0F\u589E\u52A0\u4E86\u53E6\u4E00\u79CD\u8303\u5F0F\u3002',
+    '<strong>5D. CBAM\u4F5C\u4E3A\u6865\u6881\uFF1A</strong> CBAM\u662F\u6700\u5F3A\u5927\u7684\u5355\u4E00\u8D8B\u540C\u529B\u91CF\u3002\u5B83\u5B9E\u8D28\u4E0A\u5C06EU\u78B3\u5B9A\u4EF7\u8F93\u51FA\u7ED9\u8D38\u6613\u4F19\u4F34\u3002\u97E9\u56FD\u548C\u4E2D\u56FD\u6B63\u4EE5ETS\u6539\u9769\u56DE\u5E94\uFF0C\u4F46\u6539\u9769\u901F\u5EA6\u548C\u6DF1\u5EA6\u5DEE\u5F02\u663E\u8457\u3002'
+  ]
+};
 
 function renderAxes() {
-  document.getElementById('conv-list').innerHTML = CONV_AXES.map(a =>
+  const lang = getLang();
+  const conv = CONV_AXES[lang] || CONV_AXES.en;
+  const div = DIV_AXES[lang] || DIV_AXES.en;
+
+  document.getElementById('conv-title').textContent = t('convAxes');
+  document.getElementById('div-title').textContent = t('divAxes');
+
+  document.getElementById('conv-list').innerHTML = conv.map(a =>
     `<div class="axis-item axis-conv"><div class="axis-title">${a.title}</div>${a.desc}</div>`
   ).join('');
-  document.getElementById('div-list').innerHTML = DIV_AXES.map(a =>
+  document.getElementById('div-list').innerHTML = div.map(a =>
     `<div class="axis-item axis-div"><div class="axis-title">${a.title}</div>${a.desc}</div>`
   ).join('');
 }
 
+function renderInsights() {
+  const tx = INSIGHTS[getLang()] || INSIGHTS.en;
+  document.getElementById('insights-box').innerHTML =
+    `<h3>${t('keyInsights')}</h3>` + tx.map(p => `<p>${p}</p>`).join('');
+}
+
 renderScatter();
 renderAxes();
+renderInsights();
+window.addEventListener('langchange', () => { renderScatter(); renderAxes(); renderInsights(); });
 document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
 </script>
 </body>
