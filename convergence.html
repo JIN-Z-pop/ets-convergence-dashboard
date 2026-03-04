@@ -38,22 +38,12 @@
 </style>
 
 <script>
-// === SCATTER PLOT DATA ===
-const CURRENT = [
-  { country: 'EU', age: 21, price: 79, coverage: 1600, label: 'EU 2026' },
-  { country: 'Korea', age: 11, price: 8, coverage: 600, label: 'Korea 2026' },
-  { country: 'China', age: 5, price: 11, coverage: 5000, label: 'China 2026' },
-  { country: 'Japan', age: 3, price: 0, coverage: 400, label: 'Japan 2026' }
-];
-
-const PREDICTED_2030 = [
-  { country: 'EU', age: 25, price: 85, coverage: 2000, label: 'EU 2030' },
-  { country: 'Korea', age: 15, price: 25, coverage: 700, label: 'Korea 2030' },
-  { country: 'China', age: 9, price: 20, coverage: 6000, label: 'China 2030' },
-  { country: 'Japan', age: 7, price: 15, coverage: 500, label: 'Japan 2030' }
-];
+// === SCATTER PLOT DATA (loaded via fetch) ===
+let CURRENT = null;
+let PREDICTED_2030 = null;
 
 function renderScatter() {
+  if (!CURRENT || !PREDICTED_2030) return;
   const makeTrace = (data, dash) => data.map(d => ({
     x: [d.age], y: [d.price],
     mode: 'markers+text',
@@ -212,7 +202,16 @@ function renderInsights() {
     `<h3>${t('keyInsights')}</h3>` + tx.map(p => `<p>${p}</p>`).join('');
 }
 
-renderScatter();
+// Load scatter data then render
+fetch('data/convergence.json')
+  .then(r => r.json())
+  .then(data => {
+    CURRENT = data.current;
+    PREDICTED_2030 = data.predicted_2030;
+    renderScatter();
+  })
+  .catch(err => console.error('Failed to load convergence data:', err));
+
 renderAxes();
 renderInsights();
 window.addEventListener('langchange', () => { renderScatter(); renderAxes(); renderInsights(); });
