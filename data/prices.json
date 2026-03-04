@@ -131,60 +131,158 @@
   ],
   "eu_eur": [
     {
+      "year": "2005",
+      "avg_price": 22.0,
+      "max_price": 29.8,
+      "min_price": 7.0,
+      "phase": "Phase 1"
+    },
+    {
+      "year": "2006",
+      "avg_price": 17.1,
+      "max_price": 30.5,
+      "min_price": 6.3,
+      "phase": "Phase 1"
+    },
+    {
+      "year": "2007",
+      "avg_price": 0.7,
+      "max_price": 6.5,
+      "min_price": 0.02,
+      "phase": "Phase 1"
+    },
+    {
+      "year": "2008",
+      "avg_price": 22.0,
+      "max_price": 29.3,
+      "min_price": 8.2,
+      "phase": "Phase 2"
+    },
+    {
+      "year": "2009",
+      "avg_price": 13.0,
+      "max_price": 15.4,
+      "min_price": 8.2,
+      "phase": "Phase 2"
+    },
+    {
+      "year": "2010",
+      "avg_price": 14.5,
+      "max_price": 16.5,
+      "min_price": 12.5,
+      "phase": "Phase 2"
+    },
+    {
+      "year": "2011",
+      "avg_price": 13.0,
+      "max_price": 17.4,
+      "min_price": 6.3,
+      "phase": "Phase 2"
+    },
+    {
+      "year": "2012",
+      "avg_price": 7.5,
+      "max_price": 9.6,
+      "min_price": 5.9,
+      "phase": "Phase 2"
+    },
+    {
       "year": "2013",
-      "avg_price": 4.5
+      "avg_price": 4.5,
+      "max_price": 6.8,
+      "min_price": 2.8,
+      "phase": "Phase 3"
     },
     {
       "year": "2014",
-      "avg_price": 6.0
+      "avg_price": 6.0,
+      "max_price": 7.5,
+      "min_price": 4.6,
+      "phase": "Phase 3"
     },
     {
       "year": "2015",
-      "avg_price": 7.7
+      "avg_price": 7.7,
+      "max_price": 8.7,
+      "min_price": 6.3,
+      "phase": "Phase 3"
     },
     {
       "year": "2016",
-      "avg_price": 5.3
+      "avg_price": 5.3,
+      "max_price": 8.3,
+      "min_price": 3.9,
+      "phase": "Phase 3"
     },
     {
       "year": "2017",
-      "avg_price": 5.8
+      "avg_price": 5.8,
+      "max_price": 8.2,
+      "min_price": 4.4,
+      "phase": "Phase 3"
     },
     {
       "year": "2018",
-      "avg_price": 15.9
+      "avg_price": 15.9,
+      "max_price": 25.2,
+      "min_price": 7.7,
+      "phase": "Phase 3"
     },
     {
       "year": "2019",
-      "avg_price": 24.8
+      "avg_price": 24.8,
+      "max_price": 29.8,
+      "min_price": 19.3,
+      "phase": "Phase 3"
     },
     {
       "year": "2020",
-      "avg_price": 24.6
+      "avg_price": 24.6,
+      "max_price": 30.8,
+      "min_price": 15.3,
+      "phase": "Phase 3"
     },
     {
       "year": "2021",
-      "avg_price": 53.3
+      "avg_price": 53.3,
+      "max_price": 90.0,
+      "min_price": 33.0,
+      "phase": "Phase 4"
     },
     {
       "year": "2022",
-      "avg_price": 81.2
+      "avg_price": 81.2,
+      "max_price": 99.0,
+      "min_price": 55.0,
+      "phase": "Phase 4"
     },
     {
       "year": "2023",
-      "avg_price": 85.0
+      "avg_price": 85.0,
+      "max_price": 105.0,
+      "min_price": 55.0,
+      "phase": "Phase 4"
     },
     {
       "year": "2024",
-      "avg_price": 65.0
+      "avg_price": 65.0,
+      "max_price": 75.0,
+      "min_price": 52.0,
+      "phase": "Phase 4"
     },
     {
       "year": "2025",
-      "avg_price": 68.0
+      "avg_price": 68.0,
+      "max_price": 78.0,
+      "min_price": 58.0,
+      "phase": "Phase 4"
     },
     {
       "year": "2026",
-      "avg_price": 72.0
+      "avg_price": 72.0,
+      "max_price": 80.0,
+      "min_price": 63.0,
+      "phase": "Phase 4"
     }
   ],
   "fx": {
