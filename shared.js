@@ -15,7 +15,7 @@ const NAV_PAGES = [
   { id: 'compare', href: 'compare.html', en: 'Compare', ja: '比較', ko: '비교', zh: '比较' },
   { id: 'allocation', href: 'allocation.html', en: 'Allocation', ja: '割当', ko: '할당', zh: '分配' },
   { id: 'cbam', href: 'cbam.html', en: 'CBAM', ja: 'CBAM', ko: 'CBAM', zh: 'CBAM' },
-  { id: 'convergence', href: 'convergence.html', en: 'Convergence', ja: '収斂・分岐', ko: '수렴·분기', zh: '趋同·分歧' },
+  { id: 'convergence', href: 'convergence.html', en: 'Convergence', ja: '統合分析', ko: '수렴·분기', zh: '趋同·分歧' },
   { id: 'rosetta', href: 'rosetta.html', en: 'Rosetta', ja: 'ロゼッタ', ko: '로제타', zh: '罗塞塔' }
 ];
 
@@ -72,13 +72,13 @@ const LANG = {
     asiaWorld: 'Asia World'
   },
   ja: {
-    dashTitle: 'ETS\u53CE\u6582\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9',
-    dashSub: '4\u30AB\u56FDETS\u5236\u5EA6\u306E2030\u5E74\u306B\u5411\u3051\u305F\u53CE\u6582\u3068\u5206\u5C90',
+    dashTitle: 'ETS\u7D71\u5408\u5206\u6790\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9',
+    dashSub: '4\u30AB\u56FDETS\u5236\u5EA6\u306E2030\u5E74\u306B\u5411\u3051\u305F\u7D71\u5408\u5206\u6790',
     footer: '\u30C7\u30FC\u30BF: ETS database | JIN-Z-pop and his merry AI brothers | Plotly.js',
     price: '\u4FA1\u683C', coverage: '\u30AB\u30D0\u30FC\u7387', entities: '\u5BFE\u8C61\u4F01\u696D', since: '\u958B\u59CB',
     eu: 'EU', korea: '\u97D3\u56FD', china: '\u4E2D\u56FD', japan: '\u65E5\u672C',
     usdPerTon: 'USD/t', approx: '\u7D04',
-    convergence: '\u53CE\u6582', divergence: '\u5206\u5C90',
+    convergence: '\u53CE\u675F', divergence: '\u4E56\u96E2',
     source: '\u51FA\u5178', noData: '\u5E02\u5834\u30C7\u30FC\u30BF\u672A\u5F62\u6210',
     pageCompareTitle: '\u5236\u5EA6\u6BD4\u8F03',
     pageCompareSub: '\u30EC\u30FC\u30C0\u30FC\u30C1\u30E3\u30FC\u30C8 \u2014 4\u30AB\u56FDETS\u306E5\u3064\u306E\u4E3B\u8981\u6B21\u5143\u3092\u6BD4\u8F03',
@@ -86,7 +86,7 @@ const LANG = {
     pageAllocSub: '\u904E\u53BB\u6392\u51FA\u91CF\u57FA\u6E96\u304B\u3089\u30D9\u30F3\u30C1\u30DE\u30FC\u30AF\u3001\u30AA\u30FC\u30AF\u30B7\u30E7\u30F3\u3078',
     pageCbamTitle: 'CBAM\u30A4\u30F3\u30D1\u30AF\u30C8\u5E74\u8868',
     pageCbamSub: 'EU\u70AD\u7D20\u56FD\u5883\u8ABF\u6574\u30E1\u30AB\u30CB\u30BA\u30E0 \u2014 \u5E74\u8868\u3068\u30A2\u30B8\u30A2ETS\u3078\u306E\u5F71\u97FF',
-    pageConvTitle: '\u53CE\u6582\u30FB\u5206\u5C90\u30DE\u30C3\u30D7',
+    pageConvTitle: '\u7D71\u5408\u5206\u6790\u30DE\u30C3\u30D7',
     pageConvSub: '4\u3064\u306EETS\u5236\u5EA6\u306E\u73FE\u5728\u5730\u3001\u305D\u3057\u30662030\u5E74\u306B\u5411\u304B\u3046\u5148',
     pageRosettaTitle: '\u30ED\u30BC\u30C3\u30BF\u30B9\u30C8\u30FC\u30F3',
     pageRosettaSub: '4\u8A00\u8A9EETS\u7528\u8A9E\u96C6 \u2014 \u82F1\u8A9E\u30FB\u65E5\u672C\u8A9E\u30FB\u97D3\u56FD\u8A9E\u30FB\u4E2D\u56FD\u8A9E',
@@ -100,8 +100,8 @@ const LANG = {
     allocPath: '\u5272\u5F53\u65B9\u5F0F\u306E\u79FB\u884C\u30D1\u30B9',
     twoWorlds: '\u300C\u4E8C\u3064\u306E\u4E16\u754C\u300D\u2014 EU vs \u30A2\u30B8\u30A2ETS\u30D1\u30E9\u30C0\u30A4\u30E0',
     keyInsights: '\u4E3B\u8981\u306A\u77E5\u898B',
-    convAxes: '\u2192 5\u3064\u306E\u53CE\u6582\u8EF8',
-    divAxes: '\u2190 5\u3064\u306E\u5206\u5C90\u8EF8',
+    convAxes: '\u2192 5\u3064\u306E\u53CE\u675F\u8981\u56E0',
+    divAxes: '\u2190 5\u3064\u306E\u4E56\u96E2\u8981\u56E0',
     searchPlaceholder: '4\u8A00\u8A9E\u3067\u691C\u7D22...',
     showingTerms: '\u8868\u793A\u4E2D',
     ofTerms: '/',
@@ -113,7 +113,7 @@ const LANG = {
     bubbleNote: '\u30D0\u30D6\u30EB\u30B5\u30A4\u30BA = \u6392\u51FA\u30AB\u30D0\u30FC\u898F\u6A21\uFF08\u76F8\u5BFE\u5024\uFF09',
     solidFaded: '\u5B9F\u7DDA = \u73FE\u5728(2026) | \u8584\u8272 = \u4E88\u6E2C(2030)',
     jpNoPrice: '\u65E5\u672CGXETS\uFF1A\u5E02\u5834\u4FA1\u683C\u672A\u5F62\u6210',
-    cbamNote: 'CBAM\u306F\u53CE\u6582\u3092\u5F37\u5236\u3059\u308B\u67B6\u3051\u6A4B \u2014 \u30A2\u30B8\u30A2\u306F\u70AD\u7D20\u4FA1\u683C\u3092\u5F15\u304D\u4E0A\u3052\u308B\u304B\u3001EU\u5DEE\u984D\u3092\u652F\u6255\u3046',
+    cbamNote: 'CBAM\u306F\u5236\u5EA6\u7D71\u5408\u3092\u4FC3\u3059\u67B6\u3051\u6A4B \u2014 \u30A2\u30B8\u30A2\u306F\u70AD\u7D20\u4FA1\u683C\u3092\u5F15\u304D\u4E0A\u3052\u308B\u304B\u3001EU\u5DEE\u984D\u3092\u652F\u6255\u3046',
     euWorld: 'EU\u306E\u4E16\u754C',
     asiaWorld: '\u30A2\u30B8\u30A2\u306E\u4E16\u754C'
   },
