@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ETS Convergence Dashboard</title>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<script src="shared.js?v=3"></script>
+<script src="shared.js?v=4"></script>
 </head>
 <body>
 <script>initPage('index');</script>
@@ -24,19 +24,19 @@
 // === ABOUT TEXTS ===
 const ABOUT = {
   en: [
-    'This dashboard visualizes the convergence and divergence of Emission Trading Systems (ETS) across four major economies \u2014 EU, Korea, China, and Japan \u2014 as they approach 2030. Data is sourced from <code>gods-eye-db</code> (48 tables, ~26,300 rows) and <code>Knowledge Brain RAG</code> (1,600+ items).',
+    'This dashboard visualizes the convergence and divergence of Emission Trading Systems (ETS) across four major economies \u2014 EU, Korea, China, and Japan \u2014 as they approach 2030.',
     'Navigate using the top bar to explore system comparisons, allocation evolution, CBAM impacts, convergence mapping, and a 4-language ETS terminology reference.'
   ],
   ja: [
-    '\u3053\u306E\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9\u306F\u3001EU\u30FB\u97D3\u56FD\u30FB\u4E2D\u56FD\u30FB\u65E5\u672C\u306E4\u3064\u306E\u4E3B\u8981\u7D4C\u6E08\u570F\u306B\u304A\u3051\u308B\u6392\u51FA\u6A29\u53D6\u5F15\u5236\u5EA6\uFF08ETS\uFF09\u306E2030\u5E74\u306B\u5411\u3051\u305F\u7D71\u5408\u5206\u6790\u3092\u53EF\u8996\u5316\u3057\u307E\u3059\u3002\u30C7\u30FC\u30BF\u306F <code>gods-eye-db</code>\uFF0848\u30C6\u30FC\u30D6\u30EB\u3001\u7D0426,300\u884C\uFF09\u3068 <code>Knowledge Brain RAG</code>\uFF081,600\u4EF6\u4EE5\u4E0A\uFF09\u304B\u3089\u53D6\u5F97\u3057\u3066\u3044\u307E\u3059\u3002',
+    '\u3053\u306E\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9\u306F\u3001EU\u30FB\u97D3\u56FD\u30FB\u4E2D\u56FD\u30FB\u65E5\u672C\u306E4\u3064\u306E\u4E3B\u8981\u7D4C\u6E08\u570F\u306B\u304A\u3051\u308B\u6392\u51FA\u6A29\u53D6\u5F15\u5236\u5EA6\uFF08ETS\uFF09\u306E2030\u5E74\u306B\u5411\u3051\u305F\u7D71\u5408\u5206\u6790\u3092\u53EF\u8996\u5316\u3057\u307E\u3059\u3002',
     '\u4E0A\u90E8\u306E\u30CA\u30D3\u30B2\u30FC\u30B7\u30E7\u30F3\u304B\u3089\u3001\u5236\u5EA6\u6BD4\u8F03\u3001\u5272\u5F53\u65B9\u5F0F\u306E\u9032\u5316\u3001CBAM\u306E\u5F71\u97FF\u3001\u7D71\u5408\u5206\u6790\u30DE\u30C3\u30D7\u30014\u8A00\u8A9EETS\u7528\u8A9E\u96C6\u3092\u3054\u89A7\u304F\u3060\u3055\u3044\u3002'
   ],
   ko: [
-    '\uC774 \uB300\uC2DC\uBCF4\uB4DC\uB294 EU\u00B7\uD55C\uAD6D\u00B7\uC911\uAD6D\u00B7\uC77C\uBCF8 4\uAC1C \uC8FC\uC694 \uACBD\uC81C\uAD8C\uC758 \uBC30\uCD9C\uAD8C\uAC70\uB798\uC81C(ETS)\uAC00 2030\uB144\uC744 \uD5A5\uD574 \uC5B4\uB5BB\uAC8C \uC218\uB834\u00B7\uBD84\uAE30\uD558\uACE0 \uC788\uB294\uC9C0 \uC2DC\uAC01\uD654\uD569\uB2C8\uB2E4. \uB370\uC774\uD130\uB294 <code>gods-eye-db</code>(48\uAC1C \uD14C\uC774\uBE14, \uC57D 26,300\uD589)\uC640 <code>Knowledge Brain RAG</code>(1,600\uAC74 \uC774\uC0C1)\uC5D0\uC11C \uAC00\uC838\uC635\uB2C8\uB2E4.',
+    '\uC774 \uB300\uC2DC\uBCF4\uB4DC\uB294 EU\u00B7\uD55C\uAD6D\u00B7\uC911\uAD6D\u00B7\uC77C\uBCF8 4\uAC1C \uC8FC\uC694 \uACBD\uC81C\uAD8C\uC758 \uBC30\uCD9C\uAD8C\uAC70\uB798\uC81C(ETS)\uAC00 2030\uB144\uC744 \uD5A5\uD574 \uC5B4\uB5BB\uAC8C \uC218\uB834\u00B7\uBD84\uAE30\uD558\uACE0 \uC788\uB294\uC9C0 \uC2DC\uAC01\uD654\uD569\uB2C8\uB2E4.',
     '\uC0C1\uB2E8 \uB0B4\uBE44\uAC8C\uC774\uC158\uC744 \uD1B5\uD574 \uC81C\uB3C4 \uBE44\uAD50, \uD560\uB2F9 \uBC29\uC2DD\uC758 \uC9C4\uD654, CBAM \uC601\uD5A5, \uC218\uB834\u00B7\uBD84\uAE30 \uB9E4\uD551, 4\uAC1C \uC5B8\uC5B4 ETS \uC6A9\uC5B4\uC9D1\uC744 \uC0B4\uD3B4\uBCF4\uC138\uC694.'
   ],
   zh: [
-    '\u6B64\u4EEA\u8868\u677F\u53EF\u89C6\u5316\u4E86EU\u00B7\u97E9\u56FD\u00B7\u4E2D\u56FD\u00B7\u65E5\u672C\u56DB\u5927\u7ECF\u6D4E\u4F53\u6392\u653E\u6743\u4EA4\u6613\u5236\u5EA6(ETS)\u57282030\u5E74\u524D\u7684\u8D8B\u540C\u4E0E\u5206\u6B67\u3002\u6570\u636E\u6765\u6E90\u4E8E <code>gods-eye-db</code>\uFF0848\u4E2A\u8868\uFF0C\u7EA626,300\u884C\uFF09\u548C <code>Knowledge Brain RAG</code>\uFF081,600+\u6761\u76EE\uFF09\u3002',
+    '\u6B64\u4EEA\u8868\u677F\u53EF\u89C6\u5316\u4E86EU\u00B7\u97E9\u56FD\u00B7\u4E2D\u56FD\u00B7\u65E5\u672C\u56DB\u5927\u7ECF\u6D4E\u4F53\u6392\u653E\u6743\u4EA4\u6613\u5236\u5EA6(ETS)\u57282030\u5E74\u524D\u7684\u8D8B\u540C\u4E0E\u5206\u6B67\u3002',
     '\u901A\u8FC7\u9876\u90E8\u5BFC\u822A\u680F\u63A2\u7D22\u5236\u5EA6\u6BD4\u8F83\u3001\u5206\u914D\u65B9\u5F0F\u6F14\u53D8\u3001CBAM\u5F71\u54CD\u3001\u8D8B\u540C\u00B7\u5206\u6B67\u5730\u56FE\u548C\u56DB\u8BEDETS\u672F\u8BED\u53C2\u8003\u3002'
   ]
 };
@@ -55,7 +55,7 @@ const KPI = [
   { country: 'EU', flag: '\u{1F1EA}\u{1F1FA}', price: '\u20AC72/t', priceUsd: '~$79/t', coverage: '40%', entities: '~11,000', since: '2005', color: THEME.countries.EU },
   { country: 'Korea', flag: '\u{1F1F0}\u{1F1F7}', price: '\u20A911,823/t', priceUsd: '~$8/t', coverage: '68%', entities: '~680', since: '2015', color: THEME.countries.Korea },
   { country: 'China', flag: '\u{1F1E8}\u{1F1F3}', price: '\u00A579/t', priceUsd: '~$11/t', coverage: '60%', entities: '~3,500', since: '2021', color: THEME.countries.China },
-  { country: 'Japan', flag: '\u{1F1EF}\u{1F1F5}', price: 'GX-ETS', priceUsd: 'N/A', coverage: '60%*', entities: '300-400', since: '2023', color: THEME.countries.Japan },
+  { country: 'Japan', flag: '\u{1F1EF}\u{1F1F5}', price: 'GX-ETS', priceUsd: 'N/A', coverage: '60%*', entities: '~747', since: '2023', color: THEME.countries.Japan },
 ];
 
 function renderCards() {
