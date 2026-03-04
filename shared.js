@@ -23,7 +23,7 @@ const LANG = {
   en: {
     dashTitle: 'ETS Convergence Dashboard',
     dashSub: '4-Country ETS Convergence & Divergence toward 2030',
-    footer: 'Data: ETS database | JIN-Z-pop and his merry AI brothers | Plotly.js',
+    footer: 'JIN-Z-pop and his merry AI brothers | Plotly.js',
     price: 'Price', coverage: 'Coverage', entities: 'Entities', since: 'Since',
     eu: 'EU', korea: 'Korea', china: 'China', japan: 'Japan',
     usdPerTon: 'USD/t', approx: 'approx.',
@@ -74,7 +74,7 @@ const LANG = {
   ja: {
     dashTitle: 'ETS\u7D71\u5408\u5206\u6790\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9',
     dashSub: '4\u30AB\u56FDETS\u5236\u5EA6\u306E2030\u5E74\u306B\u5411\u3051\u305F\u7D71\u5408\u5206\u6790',
-    footer: '\u30C7\u30FC\u30BF: ETS database | JIN-Z-pop and his merry AI brothers | Plotly.js',
+    footer: 'JIN-Z-pop and his merry AI brothers | Plotly.js',
     price: '\u4FA1\u683C', coverage: '\u30AB\u30D0\u30FC\u7387', entities: '\u5BFE\u8C61\u4F01\u696D', since: '\u958B\u59CB',
     eu: 'EU', korea: '\u97D3\u56FD', china: '\u4E2D\u56FD', japan: '\u65E5\u672C',
     usdPerTon: 'USD/t', approx: '\u7D04',
@@ -120,7 +120,7 @@ const LANG = {
   ko: {
     dashTitle: 'ETS \uC218\uB834 \uB300\uC2DC\uBCF4\uB4DC',
     dashSub: '4\uAC1C\uAD6D ETS \uC81C\uB3C4\uC758 2030\uB144 \uC218\uB834\uACFC \uBD84\uAE30',
-    footer: '\uB370\uC774\uD130: ETS database | JIN-Z-pop and his merry AI brothers | Plotly.js',
+    footer: 'JIN-Z-pop and his merry AI brothers | Plotly.js',
     price: '\uAC00\uACA9', coverage: '\uCEE4\uBC84\uC728', entities: '\uB300\uC0C1\uAE30\uC5C5', since: '\uC2DC\uC791',
     eu: 'EU', korea: '\uD55C\uAD6D', china: '\uC911\uAD6D', japan: '\uC77C\uBCF8',
     usdPerTon: 'USD/t', approx: '\uC57D',
@@ -166,7 +166,7 @@ const LANG = {
   zh: {
     dashTitle: 'ETS\u8D8B\u540C\u4EEA\u8868\u677F',
     dashSub: '\u56DB\u56FDETS\u5236\u5EA62030\u5E74\u8D8B\u540C\u4E0E\u5206\u6B67',
-    footer: '\u6570\u636E: ETS database | JIN-Z-pop and his merry AI brothers | Plotly.js',
+    footer: 'JIN-Z-pop and his merry AI brothers | Plotly.js',
     price: '\u4EF7\u683C', coverage: '\u8986\u76D6\u7387', entities: '\u7EB3\u5165\u4F01\u4E1A', since: '\u542F\u52A8',
     eu: 'EU', korea: '\u97E9\u56FD', china: '\u4E2D\u56FD', japan: '\u65E5\u672C',
     usdPerTon: 'USD/t', approx: '\u7EA6',
