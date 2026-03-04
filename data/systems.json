@@ -1,1114 +1,1896 @@
-[
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2030,
-    "metric_name": "2030年削減目標(対2005年)",
-    "metric_value": "62",
-    "metric_unit": "%"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-CBAM",
-    "reference_year": 2026,
-    "metric_name": "EU無償割当廃止期間",
-    "metric_value": "2026-2034",
-    "metric_unit": "年（段階的廃止）"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "オフセット相殺上限",
-    "metric_value": "不可(Phase 4)",
-    "metric_unit": "-"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "オークション比率",
-    "metric_value": "約43",
-    "metric_unit": "%"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "オークション比率",
-    "metric_value": "43",
-    "metric_unit": "%"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "借入",
-    "metric_value": "不可",
-    "metric_unit": "-"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "借入(Borrowing)",
-    "metric_value": "不可",
-    "metric_unit": "-"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "制度対象_単位",
-    "metric_value": "設備",
-    "metric_unit": "-"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "制度対象_規模基準",
-    "metric_value": "25000",
-    "metric_unit": "tCO2以上（直接排出）"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "外部クレジット活用",
-    "metric_value": "不可（Phase4より）",
-    "metric_unit": "-"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-CBAM",
-    "reference_year": 2026,
-    "metric_name": "対象品目数",
-    "metric_value": "6",
-    "metric_unit": "品目（セメント・鉄鋼・アルミ・肥料・電力・水素）"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "対象施設数",
-    "metric_value": "約11000",
-    "metric_unit": "施設"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "対象施設数",
-    "metric_value": "11000",
-    "metric_unit": "施設"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "対象温室効果ガス",
-    "metric_value": "6種類",
-    "metric_unit": "-"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "市場安定化措置",
-    "metric_value": "MSR(市場安定化準備)",
-    "metric_unit": "-"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "折減因子(2024-2027)",
-    "metric_value": "4.3",
-    "metric_unit": "%"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2028,
-    "metric_name": "折減因子(2028-2030)",
-    "metric_value": "4.4",
-    "metric_unit": "%"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "排出量カバー率",
-    "metric_value": "約40",
-    "metric_unit": "%"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "排出量カバー率",
-    "metric_value": "40",
-    "metric_unit": "%"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-CBAM",
-    "reference_year": 2026,
-    "metric_name": "本格施行開始",
-    "metric_value": "2026年1月",
-    "metric_unit": "-"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "炭素価格",
-    "metric_value": "80",
-    "metric_unit": "EUR/トン"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "無償割当比率",
-    "metric_value": "約57",
-    "metric_unit": "%"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "無償割当比率",
-    "metric_value": "57",
-    "metric_unit": "%（Phase 4）"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "現在Phase",
-    "metric_value": "Phase 4 (2021-2030)",
-    "metric_unit": "-"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "相殺",
-    "metric_value": "不可（Phase 4）",
-    "metric_unit": "-"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "繰越(Banking)",
-    "metric_value": "無制限",
-    "metric_unit": "-"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "罰則金額",
-    "metric_value": "100",
-    "metric_unit": "EUR/tCO2"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "罰則金額",
-    "metric_value": "100",
-    "metric_unit": "EUR/tCO2"
-  },
-  {
-    "country": "EU",
-    "system_name": "EU-ETS",
-    "reference_year": 2024,
-    "metric_name": "開始年",
-    "metric_value": "2005",
-    "metric_unit": "年"
-  },
-  {
-    "country": "カナダ",
-    "system_name": "炭素税",
-    "reference_year": 2030,
-    "metric_name": "炭素価格_2030年目標",
-    "metric_value": "135.3",
-    "metric_unit": "USD/tCO2e"
-  },
-  {
-    "country": "ドイツ",
-    "system_name": "炭素税",
-    "reference_year": 2025,
-    "metric_name": "炭素価格_2025年目標",
-    "metric_value": "64.6",
-    "metric_unit": "USD/tCO2e"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2030,
-    "metric_name": "2030年カバー企業数予測",
-    "metric_value": "約5500",
-    "metric_unit": "社"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2030,
-    "metric_name": "2030年カバー排出量予測",
-    "metric_value": "86",
-    "metric_unit": "億トン以上"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2030,
-    "metric_name": "2030年カバー率予測",
-    "metric_value": "約74",
-    "metric_unit": "%"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2030,
-    "metric_name": "2030年配額価格予測(突破)",
-    "metric_value": "200",
-    "metric_unit": "元/トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "CCER初日平均価格（2024.1.22）",
-    "metric_value": "63.5",
-    "metric_unit": "元/トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "CCER年間成交量",
-    "metric_value": "1959.87",
-    "metric_unit": "万トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "Q4取引集中度",
-    "metric_value": "79",
-    "metric_unit": "%"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "Q4取引集中度",
-    "metric_value": "79",
-    "metric_unit": "%"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "オフセット相殺上限(CCER)",
-    "metric_value": "5",
-    "metric_unit": "%"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "オークション比率",
-    "metric_value": "0",
-    "metric_unit": "%"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "カバー企業数",
-    "metric_value": "2257",
-    "metric_unit": "社"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "借入(Borrowing)上限",
-    "metric_value": "50",
-    "metric_unit": "%以内"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "借入上限",
-    "metric_value": "50",
-    "metric_unit": "%以内"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "外部クレジット(CCER)使用上限",
-    "metric_value": "5",
-    "metric_unit": "%（償却量対比）"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "対象企業数",
-    "metric_value": "3500",
-    "metric_unit": "社"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2025,
-    "metric_name": "対象企業数(拡大後)",
-    "metric_value": "約3500",
-    "metric_unit": "社"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "対象業種",
-    "metric_value": "発電業のみ",
-    "metric_unit": "-"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2025,
-    "metric_name": "対象業種（拡大後）",
-    "metric_value": "発電・鉄鋼・セメント・電解アルミ",
-    "metric_unit": "-"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "履行率",
-    "metric_value": "99.98",
-    "metric_unit": "%"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "市場安定化措置",
-    "metric_value": "生態環境部が±20%調整可能",
-    "metric_unit": "-"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "年末終値",
-    "metric_value": "97.49",
-    "metric_unit": "元/トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "年間取引量",
-    "metric_value": "1.89",
-    "metric_unit": "億トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "年間取引額",
-    "metric_value": "181.14",
-    "metric_unit": "億元"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "年間平均価格",
-    "metric_value": "95.99",
-    "metric_unit": "元/トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "年間平均炭素価格",
-    "metric_value": "95.99",
-    "metric_unit": "元/トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "年間換手率",
-    "metric_value": "2-3",
-    "metric_unit": "%"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "年間最高価格",
-    "metric_value": "106.02",
-    "metric_unit": "元/トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2025,
-    "metric_name": "拡大後カバー企業数予測",
-    "metric_value": "約3500",
-    "metric_unit": "社"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2025,
-    "metric_name": "拡大後カバー排出量予測",
-    "metric_value": "約64",
-    "metric_unit": "億トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2025,
-    "metric_name": "拡大後カバー率予測",
-    "metric_value": "53",
-    "metric_unit": "%"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "排出量カバー率",
-    "metric_value": "60",
-    "metric_unit": "%"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2025,
-    "metric_name": "排出量カバー率(拡大後)",
-    "metric_value": "約60",
-    "metric_unit": "%"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "炭素価格",
-    "metric_value": "97.49",
-    "metric_unit": "元/トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "無償割当比率",
-    "metric_value": "100",
-    "metric_unit": "%"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "無償割当比率",
-    "metric_value": "100",
-    "metric_unit": "%（現状）"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "相殺上限(CCER)",
-    "metric_value": "5",
-    "metric_unit": "%"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "累計取引量",
-    "metric_value": "696000000",
-    "metric_unit": "トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "累計取引量（2021.7〜2024.12）",
-    "metric_value": "6.30",
-    "metric_unit": "億トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "累計取引額（2021.7〜2024.12）",
-    "metric_value": "430.33",
-    "metric_unit": "億元"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "罰則上限（改正後）",
-    "metric_value": "50万〜500万",
-    "metric_unit": "元"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "罰則金額",
-    "metric_value": "2-3万元/tCO2",
-    "metric_unit": "-"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "罰則金額",
-    "metric_value": "20000-30000",
-    "metric_unit": "元/tCO2"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2025,
-    "metric_name": "配額価格予測(突破)",
-    "metric_value": "105",
-    "metric_unit": "元/トン"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "配額分配方式",
-    "metric_value": "強度ベース(BM)",
-    "metric_unit": "-"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "配額方式",
-    "metric_value": "強度ベース（基準値法）",
-    "metric_unit": "-"
-  },
-  {
-    "country": "中国",
-    "system_name": "China-ETS",
-    "reference_year": 2024,
-    "metric_name": "開始年",
-    "metric_value": "2021",
-    "metric_unit": "年"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2024,
-    "metric_name": "NDC水準削減率_2024年度",
-    "metric_value": "29.7",
-    "metric_unit": "%（2013年度比）"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2025,
-    "metric_name": "NDC水準削減率_2025年度",
-    "metric_value": "32.4",
-    "metric_unit": "%（2013年度比）"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2026,
-    "metric_name": "Phase2_クレジット活用",
-    "metric_value": "J-クレジット・JCMクレジット",
-    "metric_unit": "-"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2026,
-    "metric_name": "Phase2_不履行時罰則",
-    "metric_value": "上限価格×1.X倍",
-    "metric_unit": "-"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2026,
-    "metric_name": "Phase2_価格安定化措置",
-    "metric_value": "上下限価格設定",
-    "metric_unit": "-"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2026,
-    "metric_name": "Phase2_償却義務",
-    "metric_value": "検証済排出量と同量の排出枠償却",
-    "metric_unit": "-"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2026,
-    "metric_name": "Phase2_制度対象事業者数",
-    "metric_value": "300-400",
-    "metric_unit": "社"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2026,
-    "metric_name": "Phase2_制度対象者基準",
-    "metric_value": "100000",
-    "metric_unit": "tCO2直接排出(3カ年平均)"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2026,
-    "metric_name": "Phase2_割当方式",
-    "metric_value": "全量無償割当",
-    "metric_unit": "-"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2026,
-    "metric_name": "Phase2_取引所運営",
-    "metric_value": "GX推進機構が市場開設",
-    "metric_unit": "-"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2026,
-    "metric_name": "Phase2_排出量カバー率",
-    "metric_value": "60",
-    "metric_unit": "%（見込み）"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2028,
-    "metric_name": "化石燃料賦課金_導入年度",
-    "metric_value": "2028",
-    "metric_unit": "年度"
-  },
-  {
-    "country": "日本",
-    "system_name": "GX-ETS",
-    "reference_year": 2033,
-    "metric_name": "発電事業者有償オークション_導入年度",
-    "metric_value": "2033",
-    "metric_unit": "年度"
-  },
-  {
-    "country": "米国",
-    "system_name": "California-ETS",
-    "reference_year": 2024,
-    "metric_name": "外部クレジット使用上限_2021-2025",
-    "metric_value": "4",
-    "metric_unit": "%（償却量対比）"
-  },
-  {
-    "country": "英国",
-    "system_name": "UK-ETS",
-    "reference_year": 2027,
-    "metric_name": "CBAM導入予定年",
-    "metric_value": "2027",
-    "metric_unit": "年"
-  },
-  {
-    "country": "英国",
-    "system_name": "UK-ETS",
-    "reference_year": 2024,
-    "metric_name": "制度対象_単位",
-    "metric_value": "設備",
-    "metric_unit": "-"
-  },
-  {
-    "country": "英国",
-    "system_name": "UK-ETS",
-    "reference_year": 2024,
-    "metric_name": "制度対象_規模基準",
-    "metric_value": "25000",
-    "metric_unit": "tCO2以上（直接排出）"
-  },
-  {
-    "country": "英国",
-    "system_name": "UK-ETS",
-    "reference_year": 2026,
-    "metric_name": "海運セクター追加予定年",
-    "metric_value": "2026",
-    "metric_unit": "年"
-  },
-  {
-    "country": "韓国",
-    "system_name": "CBAM_鉄鋼平板圧延",
-    "reference_year": 2040,
-    "metric_name": "CBAM認証書費用_平板圧延(製品1トン当)",
-    "metric_value": "867719",
-    "metric_unit": "ウォン/トン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "CBAM_2040年展望_BAU",
-    "reference_year": 2040,
-    "metric_name": "CBAM貿易関税額(BAU)",
-    "metric_value": "1910",
-    "metric_unit": "億ウォン/年"
-  },
-  {
-    "country": "韓国",
-    "system_name": "CBAM_2040年展望_CN",
-    "reference_year": 2040,
-    "metric_name": "CBAM貿易関税額(CNシナリオ)",
-    "metric_value": "500",
-    "metric_unit": "億ウォン/年"
-  },
-  {
-    "country": "韓国",
-    "system_name": "CBAM_2040年展望_CN",
-    "reference_year": 2040,
-    "metric_name": "CBAM関税削減率(制度改革+脱炭素技術)",
-    "metric_value": "74",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "KAU取引構成比（累計）",
-    "metric_value": "88.0",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "KCU取引構成比（累計）",
-    "metric_value": "1.1",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "KOC取引構成比（累計）",
-    "metric_value": "10.9",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "オフセット相殺上限",
-    "metric_value": "10",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "オークション比率",
-    "metric_value": "10",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "オークション比率(Phase3)",
-    "metric_value": "10",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "借入(Borrowing)上限",
-    "metric_value": "10",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "借入上限",
-    "metric_value": "10",
-    "metric_unit": "%以内"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "全期間平均取引価格",
-    "metric_value": "19131",
-    "metric_unit": "ウォン/トン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "制度対象_単位",
-    "metric_value": "事業者",
-    "metric_unit": "-"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "制度対象_規模基準",
-    "metric_value": "125000",
-    "metric_unit": "tCO2（直接・間接排出）"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "場内取引構成比（累計）",
-    "metric_value": "61.2",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "場外取引構成比（累計）",
-    "metric_value": "38.8",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "外部クレジット使用上限",
-    "metric_value": "5",
-    "metric_unit": "%（償却量対比）"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "対象企業数",
-    "metric_value": "約680",
-    "metric_unit": "社"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "対象企業数",
-    "metric_value": "680",
-    "metric_unit": "社"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "対象業種数",
-    "metric_value": "23",
-    "metric_unit": "業種"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "対象業種数",
-    "metric_value": "23",
-    "metric_unit": "業種"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "対象温室効果ガス",
-    "metric_value": "6種類",
-    "metric_unit": "-"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS_シナリオ_BAU",
-    "reference_year": 2040,
-    "metric_name": "年間有償割当収益(BAU)",
-    "metric_value": "324000",
-    "metric_unit": "億ウォン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS_シナリオ_CN",
-    "reference_year": 2040,
-    "metric_name": "年間有償割当収益(カーボンニュートラル)",
-    "metric_value": "665000",
-    "metric_unit": "億ウォン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS_シナリオ_BAU",
-    "reference_year": 2040,
-    "metric_name": "排出枠平均価格(BAU)",
-    "metric_value": "80000",
-    "metric_unit": "ウォン/トン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS_シナリオ_NDC強化",
-    "reference_year": 2040,
-    "metric_name": "排出枠平均価格(NDC強化)",
-    "metric_value": "110000",
-    "metric_unit": "ウォン/トン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS_シナリオ_CN",
-    "reference_year": 2040,
-    "metric_name": "排出枠平均価格(カーボンニュートラル)",
-    "metric_value": "136000",
-    "metric_unit": "ウォン/トン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "排出量カバー率",
-    "metric_value": "約68",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "排出量カバー率",
-    "metric_value": "68",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2026,
-    "metric_name": "有償割当比率_Phase4(予定)",
-    "metric_value": "20",
-    "metric_unit": "%（予定）"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "無償割当比率",
-    "metric_value": "90",
-    "metric_unit": "%（Phase 3）"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "無償割当比率(Phase3)",
-    "metric_value": "90",
-    "metric_unit": "%"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "現在Phase",
-    "metric_value": "Phase 3 (2021-2025)",
-    "metric_unit": "-"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "相殺上限",
-    "metric_value": "10",
-    "metric_unit": "%（国内のみ）"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS_シナリオ_CN",
-    "reference_year": 2040,
-    "metric_name": "累積オークション収益(Phase4-6, 2026-2040)",
-    "metric_value": "621",
-    "metric_unit": "兆ウォン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "累計取引量(2015-2024.8)",
-    "metric_value": "414.0",
-    "metric_unit": "百万トン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "累計取引量（2015〜2024.8）",
-    "metric_value": "414.0",
-    "metric_unit": "百万トン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "累計取引金額(2015-2024.8)",
-    "metric_value": "79199",
-    "metric_unit": "億ウォン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "累計取引額（2015〜2024.8）",
-    "metric_value": "79199",
-    "metric_unit": "億ウォン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "累計平均価格（2015〜2024.8）",
-    "metric_value": "19131",
-    "metric_unit": "ウォン/トン"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "罰則金額",
-    "metric_value": "市場価格×3倍",
-    "metric_unit": "-"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "罰則金額",
-    "metric_value": "市場価格×3倍",
-    "metric_unit": "-"
-  },
-  {
-    "country": "韓国",
-    "system_name": "K-ETS",
-    "reference_year": 2024,
-    "metric_name": "開始年",
-    "metric_value": "2015",
-    "metric_unit": "年"
-  }
-]
+{
+  "metrics": [
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "2024年キャップ追加削減",
+      "metric_value": "90",
+      "metric_unit": "百万排出枠"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2026,
+      "metric_name": "2026年キャップ追加削減",
+      "metric_value": "27",
+      "metric_unit": "百万排出枠"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2030,
+      "metric_name": "2030年削減目標(対2005年)",
+      "metric_value": "62",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "BM更新回数(Phase4)",
+      "metric_value": "2",
+      "metric_unit": "回(2021-25, 2026-30)"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "CBAM対象セクター",
+      "metric_value": "鉄鋼,セメント,アルミ,肥料,水素",
+      "metric_unit": "5セクター"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2026,
+      "metric_name": "CBAM無償割当係数(2026)",
+      "metric_value": "97.5",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2027,
+      "metric_name": "CBAM無償割当係数(2027)",
+      "metric_value": "92.5",
+      "metric_unit": "%（推計）"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2030,
+      "metric_name": "CBAM無償割当係数(2030)",
+      "metric_value": "51.5",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2033,
+      "metric_name": "CBAM無償割当係数(2033)",
+      "metric_value": "14",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2034,
+      "metric_name": "CBAM無償割当完全廃止",
+      "metric_value": "0",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2025,
+      "metric_name": "EUA価格(2025年6月末)",
+      "metric_value": "70",
+      "metric_unit": "EUR/tCO2e"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "EU全体対2005年削減率",
+      "metric_value": "51",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-CBAM",
+      "reference_year": 2026,
+      "metric_name": "EU無償割当廃止期間",
+      "metric_value": "2026-2034",
+      "metric_unit": "年（段階的廃止）"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "MSR吸収率",
+      "metric_value": "24",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "MSR吸収閾値(TNAC上限)",
+      "metric_value": "1096",
+      "metric_unit": "百万排出枠"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "MSR放出閾値(TNAC下限)",
+      "metric_value": "400",
+      "metric_unit": "百万排出枠"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "MSR無効化(2024年1月)",
+      "metric_value": "382",
+      "metric_unit": "百万排出枠"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "MSR無効化閾値(2024~)",
+      "metric_value": "400",
+      "metric_unit": "百万排出枠"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "NER初期量(Phase4)",
+      "metric_value": "331.3",
+      "metric_unit": "百万排出枠"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "Phase4オークション比率",
+      "metric_value": "57",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "Phase4無償割当方式",
+      "metric_value": "セクター別ベンチマーク",
+      "metric_unit": "BM方式"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "TNAC(2024年末)",
+      "metric_value": "1150",
+      "metric_unit": "百万EUA(概算)"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2030,
+      "metric_name": "イノベーション基金予算(~2030)",
+      "metric_value": "40",
+      "metric_unit": "十億EUR"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "オフセット相殺上限",
+      "metric_value": "不可(Phase 4)",
+      "metric_unit": "-"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "オークション収入(2024)",
+      "metric_value": "38.8",
+      "metric_unit": "十億EUR"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "オークション比率",
+      "metric_value": "約43",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "オークション比率",
+      "metric_value": "43",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "カーボンリーケージリスト期間",
+      "metric_value": "2021-2030",
+      "metric_unit": "第3次リスト"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "キャップ(航空)",
+      "metric_value": "27.6",
+      "metric_unit": "MtCO2e"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "キャップ(設備)",
+      "metric_value": "1386",
+      "metric_unit": "MtCO2e"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "ドイツETS排出量",
+      "metric_value": "273",
+      "metric_unit": "MtCO2eq"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "ドイツETS設備数",
+      "metric_value": "1716",
+      "metric_unit": "設備"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "ドイツエネルギー部門排出量",
+      "metric_value": "171",
+      "metric_unit": "MtCO2eq"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "ドイツ対2005年エネルギー削減率",
+      "metric_value": "54",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "ドイツ対2005年全体削減率",
+      "metric_value": "47",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "ドイツ産業部門排出量",
+      "metric_value": "102",
+      "metric_unit": "MtCO2eq"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "ドイツ航空事業者数",
+      "metric_value": "75",
+      "metric_unit": "事業者"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "ドイツ航空排出量",
+      "metric_value": "8.9",
+      "metric_unit": "MtCO2eq"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "ベンチマーク数",
+      "metric_value": "54",
+      "metric_unit": "個"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "借入",
+      "metric_value": "不可",
+      "metric_unit": "-"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "借入(Borrowing)",
+      "metric_value": "不可",
+      "metric_unit": "-"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "償却期限",
+      "metric_value": "9月末",
+      "metric_unit": "年次"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "制度対象_単位",
+      "metric_value": "設備",
+      "metric_unit": "-"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "制度対象_規模基準",
+      "metric_value": "25000",
+      "metric_unit": "tCO2以上（直接排出）"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "参加国数",
+      "metric_value": "31",
+      "metric_unit": "国（EU27+EEA4）"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "外部クレジット活用",
+      "metric_value": "不可（Phase4より）",
+      "metric_unit": "-"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "対2005年排出削減率",
+      "metric_value": "47.6",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象GHG種類",
+      "metric_value": "CO2, N2O, HFCs, PFCs",
+      "metric_unit": "4種"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-CBAM",
+      "reference_year": 2026,
+      "metric_name": "対象品目数",
+      "metric_value": "6",
+      "metric_unit": "品目（セメント・鉄鋼・アルミ・肥料・電力・水素）"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象施設数",
+      "metric_value": "約11000",
+      "metric_unit": "施設"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象施設数",
+      "metric_value": "11000",
+      "metric_unit": "施設"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象海運会社数",
+      "metric_value": "2251",
+      "metric_unit": "社"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象温室効果ガス",
+      "metric_value": "6種類",
+      "metric_unit": "-"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象航空事業者数",
+      "metric_value": "379",
+      "metric_unit": "事業者"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象設備数",
+      "metric_value": "8554",
+      "metric_unit": "設備"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "市場安定化措置",
+      "metric_value": "MSR(市場安定化準備)",
+      "metric_unit": "-"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "年平均オークション価格(EUR)",
+      "metric_value": "64.74",
+      "metric_unit": "EUR/tCO2e"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "年平均オークション価格(USD)",
+      "metric_value": "70.07",
+      "metric_unit": "USD/tCO2e"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "年平均二次市場価格(EUR)",
+      "metric_value": "65.23",
+      "metric_unit": "EUR/tCO2e"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "折減因子(2024-2027)",
+      "metric_value": "4.3",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2028,
+      "metric_name": "折減因子(2028-2030)",
+      "metric_value": "4.4",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "排出報告期限",
+      "metric_value": "3月末（前年分）",
+      "metric_unit": "年次"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "排出量カバー率",
+      "metric_value": "約40",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "排出量カバー率",
+      "metric_value": "40",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-CBAM",
+      "reference_year": 2026,
+      "metric_name": "本格施行開始",
+      "metric_value": "2026年1月",
+      "metric_unit": "-"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "法的根拠",
+      "metric_value": "Directive 2003/87/EC",
+      "metric_unit": "EU指令"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2025,
+      "metric_name": "海運償却義務(2025)",
+      "metric_value": "40",
+      "metric_unit": "%(2024年排出分)"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2026,
+      "metric_name": "海運償却義務(2026)",
+      "metric_value": "70",
+      "metric_unit": "%(2025年排出分)"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2027,
+      "metric_name": "海運償却義務(2027~)",
+      "metric_value": "100",
+      "metric_unit": "%(2026年以降)"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "海運対象船舶",
+      "metric_value": "5000GT以上",
+      "metric_unit": "総トン数基準"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "炭素価格",
+      "metric_value": "80",
+      "metric_unit": "EUR/トン"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "無償割当比率",
+      "metric_value": "約57",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "無償割当比率",
+      "metric_value": "57",
+      "metric_unit": "%（Phase 4）"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "現在Phase",
+      "metric_value": "Phase 4 (2021-2030)",
+      "metric_unit": "-"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "相殺",
+      "metric_value": "不可（Phase 4）",
+      "metric_unit": "-"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "累計オークション収入",
+      "metric_value": "184",
+      "metric_unit": "十億EUR"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "線形削減因子(2021-2023)",
+      "metric_value": "2.2",
+      "metric_unit": "%/年"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "繰越(Banking)",
+      "metric_value": "無制限",
+      "metric_unit": "-"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "罰則種類",
+      "metric_value": "超過排出罰金+翌年償却+企業名公表",
+      "metric_unit": "複合"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "罰則金額",
+      "metric_value": "100",
+      "metric_unit": "EUR/tCO2"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "罰則金額",
+      "metric_value": "100",
+      "metric_unit": "EUR/tCO2"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "罰金額(インフレ調整後)",
+      "metric_value": "100+",
+      "metric_unit": "EUR/tCO2e"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "航空無償割当(2024)",
+      "metric_value": "75",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2025,
+      "metric_name": "航空無償割当(2025)",
+      "metric_value": "50",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2026,
+      "metric_name": "航空無償割当(2026~)",
+      "metric_value": "0",
+      "metric_unit": "%"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2030,
+      "metric_name": "近代化基金予算(2021-2030)",
+      "metric_value": "56",
+      "metric_unit": "十億EUR"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "遵守期間",
+      "metric_value": "1暦年",
+      "metric_unit": "年次"
+    },
+    {
+      "country": "EU",
+      "system_name": "EU-ETS",
+      "reference_year": 2024,
+      "metric_name": "開始年",
+      "metric_value": "2005",
+      "metric_unit": "年"
+    },
+    {
+      "country": "カナダ",
+      "system_name": "炭素税",
+      "reference_year": 2030,
+      "metric_name": "炭素価格_2030年目標",
+      "metric_value": "135.3",
+      "metric_unit": "USD/tCO2e"
+    },
+    {
+      "country": "ドイツ",
+      "system_name": "炭素税",
+      "reference_year": 2025,
+      "metric_name": "炭素価格_2025年目標",
+      "metric_value": "64.6",
+      "metric_unit": "USD/tCO2e"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2030,
+      "metric_name": "2030年カバー企業数予測",
+      "metric_value": "約5500",
+      "metric_unit": "社"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2030,
+      "metric_name": "2030年カバー排出量予測",
+      "metric_value": "86",
+      "metric_unit": "億トン以上"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2030,
+      "metric_name": "2030年カバー率予測",
+      "metric_value": "約74",
+      "metric_unit": "%"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2030,
+      "metric_name": "2030年配額価格予測(突破)",
+      "metric_value": "200",
+      "metric_unit": "元/トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "CCER初日平均価格（2024.1.22）",
+      "metric_value": "63.5",
+      "metric_unit": "元/トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "CCER年間成交量",
+      "metric_value": "1959.87",
+      "metric_unit": "万トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "Q4取引集中度",
+      "metric_value": "79",
+      "metric_unit": "%"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "Q4取引集中度",
+      "metric_value": "79",
+      "metric_unit": "%"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "オフセット相殺上限(CCER)",
+      "metric_value": "5",
+      "metric_unit": "%"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "オークション比率",
+      "metric_value": "0",
+      "metric_unit": "%"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "カバー企業数",
+      "metric_value": "2257",
+      "metric_unit": "社"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "借入(Borrowing)上限",
+      "metric_value": "50",
+      "metric_unit": "%以内"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "借入上限",
+      "metric_value": "50",
+      "metric_unit": "%以内"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "外部クレジット(CCER)使用上限",
+      "metric_value": "5",
+      "metric_unit": "%（償却量対比）"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象企業数",
+      "metric_value": "3500",
+      "metric_unit": "社"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2025,
+      "metric_name": "対象企業数(拡大後)",
+      "metric_value": "約3500",
+      "metric_unit": "社"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象業種",
+      "metric_value": "発電業のみ",
+      "metric_unit": "-"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2025,
+      "metric_name": "対象業種（拡大後）",
+      "metric_value": "発電・鉄鋼・セメント・電解アルミ",
+      "metric_unit": "-"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "履行率",
+      "metric_value": "99.98",
+      "metric_unit": "%"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "市場安定化措置",
+      "metric_value": "生態環境部が±20%調整可能",
+      "metric_unit": "-"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "年末終値",
+      "metric_value": "97.49",
+      "metric_unit": "元/トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "年間取引量",
+      "metric_value": "1.89",
+      "metric_unit": "億トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "年間取引額",
+      "metric_value": "181.14",
+      "metric_unit": "億元"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "年間平均価格",
+      "metric_value": "95.99",
+      "metric_unit": "元/トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "年間平均炭素価格",
+      "metric_value": "95.99",
+      "metric_unit": "元/トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "年間換手率",
+      "metric_value": "2-3",
+      "metric_unit": "%"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "年間最高価格",
+      "metric_value": "106.02",
+      "metric_unit": "元/トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2025,
+      "metric_name": "拡大後カバー企業数予測",
+      "metric_value": "約3500",
+      "metric_unit": "社"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2025,
+      "metric_name": "拡大後カバー排出量予測",
+      "metric_value": "約64",
+      "metric_unit": "億トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2025,
+      "metric_name": "拡大後カバー率予測",
+      "metric_value": "53",
+      "metric_unit": "%"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "排出量カバー率",
+      "metric_value": "60",
+      "metric_unit": "%"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2025,
+      "metric_name": "排出量カバー率(拡大後)",
+      "metric_value": "約60",
+      "metric_unit": "%"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "炭素価格",
+      "metric_value": "97.49",
+      "metric_unit": "元/トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "無償割当比率",
+      "metric_value": "100",
+      "metric_unit": "%"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "無償割当比率",
+      "metric_value": "100",
+      "metric_unit": "%（現状）"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "相殺上限(CCER)",
+      "metric_value": "5",
+      "metric_unit": "%"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "累計取引量",
+      "metric_value": "696000000",
+      "metric_unit": "トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "累計取引量（2021.7〜2024.12）",
+      "metric_value": "6.30",
+      "metric_unit": "億トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "累計取引額（2021.7〜2024.12）",
+      "metric_value": "430.33",
+      "metric_unit": "億元"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "罰則上限（改正後）",
+      "metric_value": "50万〜500万",
+      "metric_unit": "元"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "罰則金額",
+      "metric_value": "2-3万元/tCO2",
+      "metric_unit": "-"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "罰則金額",
+      "metric_value": "20000-30000",
+      "metric_unit": "元/tCO2"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2025,
+      "metric_name": "配額価格予測(突破)",
+      "metric_value": "105",
+      "metric_unit": "元/トン"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "配額分配方式",
+      "metric_value": "強度ベース(BM)",
+      "metric_unit": "-"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "配額方式",
+      "metric_value": "強度ベース（基準値法）",
+      "metric_unit": "-"
+    },
+    {
+      "country": "中国",
+      "system_name": "China-ETS",
+      "reference_year": 2024,
+      "metric_name": "開始年",
+      "metric_value": "2021",
+      "metric_unit": "年"
+    },
+    {
+      "country": "日本",
+      "system_name": "GXリーグ",
+      "reference_year": 2024,
+      "metric_name": "GXリーグ参加企業数",
+      "metric_value": "747",
+      "metric_unit": "社"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2024,
+      "metric_name": "NDC水準削減率_2024年度",
+      "metric_value": "29.7",
+      "metric_unit": "%（2013年度比）"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2025,
+      "metric_name": "NDC水準削減率_2025年度",
+      "metric_value": "32.4",
+      "metric_unit": "%（2013年度比）"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_クレジット活用",
+      "metric_value": "J-クレジット・JCMクレジット",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_リーケージリスク対策",
+      "metric_value": "排出枠調達コストが収益の一定水準超の場合、不足分の一定割合を追加割当",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_不履行時罰則",
+      "metric_value": "上限価格×1.X倍",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_価格安定化措置",
+      "metric_value": "上下限価格設定",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_償却義務",
+      "metric_value": "検証済排出量と同量の排出枠償却",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_先行投資支援",
+      "metric_value": "GX経済移行債による10年間20兆円規模の先行投資支援",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_制度対象事業者数",
+      "metric_value": "300-400",
+      "metric_unit": "社"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_制度対象者基準",
+      "metric_value": "100000",
+      "metric_unit": "tCO2直接排出(3カ年平均)"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_割当方式",
+      "metric_value": "全量無償割当",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_取引市場開設時期",
+      "metric_value": "2027年度秋頃",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_取引所運営",
+      "metric_value": "GX推進機構が市場開設",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_排出量カバー率",
+      "metric_value": "60",
+      "metric_unit": "%（見込み）"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_早期削減努力勘案",
+      "metric_value": "制度開始前の基準超過削減量を基準年度排出量に加算",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_法的根拠",
+      "metric_value": "GX推進法（2023年5月成立）",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_活動量変動調整",
+      "metric_value": "事業所新設・閉鎖・活動量の大幅増減時に割当量調整",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_研究開発投資勘案",
+      "metric_value": "GX関連R&D投資額に応じ排出枠不足分の範囲で追加割当",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_第三者検証",
+      "metric_value": "必須（一定規模以上は合理的保証、小規模は限定的保証）",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_算定基準",
+      "metric_value": "省エネ法・温対法SHK制度のエネルギー使用量・排出量報告と連携",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_認定管理統括事業者制度",
+      "metric_value": "親会社が子会社含め一体で制度対応可能",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "Phase2_運営機関",
+      "metric_value": "GX推進機構（取引所運営・リバースオークション実施）",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2033,
+      "metric_name": "Phase3_有償オークション",
+      "metric_value": "発電事業者に対し有償で排出枠割当（入札方式）",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2033,
+      "metric_name": "Phase3_特定事業者負担金",
+      "metric_value": "有償オークション落札価格に基づく負担金",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "借入(Borrowing)",
+      "metric_value": "未規定",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2028,
+      "metric_name": "化石燃料賦課金_対象",
+      "metric_value": "化石燃料の輸入事業者等",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2028,
+      "metric_name": "化石燃料賦課金_導入年度",
+      "metric_value": "2028",
+      "metric_unit": "年度"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2028,
+      "metric_name": "化石燃料賦課金_方式",
+      "metric_value": "CO2排出量に応じた賦課金徴収",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "外部クレジット活用",
+      "metric_value": "J-クレジット・JCMクレジット（海外ボランタリーは不可）",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "市場安定化措置",
+      "metric_value": "上下限価格設定＋リバースオークション（下限）＋追加供給（上限）",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "有償割当比率",
+      "metric_value": "0",
+      "metric_unit": "%（2033年〜発電部門で有償オークション導入予定）"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "無償割当比率",
+      "metric_value": "100",
+      "metric_unit": "%（Phase2当初）"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2033,
+      "metric_name": "発電事業者有償オークション_導入年度",
+      "metric_value": "2033",
+      "metric_unit": "年度"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "繰越(Banking)",
+      "metric_value": "検討中（排出枠の翌年度繰越）",
+      "metric_unit": "-"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "罰則金額",
+      "metric_value": "未償却量×上限価格×1.X倍",
+      "metric_unit": "未償却相当負担金"
+    },
+    {
+      "country": "日本",
+      "system_name": "GX-ETS",
+      "reference_year": 2026,
+      "metric_name": "配額方式",
+      "metric_value": "BM(ベンチマーク) + GF(グランドファザリング)",
+      "metric_unit": "-"
+    },
+    {
+      "country": "米国",
+      "system_name": "California-ETS",
+      "reference_year": 2024,
+      "metric_name": "外部クレジット使用上限_2021-2025",
+      "metric_value": "4",
+      "metric_unit": "%（償却量対比）"
+    },
+    {
+      "country": "英国",
+      "system_name": "UK-ETS",
+      "reference_year": 2027,
+      "metric_name": "CBAM導入予定年",
+      "metric_value": "2027",
+      "metric_unit": "年"
+    },
+    {
+      "country": "英国",
+      "system_name": "UK-ETS",
+      "reference_year": 2024,
+      "metric_name": "制度対象_単位",
+      "metric_value": "設備",
+      "metric_unit": "-"
+    },
+    {
+      "country": "英国",
+      "system_name": "UK-ETS",
+      "reference_year": 2024,
+      "metric_name": "制度対象_規模基準",
+      "metric_value": "25000",
+      "metric_unit": "tCO2以上（直接排出）"
+    },
+    {
+      "country": "英国",
+      "system_name": "UK-ETS",
+      "reference_year": 2026,
+      "metric_name": "海運セクター追加予定年",
+      "metric_value": "2026",
+      "metric_unit": "年"
+    },
+    {
+      "country": "韓国",
+      "system_name": "CBAM_鉄鋼平板圧延",
+      "reference_year": 2040,
+      "metric_name": "CBAM認証書費用_平板圧延(製品1トン当)",
+      "metric_value": "867719",
+      "metric_unit": "ウォン/トン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "CBAM_2040年展望_BAU",
+      "reference_year": 2040,
+      "metric_name": "CBAM貿易関税額(BAU)",
+      "metric_value": "1910",
+      "metric_unit": "億ウォン/年"
+    },
+    {
+      "country": "韓国",
+      "system_name": "CBAM_2040年展望_CN",
+      "reference_year": 2040,
+      "metric_name": "CBAM貿易関税額(CNシナリオ)",
+      "metric_value": "500",
+      "metric_unit": "億ウォン/年"
+    },
+    {
+      "country": "韓国",
+      "system_name": "CBAM_2040年展望_CN",
+      "reference_year": 2040,
+      "metric_name": "CBAM関税削減率(制度改革+脱炭素技術)",
+      "metric_value": "74",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "KAU取引構成比（累計）",
+      "metric_value": "88.0",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "KCU取引構成比（累計）",
+      "metric_value": "1.1",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "KOC取引構成比（累計）",
+      "metric_value": "10.9",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "オフセット相殺上限",
+      "metric_value": "10",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "オークション比率",
+      "metric_value": "10",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "オークション比率(Phase3)",
+      "metric_value": "10",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "借入(Borrowing)上限",
+      "metric_value": "10",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "借入上限",
+      "metric_value": "10",
+      "metric_unit": "%以内"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "全期間平均取引価格",
+      "metric_value": "19131",
+      "metric_unit": "ウォン/トン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "制度対象_単位",
+      "metric_value": "事業者",
+      "metric_unit": "-"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "制度対象_規模基準",
+      "metric_value": "125000",
+      "metric_unit": "tCO2（直接・間接排出）"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "場内取引構成比（累計）",
+      "metric_value": "61.2",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "場外取引構成比（累計）",
+      "metric_value": "38.8",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "外部クレジット使用上限",
+      "metric_value": "5",
+      "metric_unit": "%（償却量対比）"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象企業数",
+      "metric_value": "約680",
+      "metric_unit": "社"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象企業数",
+      "metric_value": "680",
+      "metric_unit": "社"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象業種数",
+      "metric_value": "23",
+      "metric_unit": "業種"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象業種数",
+      "metric_value": "23",
+      "metric_unit": "業種"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "対象温室効果ガス",
+      "metric_value": "6種類",
+      "metric_unit": "-"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS_シナリオ_BAU",
+      "reference_year": 2040,
+      "metric_name": "年間有償割当収益(BAU)",
+      "metric_value": "324000",
+      "metric_unit": "億ウォン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS_シナリオ_CN",
+      "reference_year": 2040,
+      "metric_name": "年間有償割当収益(カーボンニュートラル)",
+      "metric_value": "665000",
+      "metric_unit": "億ウォン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS_シナリオ_BAU",
+      "reference_year": 2040,
+      "metric_name": "排出枠平均価格(BAU)",
+      "metric_value": "80000",
+      "metric_unit": "ウォン/トン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS_シナリオ_NDC強化",
+      "reference_year": 2040,
+      "metric_name": "排出枠平均価格(NDC強化)",
+      "metric_value": "110000",
+      "metric_unit": "ウォン/トン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS_シナリオ_CN",
+      "reference_year": 2040,
+      "metric_name": "排出枠平均価格(カーボンニュートラル)",
+      "metric_value": "136000",
+      "metric_unit": "ウォン/トン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "排出量カバー率",
+      "metric_value": "約68",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "排出量カバー率",
+      "metric_value": "68",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2026,
+      "metric_name": "有償割当比率_Phase4(予定)",
+      "metric_value": "20",
+      "metric_unit": "%（予定）"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "無償割当比率",
+      "metric_value": "90",
+      "metric_unit": "%（Phase 3）"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "無償割当比率(Phase3)",
+      "metric_value": "90",
+      "metric_unit": "%"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "現在Phase",
+      "metric_value": "Phase 3 (2021-2025)",
+      "metric_unit": "-"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "相殺上限",
+      "metric_value": "10",
+      "metric_unit": "%（国内のみ）"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS_シナリオ_CN",
+      "reference_year": 2040,
+      "metric_name": "累積オークション収益(Phase4-6, 2026-2040)",
+      "metric_value": "621",
+      "metric_unit": "兆ウォン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "累計取引量(2015-2024.8)",
+      "metric_value": "414.0",
+      "metric_unit": "百万トン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "累計取引量（2015〜2024.8）",
+      "metric_value": "414.0",
+      "metric_unit": "百万トン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "累計取引金額(2015-2024.8)",
+      "metric_value": "79199",
+      "metric_unit": "億ウォン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "累計取引額（2015〜2024.8）",
+      "metric_value": "79199",
+      "metric_unit": "億ウォン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "累計平均価格（2015〜2024.8）",
+      "metric_value": "19131",
+      "metric_unit": "ウォン/トン"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "罰則金額",
+      "metric_value": "市場価格×3倍",
+      "metric_unit": "-"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "罰則金額",
+      "metric_value": "市場価格×3倍",
+      "metric_unit": "-"
+    },
+    {
+      "country": "韓国",
+      "system_name": "K-ETS",
+      "reference_year": 2024,
+      "metric_name": "開始年",
+      "metric_value": "2015",
+      "metric_unit": "年"
+    }
+  ],
+  "radar": {
+    "EU": [
+      100,
+      40,
+      43,
+      90,
+      100
+    ],
+    "Korea": [
+      9,
+      68,
+      10,
+      80,
+      52
+    ],
+    "China": [
+      12.5,
+      60,
+      0,
+      50,
+      24
+    ],
+    "Japan": [
+      0,
+      60,
+      0,
+      20,
+      14
+    ]
+  },
+  "table": [
+    {
+      "EU": "EU-ETS",
+      "Korea": "K-ETS",
+      "China": "China-ETS",
+      "Japan": "GX-ETS"
+    },
+    {
+      "EU": "2005",
+      "Korea": "2015",
+      "China": "2021",
+      "Japan": "2023"
+    },
+    {
+      "EU": "~€72/t (~$79)",
+      "Korea": "~₩11,823/t (~$8)",
+      "China": "~¥79/t (~$11)",
+      "Japan": "N/A (GX League)"
+    },
+    {
+      "EU": "~40% of GHG",
+      "Korea": "~68% of GHG",
+      "China": "~60% (power only)",
+      "Japan": "~60%*"
+    },
+    {
+      "EU": "~11,000",
+      "Korea": "~680",
+      "China": "~3,500",
+      "Japan": "~747 (GX League)"
+    },
+    {
+      "EU": "Absolute",
+      "Korea": "Absolute",
+      "China": "Intensity-based",
+      "Japan": "Voluntary targets"
+    },
+    {
+      "EU": "~43%",
+      "Korea": "~10%",
+      "China": "0% (100% free)",
+      "Japan": "0% (2033~ planned)"
+    },
+    {
+      "EU": "BM + Auction",
+      "Korea": "GF + BM + Auction",
+      "China": "Intensity BM",
+      "Japan": "Self-set targets"
+    },
+    {
+      "EU": "No (Phase 4)",
+      "Korea": "Yes (KOC, 10%)",
+      "China": "Yes (CCER, 5%)",
+      "Japan": "J-Credit"
+    },
+    {
+      "EU": "€100/t + next year",
+      "Korea": "3x market price",
+      "China": "1-5x avg price",
+      "Japan": "Name & shame (TBD)"
+    },
+    {
+      "EU": "Yes",
+      "Korea": "Yes",
+      "China": "Yes",
+      "Japan": "TBD"
+    },
+    {
+      "EU": "No",
+      "Korea": "Limited",
+      "China": "No",
+      "Japan": "TBD"
+    },
+    {
+      "EU": "EU MRR",
+      "Korea": "K-MRV",
+      "China": "CEMS + Calc.",
+      "Japan": "GHG Protocol"
+    },
+    {
+      "EU": "-62% (vs 2005)",
+      "Korea": "-40% (vs 2018)",
+      "China": "-65% intensity (vs 2005)",
+      "Japan": "-46% (vs 2013)"
+    }
+  ]
+}

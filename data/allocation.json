@@ -217,7 +217,7 @@
       "event_type": "GXリーグ開始",
       "description": "GXリーグ本格稼働。自主参加型",
       "phase": "GXリーグ",
-      "participants": "679社(初年度)",
+      "participants": "747社(2024年度。初年度679社)",
       "key_features": "自主的目標設定・超過削減量取引。法的拘束力なし",
       "data_completeness": "partial",
       "source_id": 949,
@@ -239,11 +239,11 @@
     },
     {
       "id": 3,
-      "event_date": "2026-01-01",
+      "event_date": "2026-04-01",
       "event_type": "GX-ETS本格施行",
       "description": "GX-ETS第2フェーズ開始(本格)",
       "phase": "Phase 2(2026-2030)",
-      "participants": "排出量一定以上の企業(義務化予定)",
+      "participants": "約300-400社(直接排出10万t以上、義務化)",
       "key_features": "法的拘束力付与予定。割当方式はGF+BM",
       "data_completeness": "partial",
       "source_id": 949,
@@ -275,6 +275,188 @@
       "source_id": null,
       "notes": null,
       "created_at": "2026-03-04 04:30:46"
+    }
+  ],
+  "gantt": [
+    {
+      "country": "EU",
+      "phase": "Phase 1",
+      "start": 2005,
+      "end": 2007,
+      "method": "GF",
+      "free": 95,
+      "auction": 5,
+      "color": "#2b6cb0"
+    },
+    {
+      "country": "EU",
+      "phase": "Phase 2",
+      "start": 2008,
+      "end": 2012,
+      "method": "GF+BM",
+      "free": 90,
+      "auction": 10,
+      "color": "#3182ce"
+    },
+    {
+      "country": "EU",
+      "phase": "Phase 3",
+      "start": 2013,
+      "end": 2020,
+      "method": "BM+Auction",
+      "free": 57,
+      "auction": 43,
+      "color": "#4299e1"
+    },
+    {
+      "country": "EU",
+      "phase": "Phase 4",
+      "start": 2021,
+      "end": 2030,
+      "method": "BM+Auction+CBAM",
+      "free": 40,
+      "auction": 60,
+      "color": "#63b3ed"
+    },
+    {
+      "country": "EU",
+      "phase": "CBAM Full",
+      "start": 2026,
+      "end": 2034,
+      "method": "CBAM phase-out",
+      "free": null,
+      "auction": null,
+      "color": "#90cdf4"
+    },
+    {
+      "country": "Korea",
+      "phase": "Phase 1",
+      "start": 2015,
+      "end": 2017,
+      "method": "GF",
+      "free": 100,
+      "auction": 0,
+      "color": "#276749"
+    },
+    {
+      "country": "Korea",
+      "phase": "Phase 2",
+      "start": 2018,
+      "end": 2020,
+      "method": "GF+BM",
+      "free": 97,
+      "auction": 3,
+      "color": "#38a169"
+    },
+    {
+      "country": "Korea",
+      "phase": "Phase 3",
+      "start": 2021,
+      "end": 2025,
+      "method": "GF+BM+Auction",
+      "free": 90,
+      "auction": 10,
+      "color": "#48bb78"
+    },
+    {
+      "country": "China",
+      "phase": "Power BM",
+      "start": 2021,
+      "end": 2024,
+      "method": "Intensity BM",
+      "free": 100,
+      "auction": 0,
+      "color": "#c05621"
+    },
+    {
+      "country": "China",
+      "phase": "4-Sector BM",
+      "start": 2025,
+      "end": 2030,
+      "method": "Intensity BM",
+      "free": 100,
+      "auction": 0,
+      "color": "#ed8936"
+    },
+    {
+      "country": "Japan",
+      "phase": "GX League",
+      "start": 2023,
+      "end": 2025,
+      "method": "Voluntary",
+      "free": null,
+      "auction": null,
+      "color": "#c53030"
+    },
+    {
+      "country": "Japan",
+      "phase": "GX-ETS P2",
+      "start": 2026,
+      "end": 2032,
+      "method": "GF+BM",
+      "free": null,
+      "auction": null,
+      "color": "#e53e3e"
+    },
+    {
+      "country": "Japan",
+      "phase": "GX-ETS P3",
+      "start": 2033,
+      "end": 2040,
+      "method": "Auction intro",
+      "free": null,
+      "auction": null,
+      "color": "#fc8181"
+    }
+  ],
+  "method_mix": [
+    {
+      "label": "EU P1\n2005",
+      "gf": 95,
+      "bm": 0,
+      "auction": 5
+    },
+    {
+      "label": "EU P3\n2013",
+      "gf": 0,
+      "bm": 57,
+      "auction": 43
+    },
+    {
+      "label": "EU P4\n2021",
+      "gf": 0,
+      "bm": 40,
+      "auction": 60
+    },
+    {
+      "label": "KR P1\n2015",
+      "gf": 100,
+      "bm": 0,
+      "auction": 0
+    },
+    {
+      "label": "KR P2\n2018",
+      "gf": 80,
+      "bm": 17,
+      "auction": 3
+    },
+    {
+      "label": "KR P3\n2021",
+      "gf": 60,
+      "bm": 30,
+      "auction": 10
+    },
+    {
+      "label": "CN\n2021",
+      "gf": 0,
+      "bm": 100,
+      "auction": 0
+    },
+    {
+      "label": "JP\n2026",
+      "gf": 50,
+      "bm": 50,
+      "auction": 0
     }
   ]
 }
