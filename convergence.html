@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETS Convergence Map</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="shared.js"></script>
+</head>
+<body>
+<script>initPage('convergence');</script>
+
+<div class="page-header">
+  <h1>Convergence & Divergence Map</h1>
+  <p>Where 4 ETS systems stand today — and where they're heading by 2030</p>
+</div>
+
+<div class="chart-wrap"><div class="chart-box" id="scatter-chart"></div></div>
+
+<div class="chart-wrap" style="display:flex;gap:15px;flex-wrap:wrap;">
+  <div class="chart-box" style="flex:1;min-width:300px;" id="conv-box">
+    <h3 style="color:#48bb78;margin-bottom:12px;font-size:1em;">\u2192 5 Convergence Axes</h3>
+    <div id="conv-list"></div>
+  </div>
+  <div class="chart-box" style="flex:1;min-width:300px;" id="div-box">
+    <h3 style="color:#e53e3e;margin-bottom:12px;font-size:1em;">\u2190 5 Divergence Axes</h3>
+    <div id="div-list"></div>
+  </div>
+</div>
+
+<div class="analysis-box">
+  <h3>Key Insights</h3>
+  <p><strong>5A. Price Convergence Pressure:</strong> CBAM creates an economic incentive for Asian ETS to raise carbon prices toward EU levels. However, the 10x gap ($8-11 vs $79) means convergence will be gradual — likely reaching $25-40 range by 2030 for Korea/China.</p>
+  <p><strong>5B. Institutional Convergence:</strong> All 4 systems are moving toward BM-based allocation (away from grandfathering). MRV standards are harmonizing around ISO 14064 / IPCC guidelines. This is the strongest convergence axis.</p>
+  <p><strong>5C. Structural Divergence:</strong> The absolute cap (EU/Korea) vs intensity cap (China) divide remains fundamental. China's GDP-linked cap means total emissions can still rise. Japan's voluntary approach adds another paradigm.</p>
+  <p><strong>5D. CBAM as Bridge:</strong> CBAM is the single most powerful convergence force. It effectively exports EU carbon pricing to trading partners. Korea and China are responding with ETS reforms, but the speed and depth of reform varies significantly.</p>
+</div>
+
+<style>
+.axis-item { padding:10px 14px; margin-bottom:8px; border-radius:6px; font-size:0.85em; line-height:1.5; }
+.axis-conv { background:#48bb7811; border-left:3px solid #48bb78; color:#a0aec0; }
+.axis-div { background:#e53e3e11; border-left:3px solid #e53e3e; color:#a0aec0; }
+.axis-title { font-weight:600; color:#e0e0e0; margin-bottom:3px; }
+</style>
+
+<script>
+// === SCATTER PLOT DATA ===
+const CURRENT = [
+  { country: 'EU', age: 21, price: 79, coverage: 1600, label: 'EU 2026' },
+  { country: 'Korea', age: 11, price: 8, coverage: 600, label: 'Korea 2026' },
+  { country: 'China', age: 5, price: 11, coverage: 5000, label: 'China 2026' },
+  { country: 'Japan', age: 3, price: 0, coverage: 400, label: 'Japan 2026' }
+];
+
+const PREDICTED_2030 = [
+  { country: 'EU', age: 25, price: 85, coverage: 2000, label: 'EU 2030' },
+  { country: 'Korea', age: 15, price: 25, coverage: 700, label: 'Korea 2030' },
+  { country: 'China', age: 9, price: 20, coverage: 6000, label: 'China 2030' },
+  { country: 'Japan', age: 7, price: 15, coverage: 500, label: 'Japan 2030' }
+];
+
+function renderScatter() {
+  const makeTrace = (data, dash, suffix) => data.map(d => ({
+    x: [d.age], y: [d.price],
+    mode: 'markers+text',
+    name: d.label,
+    text: [d.label],
+    textposition: d.country === 'Japan' ? 'top center' : 'top right',
+    textfont: { color: THEME.countries[d.country], size: 10 },
+    marker: {
+      size: Math.sqrt(d.coverage) * 0.8,
+      color: THEME.countries[d.country] + (dash ? '66' : 'cc'),
+      line: { color: THEME.countries[d.country], width: dash ? 2 : 0, dash: dash ? 'dash' : '' }
+    },
+    showlegend: false
+  }));
+
+  const currentTraces = makeTrace(CURRENT, false, '');
+  const predictTraces = makeTrace(PREDICTED_2030, true, ' 2030');
+
+  // Arrow annotations connecting current → 2030
+  const arrows = CURRENT.map((c, i) => {
+    const p = PREDICTED_2030[i];
+    return {
+      x: p.age, y: p.price, ax: c.age, ay: c.price,
+      xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+      showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 1.5,
+      arrowcolor: THEME.countries[c.country] + '88'
+    };
+  });
+
+  const layout = darkLayout('ETS Position Map: System Age vs Carbon Price', {
+    xaxis: { title: 'System Age (years)', gridcolor: THEME.border, tickfont: { color: THEME.muted }, range: [0, 28] },
+    yaxis: { title: 'Carbon Price (USD/tCO\u2082)', gridcolor: THEME.border, tickfont: { color: THEME.muted }, range: [-5, 100] },
+    margin: { l: 60, r: 30, t: 50, b: 60 },
+    annotations: [
+      ...arrows,
+      { x: 14, y: 95, text: 'Bubble size = Covered emissions (relative)', showarrow: false, font: { color: THEME.dimmed, size: 10 } },
+      { x: 14, y: 88, text: 'Solid = Current (2026) | Faded = Predicted (2030)', showarrow: false, font: { color: THEME.dimmed, size: 10 } }
+    ],
+    shapes: [
+      // Convergence zone
+      { type: 'rect', x0: 5, x1: 28, y0: 20, y1: 90, fillcolor: '#48bb7808', line: { width: 0 } }
+    ]
+  });
+
+  Plotly.newPlot('scatter-chart', [...currentTraces, ...predictTraces], layout, plotlyConfig);
+}
+
+// === CONVERGENCE & DIVERGENCE AXES ===
+const CONV_AXES = [
+  { title: '1. CBAM Pressure', desc: 'EU carbon border tax forces Asian ETS to raise prices or pay the gap. Single strongest convergence driver.' },
+  { title: '2. BM Allocation Migration', desc: 'All 4 systems moving from Grandfathering toward Benchmark-based allocation. EU/Korea already there, China intensity-BM, Japan planned.' },
+  { title: '3. Sector Expansion', desc: 'China expanding from power-only to 4 sectors. Korea expanding BM sectors. Japan planning mandatory participation. EU adding buildings/transport (ETS2).' },
+  { title: '4. MRV Digitalization', desc: 'Common push toward CEMS, digital reporting, automated verification. China leads in CEMS deployment; EU leads in standardization.' },
+  { title: '5. NDC-ETS Linkage', desc: 'All 4 countries strengthening link between NDC targets and ETS cap/ambition. Paris Agreement Article 6 enables future market linkage.' }
+];
+
+const DIV_AXES = [
+  { title: '1. Absolute vs Intensity Cap', desc: 'EU/Korea: absolute cap (total emissions decline). China: intensity cap (per-GDP, total can rise). Japan: voluntary. Fundamental structural divide.' },
+  { title: '2. 10x Price Gap', desc: 'EU ~$79/t vs Korea ~$8/t vs China ~$11/t. Order of magnitude difference reflects different economic priorities and carbon cost tolerance.' },
+  { title: '3. Auction Rate Gap', desc: 'EU 43% → 100% (CBAM sectors). Korea 10%. China/Japan 0%. Free allocation dominance in Asia reduces price discovery efficiency.' },
+  { title: '4. Market Liquidity', desc: 'EU-ETS: deep, liquid, derivatives market. Korea: thin trading. China: compliance-driven spikes. Japan: no market yet. Liquidity gap impedes price convergence.' },
+  { title: '5. Legal Enforcement', desc: 'EU: \u20AC100/t penalty + mandatory surrender. Korea: 3x price penalty. China: improving but lighter. Japan: "name and shame" only. Enforcement credibility varies widely.' }
+];
+
+function renderAxes() {
+  document.getElementById('conv-list').innerHTML = CONV_AXES.map(a =>
+    `<div class="axis-item axis-conv"><div class="axis-title">${a.title}</div>${a.desc}</div>`
+  ).join('');
+  document.getElementById('div-list').innerHTML = DIV_AXES.map(a =>
+    `<div class="axis-item axis-div"><div class="axis-title">${a.title}</div>${a.desc}</div>`
+  ).join('');
+}
+
+renderScatter();
+renderAxes();
+document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+</script>
+</body>
+</html>

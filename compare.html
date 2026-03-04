@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETS System Comparison</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="shared.js"></script>
+</head>
+<body>
+<script>initPage('compare');</script>
+
+<div class="page-header">
+  <h1 data-i18n="dashTitle">System Comparison</h1>
+  <p>Radar chart comparing 5 key dimensions across 4 ETS systems</p>
+</div>
+
+<div class="chart-wrap"><div class="chart-box" id="radar-chart"></div></div>
+
+<div class="chart-wrap">
+  <div class="chart-box" style="padding:20px;overflow-x:auto;">
+    <h3 style="color:${THEME.accent};margin-bottom:12px;">Detailed Comparison</h3>
+    <table id="compare-table"></table>
+  </div>
+</div>
+
+<style>
+#compare-table { width:100%; border-collapse:collapse; font-size:0.85em; }
+#compare-table th { background:#1e2d3d; color:#63b3ed; padding:10px 14px; text-align:left; border-bottom:2px solid #2d3748; cursor:pointer; white-space:nowrap; }
+#compare-table th:hover { background:#2d3748; }
+#compare-table td { padding:8px 14px; border-bottom:1px solid #2d3748; color:#e0e0e0; }
+#compare-table tr:hover td { background:#1e2d3d; }
+.country-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.82em; font-weight:600; color:#fff; }
+</style>
+
+<script>
+// === RADAR DATA ===
+const RADAR = {
+  axes: ['Price Level', 'Coverage %', 'Auction %', 'Penalty Severity', 'System Age'],
+  EU:    [100, 40, 43, 90, 100],
+  Korea: [9,   68, 10, 80, 52],
+  China: [12.5,60,  0, 50, 24],
+  Japan: [0,   60,  0, 20, 14]
+};
+
+// === COMPARISON TABLE DATA ===
+const TABLE_DATA = [
+  { metric: 'System Name',       EU: 'EU-ETS',          Korea: 'K-ETS',        China: 'China-ETS',      Japan: 'GX-ETS' },
+  { metric: 'Start Year',        EU: '2005',             Korea: '2015',          China: '2021',            Japan: '2023' },
+  { metric: 'Current Price',     EU: '~\u20AC72/t (~$79)',Korea: '~\u20A911,823/t (~$8)', China: '~\u00A579/t (~$11)', Japan: 'N/A (GX League)' },
+  { metric: 'Coverage',          EU: '~40% of GHG',      Korea: '~68% of GHG',   China: '~60% (power only)', Japan: '~60%*' },
+  { metric: 'Covered Entities',  EU: '~11,000',          Korea: '~680',          China: '~3,500',          Japan: '300-400' },
+  { metric: 'Cap Type',          EU: 'Absolute',         Korea: 'Absolute',      China: 'Intensity-based', Japan: 'Voluntary targets' },
+  { metric: 'Auction Rate',      EU: '~43%',             Korea: '~10%',          China: '0% (100% free)',  Japan: '0% (2033~ planned)' },
+  { metric: 'Allocation Method', EU: 'BM + Auction',     Korea: 'GF + BM + Auction', China: 'Intensity BM', Japan: 'Self-set targets' },
+  { metric: 'Offset Allowed',    EU: 'No (Phase 4)',     Korea: 'Yes (KOC, 10%)', China: 'Yes (CCER, 5%)', Japan: 'J-Credit' },
+  { metric: 'Penalty',           EU: '\u20AC100/t + next year', Korea: '3x market price', China: '1-5x avg price', Japan: 'Name & shame (TBD)' },
+  { metric: 'Banking',           EU: 'Yes',              Korea: 'Yes',           China: 'Yes',             Japan: 'TBD' },
+  { metric: 'Borrowing',         EU: 'No',               Korea: 'Limited',       China: 'No',              Japan: 'TBD' },
+  { metric: 'MRV System',        EU: 'EU MRR',           Korea: 'K-MRV',         China: 'CEMS + Calc.',    Japan: 'GHG Protocol' },
+  { metric: '2030 Target',       EU: '-62% (vs 2005)',   Korea: '-40% (vs 2018)', China: '-65% intensity (vs 2005)', Japan: '-46% (vs 2013)' },
+];
+
+function renderRadar() {
+  const countries = ['EU', 'Korea', 'China', 'Japan'];
+  const traces = countries.map(c => ({
+    type: 'scatterpolar',
+    r: [...RADAR[c], RADAR[c][0]],
+    theta: [...RADAR.axes, RADAR.axes[0]],
+    fill: 'toself',
+    fillcolor: THEME.countries[c] + '18',
+    name: c,
+    line: { color: THEME.countries[c], width: 2 },
+    marker: { size: 5 }
+  }));
+
+  const layout = darkLayout('5-Dimension ETS Comparison', {
+    polar: {
+      bgcolor: THEME.card,
+      radialaxis: { visible: true, range: [0, 105], gridcolor: THEME.border, tickfont: { color: THEME.dimmed, size: 10 } },
+      angularaxis: { gridcolor: THEME.border, tickfont: { color: THEME.muted, size: 11 } }
+    },
+    legend: { orientation: 'h', y: -0.08, font: { color: THEME.muted } },
+    margin: { l: 60, r: 60, t: 50, b: 60 }
+  });
+
+  Plotly.newPlot('radar-chart', traces, layout, plotlyConfig);
+}
+
+function renderTable() {
+  const countries = ['EU', 'Korea', 'China', 'Japan'];
+  const colors = countries.map(c => THEME.countries[c]);
+
+  let html = '<thead><tr><th onclick="sortTable(0)">Metric \u25B2\u25BC</th>';
+  countries.forEach((c, i) => {
+    html += `<th onclick="sortTable(${i+1})"><span class="country-badge" style="background:${colors[i]}">${COUNTRY_FLAGS[c]} ${c}</span> \u25B2\u25BC</th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  TABLE_DATA.forEach(row => {
+    html += `<tr><td style="font-weight:600;color:${THEME.accent}">${row.metric}</td>`;
+    countries.forEach(c => { html += `<td>${row[c]}</td>`; });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  document.getElementById('compare-table').innerHTML = html;
+}
+
+let sortCol = -1, sortAsc = true;
+function sortTable(col) {
+  const table = document.getElementById('compare-table');
+  const tbody = table.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  if (sortCol === col) { sortAsc = !sortAsc; } else { sortCol = col; sortAsc = true; }
+  rows.sort((a, b) => {
+    const va = a.children[col].textContent;
+    const vb = b.children[col].textContent;
+    return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+
+renderRadar();
+renderTable();
+document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+</script>
+</body>
+</html>

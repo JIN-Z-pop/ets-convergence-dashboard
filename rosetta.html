@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETS Rosetta Stone</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="shared.js"></script>
+</head>
+<body>
+<script>initPage('rosetta');</script>
+
+<div class="page-header">
+  <h1>Rosetta Stone</h1>
+  <p>4-Language ETS Terminology Reference — English, Japanese, Korean, Chinese</p>
+</div>
+
+<style>
+.search-bar { max-width:1400px; margin:0 auto 10px; padding:0 20px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.search-input {
+  flex:1; min-width:200px; padding:10px 16px; border-radius:8px; border:1px solid #2d3748;
+  background:#1a2332; color:#e0e0e0; font-size:0.9em; outline:none;
+}
+.search-input:focus { border-color:#63b3ed; }
+.search-input::placeholder { color:#718096; }
+.cat-filters { display:flex; gap:6px; flex-wrap:wrap; }
+.cat-btn {
+  padding:5px 12px; border-radius:16px; border:1px solid #2d3748;
+  background:#1a2332; color:#a0aec0; font-size:0.78em; cursor:pointer; transition:all 0.15s;
+}
+.cat-btn:hover { border-color:#63b3ed; color:#e0e0e0; }
+.cat-btn.active { background:#63b3ed22; border-color:#63b3ed; color:#63b3ed; font-weight:600; }
+.term-count { color:#718096; font-size:0.82em; padding:0 20px; max-width:1400px; margin:0 auto 10px; }
+.term-table-wrap { max-width:1400px; margin:0 auto; padding:0 20px 30px; overflow-x:auto; }
+#term-table { width:100%; border-collapse:collapse; font-size:0.85em; }
+#term-table th {
+  background:#1e2d3d; color:#63b3ed; padding:10px 14px; text-align:left;
+  border-bottom:2px solid #2d3748; position:sticky; top:0; cursor:pointer; white-space:nowrap;
+}
+#term-table th:hover { background:#2d3748; }
+#term-table td { padding:8px 14px; border-bottom:1px solid #2d3748; color:#e0e0e0; }
+#term-table tr:hover td { background:#1e2d3d; }
+#term-table td.cat-cell { font-size:0.78em; }
+.cat-tag { display:inline-block; padding:2px 8px; border-radius:10px; font-size:0.82em; }
+mark { background:#63b3ed44; color:#e0e0e0; padding:0 2px; border-radius:2px; }
+.abbr { color:#718096; font-size:0.82em; }
+</style>
+
+<div class="search-bar">
+  <input type="text" class="search-input" id="search" placeholder="Search across all 4 languages..." oninput="filterTerms()">
+  <div class="cat-filters" id="cat-filters"></div>
+</div>
+<div class="term-count" id="term-count"></div>
+<div class="term-table-wrap">
+  <table id="term-table"></table>
+</div>
+
+<script>
+const TERMS = [{"id":20,"term_en":"Benchmark","term_ja":"\u30d9\u30f3\u30c1\u30de\u30fc\u30af/\u57fa\u6e96\u5024","term_ko":null,"term_zh":"\u57fa\u51c6\u503c","category":"MRV","abbreviation":"BM"},{"id":16,"term_en":"CEMS","term_ja":"\u9023\u7d9a\u6392\u51fa\u76e3\u8996\u30b7\u30b9\u30c6\u30e0","term_ko":null,"term_zh":"\u8fde\u7eed\u6392\u653e\u76d1\u6d4b\u7cfb\u7edf","category":"MRV","abbreviation":"CEMS"},{"id":22,"term_en":"Carbon Intensity Factor","term_ja":"\u70ad\u7d20\u6392\u51fa\u539f\u5358\u4f4d\u4fc2\u6570","term_ko":null,"term_zh":"\u78b3\u6392\u653e\u5f3a\u5ea6\u7cfb\u6570","category":"MRV","abbreviation":null},{"id":19,"term_en":"Emission Factor","term_ja":"\u6392\u51fa\u4fc2\u6570","term_ko":null,"term_zh":"\u6392\u653e\u56e0\u5b50","category":"MRV","abbreviation":null},{"id":17,"term_en":"MRV","term_ja":"\u6e2c\u5b9a\u30fb\u5831\u544a\u30fb\u691c\u8a3c","term_ko":null,"term_zh":"\u76d1\u6d4b\u62a5\u544a\u6838\u67e5","category":"MRV","abbreviation":"MRV"},{"id":18,"term_en":"Mass Balance","term_ja":"\u7269\u8cea\u53ce\u652f\u6cd5","term_ko":null,"term_zh":"\u7269\u6599\u5e73\u8861\u6cd5","category":"MRV","abbreviation":null},{"id":21,"term_en":"Verified Emissions","term_ja":"\u691c\u8a3c\u6e08\u307f\u6392\u51fa\u91cf","term_ko":null,"term_zh":"\u7ecf\u6838\u67e5\u6392\u653e\u91cf","category":"MRV","abbreviation":null},{"id":11,"term_en":"Additionality","term_ja":"\u8ffd\u52a0\u6027","term_ko":null,"term_zh":"\u989d\u5916\u6027","category":"\u30aa\u30d5\u30bb\u30c3\u30c8","abbreviation":null},{"id":9,"term_en":"CCER","term_ja":"\u4e2d\u56fd\u8a8d\u8a3c\u81ea\u613f\u6e1b\u6392\u91cf","term_ko":null,"term_zh":"\u6838\u8bc1\u81ea\u613f\u51cf\u6392\u91cf","category":"\u30aa\u30d5\u30bb\u30c3\u30c8","abbreviation":"CCER"},{"id":15,"term_en":"Crediting Period","term_ja":"\u30af\u30ec\u30b8\u30c3\u30c8\u671f\u9593","term_ko":null,"term_zh":"\u8ba1\u5165\u671f","category":"\u30aa\u30d5\u30bb\u30c3\u30c8","abbreviation":null},{"id":14,"term_en":"Methodology","term_ja":"\u65b9\u6cd5\u5b66","term_ko":null,"term_zh":"\u65b9\u6cd5\u5b66","category":"\u30aa\u30d5\u30bb\u30c3\u30c8","abbreviation":null},{"id":10,"term_en":"Offset Ratio","term_ja":"\u76f8\u6bba\u6bd4\u7387","term_ko":null,"term_zh":"\u62b5\u6d88\u6bd4\u4f8b","category":"\u30aa\u30d5\u30bb\u30c3\u30c8","abbreviation":null},{"id":12,"term_en":"Validation Cost","term_ja":"\u5be9\u67fb\u30b3\u30b9\u30c8","term_ko":null,"term_zh":"\u5ba1\u5b9a\u6210\u672c","category":"\u30aa\u30d5\u30bb\u30c3\u30c8","abbreviation":null},{"id":13,"term_en":"Verification","term_ja":"\u691c\u8a3c","term_ko":null,"term_zh":"\u6838\u67e5","category":"\u30aa\u30d5\u30bb\u30c3\u30c8","abbreviation":null},{"id":39,"term_en":"CBAM","term_ja":"\u70ad\u7d20\u56fd\u5883\u8abf\u6574\u30e1\u30ab\u30cb\u30ba\u30e0","term_ko":null,"term_zh":"\u78b3\u8fb9\u5883\u8c03\u8282\u673a\u5236","category":"\u56fd\u969b\u5236\u5ea6","abbreviation":"CBAM"},{"id":42,"term_en":"CDM","term_ja":"\u30af\u30ea\u30fc\u30f3\u958b\u767a\u30e1\u30ab\u30cb\u30ba\u30e0","term_ko":null,"term_zh":"\u6e05\u6d01\u53d1\u5c55\u673a\u5236","category":"\u56fd\u969b\u5236\u5ea6","abbreviation":"CDM"},{"id":40,"term_en":"ETS Linkage","term_ja":"ETS\u9023\u643a","term_ko":null,"term_zh":"\u78b3\u5e02\u573a\u8fde\u63a5","category":"\u56fd\u969b\u5236\u5ea6","abbreviation":null},{"id":41,"term_en":"ITMOs","term_ja":"\u56fd\u969b\u79fb\u8ee2\u7de9\u548c\u6210\u679c","term_ko":null,"term_zh":"\u56fd\u9645\u8f6c\u8ba9\u51cf\u7f13\u6210\u679c","category":"\u56fd\u969b\u5236\u5ea6","abbreviation":"ITMOs"},{"id":8,"term_en":"Allowance Surrender","term_ja":"\u914d\u984d\u63d0\u51fa/\u6e05\u7b97","term_ko":null,"term_zh":"\u914d\u989d\u6e05\u7f34","category":"\u57fa\u672c\u5236\u5ea6","abbreviation":null},{"id":4,"term_en":"Banking","term_ja":"\u7e70\u8d8a","term_ko":"\uc774\uc6d4","term_zh":"\u7ed3\u8f6c","category":"\u57fa\u672c\u5236\u5ea6","abbreviation":null},{"id":5,"term_en":"Borrowing","term_ja":"\u501f\u5165","term_ko":"\ucc28\uc785","term_zh":"\u501f\u5165","category":"\u57fa\u672c\u5236\u5ea6","abbreviation":null},{"id":2,"term_en":"Cap","term_ja":"\u6392\u51fa\u8a31\u5bb9\u7dcf\u91cf","term_ko":"\ubc30\ucd9c\ud5c8\uc6a9\ucd1d\ub7c9","term_zh":"\u6392\u653e\u603b\u91cf","category":"\u57fa\u672c\u5236\u5ea6","abbreviation":null},{"id":7,"term_en":"Compliance Period","term_ja":"\u5c65\u7d04\u5468\u671f","term_ko":null,"term_zh":"\u5c65\u7ea6\u5468\u671f","category":"\u57fa\u672c\u5236\u5ea6","abbreviation":null},{"id":3,"term_en":"Covered Entity","term_ja":"\u5272\u5f53\u5bfe\u8c61\u4e8b\u696d\u8005","term_ko":"\ud560\ub2f9\ub300\uc0c1\uc5c5\uccb4","term_zh":"\u63a7\u6392\u4f01\u4e1a/\u91cd\u70b9\u6392\u653e\u5355\u4f4d","category":"\u57fa\u672c\u5236\u5ea6","abbreviation":null},{"id":1,"term_en":"Emission Allowance","term_ja":"\u6392\u51fa\u6a29/\u914d\u984d","term_ko":"\ubc30\ucd9c\uad8c","term_zh":"\u914d\u989d","category":"\u57fa\u672c\u5236\u5ea6","abbreviation":null},{"id":6,"term_en":"Offset","term_ja":"\u76f8\u6bba","term_ko":"\uc0c1\uc1c4","term_zh":"\u62b5\u6d88","category":"\u57fa\u672c\u5236\u5ea6","abbreviation":null},{"id":32,"term_en":"Block Trading","term_ja":"\u5927\u53e3\u53d6\u5f15","term_ko":null,"term_zh":"\u5927\u5b97\u534f\u8bae\u4ea4\u6613","category":"\u5e02\u5834\u53d6\u5f15","abbreviation":null},{"id":34,"term_en":"Carbon Price","term_ja":"\u70ad\u7d20\u4fa1\u683c","term_ko":null,"term_zh":"\u78b3\u4ef7","category":"\u5e02\u5834\u53d6\u5f15","abbreviation":null},{"id":33,"term_en":"Listed Trading","term_ja":"\u639b\u724c\u53d6\u5f15","term_ko":null,"term_zh":"\u6302\u724c\u534f\u8bae\u4ea4\u6613","category":"\u5e02\u5834\u53d6\u5f15","abbreviation":null},{"id":37,"term_en":"Registry","term_ja":"\u767b\u8a18\u30b7\u30b9\u30c6\u30e0","term_ko":null,"term_zh":"\u6ce8\u518c\u767b\u8bb0\u7cfb\u7edf","category":"\u5e02\u5834\u53d6\u5f15","abbreviation":null},{"id":38,"term_en":"Settlement","term_ja":"\u6c7a\u6e08","term_ko":null,"term_zh":"\u7ed3\u7b97","category":"\u5e02\u5834\u53d6\u5f15","abbreviation":null},{"id":31,"term_en":"Spot Trading","term_ja":"\u73fe\u7269\u53d6\u5f15","term_ko":null,"term_zh":"\u73b0\u8d27\u4ea4\u6613","category":"\u5e02\u5834\u53d6\u5f15","abbreviation":null},{"id":36,"term_en":"Trading Amount","term_ja":"\u53d6\u5f15\u984d","term_ko":null,"term_zh":"\u6210\u4ea4\u989d","category":"\u5e02\u5834\u53d6\u5f15","abbreviation":null},{"id":35,"term_en":"Trading Volume","term_ja":"\u53d6\u5f15\u91cf","term_ko":null,"term_zh":"\u6210\u4ea4\u91cf","category":"\u5e02\u5834\u53d6\u5f15","abbreviation":null},{"id":46,"term_en":"Aluminum Smelting","term_ja":"\u30a2\u30eb\u30df\u51b6\u91d1","term_ko":null,"term_zh":"\u94dd\u51b6\u70bc","category":"\u696d\u7a2e","abbreviation":null},{"id":45,"term_en":"Cement","term_ja":"\u30bb\u30e1\u30f3\u30c8","term_ko":null,"term_zh":"\u6c34\u6ce5","category":"\u696d\u7a2e","abbreviation":null},{"id":43,"term_en":"Power Generation","term_ja":"\u767a\u96fb","term_ko":null,"term_zh":"\u53d1\u7535","category":"\u696d\u7a2e","abbreviation":null},{"id":47,"term_en":"Process Emissions","term_ja":"\u5de5\u696d\u904e\u7a0b\u6392\u51fa","term_ko":null,"term_zh":"\u5de5\u4e1a\u8fc7\u7a0b\u6392\u653e","category":"\u696d\u7a2e","abbreviation":null},{"id":44,"term_en":"Steel","term_ja":"\u92fc\u9244/\u9244\u92fc","term_ko":null,"term_zh":"\u94a2\u94c1","category":"\u696d\u7a2e","abbreviation":null},{"id":27,"term_en":"Absolute Cap","term_ja":"\u7dcf\u91cf\u898f\u5236","term_ko":null,"term_zh":"\u603b\u91cf\u63a7\u5236","category":"\u914d\u984d\u5206\u914d","abbreviation":null},{"id":24,"term_en":"Auctioning","term_ja":"\u30aa\u30fc\u30af\u30b7\u30e7\u30f3/\u6709\u511f\u5272\u5f53","term_ko":null,"term_zh":"\u6709\u507f\u5206\u914d/\u62cd\u5356","category":"\u914d\u984d\u5206\u914d","abbreviation":null},{"id":29,"term_en":"Cap and Floor","term_ja":"\u4e0a\u4e0b\u9650","term_ko":null,"term_zh":"\u5c01\u9876\u30fb\u5c01\u5e95","category":"\u914d\u984d\u5206\u914d","abbreviation":null},{"id":28,"term_en":"Deviation","term_ja":"\u4e56\u96e2\u5ea6","term_ko":null,"term_zh":"\u504f\u79bb\u5ea6","category":"\u914d\u984d\u5206\u914d","abbreviation":null},{"id":23,"term_en":"Free Allocation","term_ja":"\u7121\u511f\u5272\u5f53","term_ko":null,"term_zh":"\u514d\u8d39\u5206\u914d","category":"\u914d\u984d\u5206\u914d","abbreviation":null},{"id":25,"term_en":"Grandfathering","term_ja":"\u904e\u53bb\u6392\u51fa\u91cf\u57fa\u6e96\u65b9\u5f0f","term_ko":null,"term_zh":"\u5386\u53f2\u6392\u653e\u6cd5","category":"\u914d\u984d\u5206\u914d","abbreviation":"GF"},{"id":26,"term_en":"Intensity-based","term_ja":"\u5f37\u5ea6\u30d9\u30fc\u30b9","term_ko":null,"term_zh":"\u5f3a\u5ea6\u63a7\u5236","category":"\u914d\u984d\u5206\u914d","abbreviation":null},{"id":30,"term_en":"Reward Advanced Penalize Laggards","term_ja":"\u5148\u9032\u512a\u904d\u30fb\u5f8c\u9032\u662f\u6b63","term_ko":null,"term_zh":"\u6fc0\u52b1\u5148\u8fdb\u3001\u97ad\u7b56\u843d\u540e","category":"\u914d\u984d\u5206\u914d","abbreviation":null}];
+
+const CAT_COLORS = {
+  'MRV': '#63b3ed', '\u30aa\u30d5\u30bb\u30c3\u30c8': '#d69e2e', '\u56fd\u969b\u5236\u5ea6': '#805ad5',
+  '\u57fa\u672c\u5236\u5ea6': '#48bb78', '\u5e02\u5834\u53d6\u5f15': '#ed8936', '\u696d\u7a2e': '#e53e3e', '\u914d\u984d\u5206\u914d': '#38b2ac'
+};
+
+let activeCategory = null;
+let searchQuery = '';
+
+function getCategories() {
+  return [...new Set(TERMS.map(t => t.category))].sort();
+}
+
+function renderCatFilters() {
+  const cats = getCategories();
+  document.getElementById('cat-filters').innerHTML =
+    `<button class="cat-btn ${!activeCategory?'active':''}" onclick="setCategory(null)">All</button>` +
+    cats.map(c => `<button class="cat-btn ${activeCategory===c?'active':''}" onclick="setCategory('${c}')">${c}</button>`).join('');
+}
+
+function setCategory(cat) {
+  activeCategory = cat;
+  renderCatFilters();
+  renderTermTable();
+}
+
+function filterTerms() {
+  searchQuery = document.getElementById('search').value.toLowerCase();
+  renderTermTable();
+}
+
+function highlight(text, query) {
+  if (!query || !text) return text || '—';
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+}
+
+function renderTermTable() {
+  let filtered = TERMS;
+  if (activeCategory) filtered = filtered.filter(t => t.category === activeCategory);
+  if (searchQuery) {
+    filtered = filtered.filter(t =>
+      [t.term_en, t.term_ja, t.term_ko, t.term_zh, t.abbreviation].some(v => v && v.toLowerCase().includes(searchQuery))
+    );
+  }
+
+  document.getElementById('term-count').textContent = `Showing ${filtered.length} of ${TERMS.length} terms`;
+
+  let html = `<thead><tr>
+    <th onclick="sortTerms('term_en')">English \u25B2\u25BC</th>
+    <th onclick="sortTerms('term_ja')">\u65E5\u672C\u8A9E \u25B2\u25BC</th>
+    <th onclick="sortTerms('term_ko')">\uD55C\uAD6D\uC5B4 \u25B2\u25BC</th>
+    <th onclick="sortTerms('term_zh')">\u4E2D\u6587 \u25B2\u25BC</th>
+    <th onclick="sortTerms('category')">Category \u25B2\u25BC</th>
+  </tr></thead><tbody>`;
+
+  filtered.forEach(t => {
+    const catColor = CAT_COLORS[t.category] || THEME.muted;
+    const abbr = t.abbreviation ? ` <span class="abbr">(${t.abbreviation})</span>` : '';
+    html += `<tr>
+      <td>${highlight(t.term_en, searchQuery)}${abbr}</td>
+      <td>${highlight(t.term_ja, searchQuery)}</td>
+      <td>${highlight(t.term_ko, searchQuery)}</td>
+      <td>${highlight(t.term_zh, searchQuery)}</td>
+      <td class="cat-cell"><span class="cat-tag" style="background:${catColor}22;color:${catColor};border:1px solid ${catColor}44">${t.category}</span></td>
+    </tr>`;
+  });
+  html += '</tbody>';
+  document.getElementById('term-table').innerHTML = html;
+}
+
+let termSortCol = '', termSortAsc = true;
+function sortTerms(col) {
+  if (termSortCol === col) { termSortAsc = !termSortAsc; } else { termSortCol = col; termSortAsc = true; }
+  TERMS.sort((a, b) => {
+    const va = (a[col] || '').toLowerCase();
+    const vb = (b[col] || '').toLowerCase();
+    return termSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+  renderTermTable();
+}
+
+renderCatFilters();
+renderTermTable();
+document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+</script>
+</body>
+</html>
