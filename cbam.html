@@ -59,19 +59,7 @@
 <div class="two-worlds" id="two-worlds-section"></div>
 
 <script>
-const CBAM_EVENTS = [
-  { date: '2005-01', type: 'ETS\u958B\u59CB', desc: 'EU-ETS Phase 1 started. World\'s first large-scale ETS.', impact: 'high', kr: null, cn: null },
-  { date: '2013-01', type: 'Phase 3', desc: 'EU-wide single cap. Power sector 100% auctioning.', impact: 'high', kr: null, cn: null },
-  { date: '2019-01', type: 'MSR', desc: 'Market Stability Reserve activated. Automatic surplus absorption.', impact: 'medium', kr: null, cn: null },
-  { date: '2021-01', type: 'Phase 4', desc: 'Strengthened LRF, aligned to -55% target.', impact: 'high', kr: null, cn: null },
-  { date: '2021-07', type: 'Fit for 55', desc: 'European Commission proposes "Fit for 55" package including CBAM.', impact: 'high', kr: 'Alert triggered', cn: 'Limited impact initially' },
-  { date: '2023-10', type: 'CBAM Transition', desc: 'CBAM transitional period starts. Reporting only (no charges).', impact: 'high', kr: 'Reporting obligation. K-ETS method mostly compatible.', cn: 'Chinese exporters also required to report.' },
-  { date: '2025-01', type: 'EU Method Required', desc: 'CBAM reports must use EU calculation method only (no default values).', impact: 'medium', kr: 'Calculation method adjustment needed', cn: 'Conversion from China method required' },
-  { date: '2026-01', type: 'CBAM Full Start', desc: 'CBAM certificates required. Free allocation reduction begins (2.5%/yr).', impact: 'critical', kr: 'Steel industry: ~\u20A9191B/yr cost (BAU)', cn: 'Steel/Aluminum/Cement exports impacted' },
-  { date: '2027-01', type: 'ETS2 Start', desc: 'ETS2 (buildings & road transport) begins.', impact: 'high', kr: null, cn: null },
-  { date: '2034-01', type: 'CBAM 100%', desc: 'CBAM sectors: 100% free allocation eliminated. Full paid.', impact: 'critical', kr: 'Korean steel: full EU-ETS price gap cost', cn: 'China 3 sectors: full EU-ETS price burden' },
-  { date: '2050-01', type: 'Climate Neutral', desc: 'EU climate neutrality target year.', impact: 'high', kr: null, cn: null }
-];
+let CBAM_EVENTS = [];
 
 // === TWO WORLDS (multilingual) ===
 const TWO_WORLDS = {
@@ -144,17 +132,23 @@ const TWO_WORLDS = {
 function renderTimeline() {
   const container = document.getElementById('timeline');
   container.innerHTML = CBAM_EVENTS.map((ev, i) => {
-    const dotClass = ev.impact === 'critical' ? 'critical' : ev.impact === 'high' ? 'high' : '';
+    const impact = ev.impact_level || ev.impact;
+    const dotClass = impact === 'critical' ? 'critical' : impact === 'high' ? 'high' : '';
+    const date = (ev.event_date || ev.date || '').slice(0, 7);
+    const type = ev.event_type || ev.type || '';
+    const desc = ev.description || ev.desc || '';
+    const kr = ev.korea_impact || ev.kr;
+    const cn = ev.china_impact || ev.cn;
     let impacts = '';
-    if (ev.kr) impacts += `<span class="impact-badge impact-kr">\u{1F1F0}\u{1F1F7} ${ev.kr}</span>`;
-    if (ev.cn) impacts += `<span class="impact-badge impact-cn">\u{1F1E8}\u{1F1F3} ${ev.cn}</span>`;
+    if (kr) impacts += `<span class="impact-badge impact-kr">\u{1F1F0}\u{1F1F7} ${kr}</span>`;
+    if (cn) impacts += `<span class="impact-badge impact-cn">\u{1F1E8}\u{1F1F3} ${cn}</span>`;
     return `
       <div class="tl-item">
         <div class="tl-dot ${dotClass}"></div>
         <div class="tl-content">
-          <div class="tl-date">${ev.date}</div>
-          <div class="tl-type">${ev.type}</div>
-          <div class="tl-desc">${ev.desc}</div>
+          <div class="tl-date">${date}</div>
+          <div class="tl-type">${type}</div>
+          <div class="tl-desc">${desc}</div>
           ${impacts ? `<div class="tl-impact">${impacts}</div>` : ''}
         </div>
       </div>`;
@@ -180,7 +174,12 @@ function renderTwoWorlds() {
     <p style="text-align:center;margin-top:16px;color:#718096;font-size:0.82em;">${t('cbamNote')}</p>`;
 }
 
-renderTimeline();
+// Load data then render
+fetch('data/cbam.json')
+  .then(r => r.json())
+  .then(data => { CBAM_EVENTS = data; renderTimeline(); })
+  .catch(err => console.error('Failed to load CBAM data:', err));
+
 renderTwoWorlds();
 window.addEventListener('langchange', () => { renderTwoWorlds(); });
 document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
