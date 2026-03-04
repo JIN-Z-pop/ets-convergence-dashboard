@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETS Convergence Dashboard</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="shared.js"></script>
+</head>
+<body>
+<script>initPage('index');</script>
+
+<div class="page-header">
+  <h1 data-i18n="dashTitle"></h1>
+  <p data-i18n="dashSub"></p>
+</div>
+
+<div class="cards" id="kpi-cards"></div>
+<div class="chart-wrap"><div class="chart-box" id="price-chart"></div></div>
+
+<div class="analysis-box">
+  <h3>About This Dashboard</h3>
+  <p>This dashboard visualizes the convergence and divergence of Emission Trading Systems (ETS)
+  across four major economies — EU, Korea, China, and Japan — as they approach 2030.
+  Data is sourced from the <code>gods-eye-db</code> (48 tables, ~26,300 rows) and
+  <code>Knowledge Brain RAG</code> (1,600+ items).</p>
+  <p>Navigate using the top bar to explore system comparisons, allocation evolution,
+  CBAM impacts, convergence mapping, and a 4-language ETS terminology reference.</p>
+</div>
+
+<script>
+// === EMBEDDED DATA ===
+const PRICES = {"china_cny":[{"year":"2021","avg_price":46.61},{"year":"2022","avg_price":57.96},{"year":"2023","avg_price":69.04},{"year":"2024","avg_price":96.31},{"year":"2025","avg_price":66.87},{"year":"2026","avg_price":78.63}],"korea_krw":[{"year":"2015","avg_price":9145},{"year":"2016","avg_price":14242},{"year":"2017","avg_price":20845},{"year":"2018","avg_price":22752},{"year":"2019","avg_price":28159},{"year":"2020","avg_price":32853},{"year":"2021","avg_price":22697},{"year":"2022","avg_price":23930},{"year":"2023","avg_price":11791},{"year":"2024","avg_price":11737},{"year":"2025","avg_price":11594},{"year":"2026","avg_price":11823}],"eu_eur":[{"year":"2013","avg_price":4.5},{"year":"2014","avg_price":6.0},{"year":"2015","avg_price":7.7},{"year":"2016","avg_price":5.3},{"year":"2017","avg_price":5.8},{"year":"2018","avg_price":15.9},{"year":"2019","avg_price":24.8},{"year":"2020","avg_price":24.6},{"year":"2021","avg_price":53.3},{"year":"2022","avg_price":81.2},{"year":"2023","avg_price":85.0},{"year":"2024","avg_price":65.0},{"year":"2025","avg_price":68.0},{"year":"2026","avg_price":72.0}],"fx":{"KRW_USD":0.000714,"CNY_USD":0.1389,"EUR_USD":1.1}};
+
+// === KPI CARDS ===
+const KPI = [
+  { country: 'EU', flag: '\u{1F1EA}\u{1F1FA}', price: '\u20AC72/t', priceUsd: '~$79/t', coverage: '40%', entities: '~11,000', since: '2005', color: THEME.countries.EU },
+  { country: 'Korea', flag: '\u{1F1F0}\u{1F1F7}', price: '\u20A911,823/t', priceUsd: '~$8/t', coverage: '68%', entities: '~680', since: '2015', color: THEME.countries.Korea },
+  { country: 'China', flag: '\u{1F1E8}\u{1F1F3}', price: '\u00A579/t', priceUsd: '~$11/t', coverage: '60%', entities: '~3,500', since: '2021', color: THEME.countries.China },
+  { country: 'Japan', flag: '\u{1F1EF}\u{1F1F5}', price: 'GX-ETS', priceUsd: 'N/A', coverage: '60%*', entities: '300-400', since: '2023', color: THEME.countries.Japan },
+];
+
+function renderCards() {
+  const lang = getLang();
+  const labels = { price: t('price'), coverage: t('coverage'), entities: t('entities'), since: t('since') };
+  document.getElementById('kpi-cards').innerHTML = KPI.map(k => `
+    <div class="card" style="border-top: 3px solid ${k.color};">
+      <div class="country-flag">${k.flag}</div>
+      <div class="country-name" style="color:${k.color}">${k.country}</div>
+      <div class="value" style="color:${k.color}">${k.price}</div>
+      <div class="sub">${k.priceUsd}</div>
+      <div style="display:flex;justify-content:space-around;margin-top:12px;font-size:0.8em;color:${THEME.muted}">
+        <div><div style="font-weight:600;color:${THEME.text}">${k.coverage}</div>${labels.coverage}</div>
+        <div><div style="font-weight:600;color:${THEME.text}">${k.entities}</div>${labels.entities}</div>
+        <div><div style="font-weight:600;color:${THEME.text}">${k.since}</div>${labels.since}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// === PRICE CHART ===
+function renderPriceChart() {
+  const fx = PRICES.fx;
+  const traces = [
+    {
+      x: PRICES.eu_eur.map(r => r.year),
+      y: PRICES.eu_eur.map(r => +(r.avg_price * fx.EUR_USD).toFixed(1)),
+      name: 'EU-ETS (EUR\u2192USD)', mode: 'lines+markers',
+      line: { color: THEME.countries.EU, width: 3 },
+      marker: { size: 6 }
+    },
+    {
+      x: PRICES.korea_krw.map(r => r.year),
+      y: PRICES.korea_krw.map(r => +(r.avg_price * fx.KRW_USD).toFixed(1)),
+      name: 'K-ETS (KRW\u2192USD)', mode: 'lines+markers',
+      line: { color: THEME.countries.Korea, width: 3 },
+      marker: { size: 6 }
+    },
+    {
+      x: PRICES.china_cny.map(r => r.year),
+      y: PRICES.china_cny.map(r => +(r.avg_price * fx.CNY_USD).toFixed(1)),
+      name: 'China-ETS (CNY\u2192USD)', mode: 'lines+markers',
+      line: { color: THEME.countries.China, width: 3 },
+      marker: { size: 6 }
+    }
+  ];
+
+  const layout = darkLayout('Carbon Price Trends (USD/t)', {
+    yaxis: { title: 'USD / tCO\u2082', gridcolor: THEME.border, zerolinecolor: THEME.border, tickfont: { color: THEME.muted } },
+    xaxis: { title: 'Year', gridcolor: THEME.border, tickfont: { color: THEME.muted } },
+    legend: { orientation: 'h', y: -0.15, font: { color: THEME.muted } },
+    annotations: [{
+      x: '2026', y: 0, xref: 'x', yref: 'y',
+      text: 'Japan GX-ETS: no market price yet',
+      showarrow: false, font: { color: THEME.countries.Japan, size: 11 },
+      yshift: 10, xanchor: 'right'
+    }]
+  });
+
+  Plotly.newPlot('price-chart', traces, layout, plotlyConfig);
+}
+
+// === INIT ===
+renderCards();
+renderPriceChart();
+
+// Update on language change
+window.addEventListener('langchange', () => { renderCards(); });
+
+// Fix i18n on load
+document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+</script>
+</body>
+</html>
