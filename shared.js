@@ -1,22 +1,23 @@
 // === ETS Convergence Dashboard — shared.js ===
+// Editorial/Magazine Design v2.0 — powered by frontend-design skill
 // Common theme, navigation, i18n, and Plotly utilities
 
 const THEME = {
-  bg: '#0f1923', card: '#1a2332', border: '#2d3748',
-  text: '#e0e0e0', muted: '#a0aec0', dimmed: '#718096',
-  accent: '#63b3ed', hover: '#4a5568',
-  countries: { EU: '#3182ce', Korea: '#48bb78', China: '#ed8936', Japan: '#e53e3e' }
+  bg: '#0c1117', card: '#151d28', border: '#232e3c',
+  text: '#dce4ec', muted: '#8a9bb0', dimmed: '#5a6b7f',
+  accent: '#5BA4D9', gold: '#E8C468', hover: '#1c2736',
+  countries: { EU: '#4A90D9', Korea: '#56B870', China: '#E8943A', Japan: '#D64545' }
 };
 
 const COUNTRY_FLAGS = { EU: '\u{1F1EA}\u{1F1FA}', Korea: '\u{1F1F0}\u{1F1F7}', China: '\u{1F1E8}\u{1F1F3}', Japan: '\u{1F1EF}\u{1F1F5}' };
 
 const NAV_PAGES = [
-  { id: 'index', href: 'index.html', en: 'Overview', ja: '概要', ko: '개요', zh: '概览' },
-  { id: 'compare', href: 'compare.html', en: 'Compare', ja: '比較', ko: '비교', zh: '比较' },
-  { id: 'allocation', href: 'allocation.html', en: 'Allocation', ja: '割当', ko: '할당', zh: '分配' },
+  { id: 'index', href: 'index.html', en: 'Overview', ja: '\u6982\u8981', ko: '\uAC1C\uC694', zh: '\u6982\u89C8' },
+  { id: 'compare', href: 'compare.html', en: 'Compare', ja: '\u6BD4\u8F03', ko: '\uBE44\uAD50', zh: '\u6BD4\u8F83' },
+  { id: 'allocation', href: 'allocation.html', en: 'Allocation', ja: '\u5272\u5F53', ko: '\uD560\uB2F9', zh: '\u5206\u914D' },
   { id: 'cbam', href: 'cbam.html', en: 'CBAM', ja: 'CBAM', ko: 'CBAM', zh: 'CBAM' },
-  { id: 'convergence', href: 'convergence.html', en: 'Convergence', ja: '統合分析', ko: '수렴·분기', zh: '趋同·分歧' },
-  { id: 'rosetta', href: 'rosetta.html', en: 'Rosetta', ja: 'ロゼッタ', ko: '로제타', zh: '罗塞塔' }
+  { id: 'convergence', href: 'convergence.html', en: 'Convergence', ja: '\u7D71\u5408\u5206\u6790', ko: '\uC218\uB834\u00B7\uBD84\uAE30', zh: '\u8D8B\u540C\u00B7\u5206\u6B67' },
+  { id: 'rosetta', href: 'rosetta.html', en: 'Rosetta', ja: '\u30ED\u30BC\u30C3\u30BF', ko: '\uB85C\uC81C\uD0C0', zh: '\u7F57\u585E\u5854' }
 ];
 
 const LANG = {
@@ -29,7 +30,6 @@ const LANG = {
     usdPerTon: 'USD/t', approx: 'approx.',
     convergence: 'Convergence', divergence: 'Divergence',
     source: 'Source', noData: 'No market data yet',
-    // Page headers
     pageCompareTitle: 'System Comparison',
     pageCompareSub: 'Radar chart \u2014 5 key dimensions across 4 ETS systems',
     pageAllocTitle: 'Allocation Evolution',
@@ -40,28 +40,24 @@ const LANG = {
     pageConvSub: 'Where 4 ETS systems stand today and where they\'re heading by 2030',
     pageRosettaTitle: 'Rosetta Stone',
     pageRosettaSub: '4-Language ETS Terminology \u2014 EN / JA / KO / ZH',
-    // Chart titles
     chartPrice: 'Carbon Price Trends (USD/t)',
     chartRadar: '5-Dimension ETS Comparison',
     chartGantt: 'Allocation Phase Timeline (2005 \u2192 2040)',
     chartMethod: 'Allocation Method Mix (%)',
     chartScatter: 'ETS Position Map: System Age vs Carbon Price',
-    // Section titles
     aboutTitle: 'About This Dashboard',
     detailCompare: 'Detailed Comparison',
     allocPath: 'Allocation Method Migration Path',
-    twoWorlds: '"Two Worlds" \u2014 EU vs Asia ETS Paradigm',
+    twoWorlds: '\u201CTwo Worlds\u201D \u2014 EU vs Asia ETS Paradigm',
     keyInsights: 'Key Insights',
     convAxes: '\u2192 5 Convergence Axes',
     divAxes: '\u2190 5 Divergence Axes',
-    // Rosetta UI
     searchPlaceholder: 'Search across all 4 languages...',
     showingTerms: 'Showing',
     ofTerms: 'of',
     terms: 'terms',
     allCats: 'All',
     category: 'Category',
-    // Labels
     metric: 'Metric',
     year: 'Year',
     bubbleNote: 'Bubble size = Covered emissions (relative)',
@@ -190,7 +186,7 @@ const LANG = {
     aboutTitle: '\u5173\u4E8E\u6B64\u4EEA\u8868\u677F',
     detailCompare: '\u8BE6\u7EC6\u6BD4\u8F83',
     allocPath: '\u5206\u914D\u65B9\u5F0F\u8FC1\u79FB\u8DEF\u5F84',
-    twoWorlds: '"\u4E24\u4E2A\u4E16\u754C" \u2014 EU vs \u4E9A\u6D32ETS\u8303\u5F0F',
+    twoWorlds: '\u201C\u4E24\u4E2A\u4E16\u754C\u201D \u2014 EU vs \u4E9A\u6D32ETS\u8303\u5F0F',
     keyInsights: '\u5173\u952E\u53D1\u73B0',
     convAxes: '\u2192 5\u5927\u8D8B\u540C\u8F74',
     divAxes: '\u2190 5\u5927\u5206\u6B67\u8F74',
@@ -224,12 +220,10 @@ function switchLang(lang) {
   document.querySelectorAll('[data-i18n-html]').forEach(el => {
     el.innerHTML = t(el.dataset.i18nHtml);
   });
-  // Update nav labels
   document.querySelectorAll('.nav-link').forEach(a => {
     const page = NAV_PAGES.find(p => p.id === a.dataset.pageId);
     if (page) a.textContent = page[lang] || page.en;
   });
-  // Dispatch event for page-specific updates
   window.dispatchEvent(new CustomEvent('langchange', { detail: { lang } }));
 }
 
@@ -241,132 +235,403 @@ function createNavHTML(currentPageId) {
     return `<a href="${p.href}" class="nav-link${active}" data-page-id="${p.id}">${p[lang] || p.en}</a>`;
   }).join('');
 
+  const langOptions = ['en','ja','ko','zh'].map(l => {
+    const labels = { en: 'EN', ja: 'JA', ko: 'KO', zh: 'ZH' };
+    const active = lang === l ? ' lang-active' : '';
+    return `<button class="lang-btn${active}" onclick="switchLang('${l}')">${labels[l]}</button>`;
+  }).join('');
+
   return `<nav class="top-nav">
-    <div class="nav-brand" data-i18n="dashTitle">${t('dashTitle')}</div>
+    <a href="index.html" class="nav-brand">
+      <span class="brand-mark"></span>
+      <span class="brand-text" data-i18n="dashTitle">${t('dashTitle')}</span>
+    </a>
     <div class="nav-links">${links}</div>
-    <div class="lang-switcher">
-      <select id="lang-select" onchange="switchLang(this.value)">
-        <option value="en"${lang==='en'?' selected':''}>English</option>
-        <option value="ja"${lang==='ja'?' selected':''}>日本語</option>
-        <option value="ko"${lang==='ko'?' selected':''}>한국어</option>
-        <option value="zh"${lang==='zh'?' selected':''}>中文</option>
-      </select>
-    </div>
-    <button class="nav-hamburger" onclick="this.parentElement.classList.toggle('open')">&#9776;</button>
+    <div class="lang-switcher">${langOptions}</div>
+    <button class="nav-hamburger" onclick="this.parentElement.classList.toggle('open')" aria-label="Menu">\u2261</button>
   </nav>`;
 }
 
 function createFooterHTML() {
   return `<footer class="dash-footer">
+    <div class="footer-rule"></div>
     <span data-i18n="footer">${t('footer')}</span>
   </footer>`;
 }
 
-// --- Common CSS ---
+// --- Common CSS (Editorial/Magazine v2) ---
 function getCommonCSS() {
   return `
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', system-ui, sans-serif; background: ${THEME.bg}; color: ${THEME.text}; }
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
+:root {
+  --bg: ${THEME.bg};
+  --card: ${THEME.card};
+  --border: ${THEME.border};
+  --text: ${THEME.text};
+  --muted: ${THEME.muted};
+  --dimmed: ${THEME.dimmed};
+  --accent: ${THEME.accent};
+  --gold: ${THEME.gold};
+  --hover: ${THEME.hover};
+  --font-display: 'DM Serif Display', 'Noto Serif JP', 'Noto Serif KR', 'Noto Serif SC', Georgia, serif;
+  --font-body: 'DM Sans', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans SC', system-ui, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+/* --- Grain overlay --- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px;
+}
+
+/* --- Ambient light --- */
+body::after {
+  content: '';
+  position: fixed;
+  top: -30%; left: 50%; transform: translateX(-50%);
+  width: 120vw; height: 60vh;
+  background: radial-gradient(ellipse, rgba(91,164,217,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- Fade-in animation --- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  opacity: 0;
+  animation: fadeUp 0.5s ease-out forwards;
+}
+
+/* ==================== NAV ==================== */
 .top-nav {
-  display: flex; align-items: center; gap: 8px;
-  padding: 12px 24px; background: linear-gradient(135deg, ${THEME.card}, ${THEME.border});
-  border-bottom: 1px solid ${THEME.border}; flex-wrap: wrap; position: relative;
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 32px;
+  background: rgba(12,17,23,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
 }
-.nav-brand { font-size: 1.1em; font-weight: 700; color: ${THEME.accent}; white-space: nowrap; }
-.nav-links { display: flex; gap: 4px; flex: 1; justify-content: center; flex-wrap: wrap; }
+
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; white-space: nowrap;
+}
+.brand-mark {
+  display: inline-block; width: 8px; height: 24px;
+  background: linear-gradient(180deg, var(--accent), var(--gold));
+  border-radius: 2px;
+}
+.brand-text {
+  font-family: var(--font-display);
+  font-size: 1.15em; color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.nav-links {
+  display: flex; gap: 2px; flex: 1; justify-content: center;
+}
 .nav-link {
-  padding: 6px 14px; border-radius: 6px; text-decoration: none;
-  color: ${THEME.muted}; font-size: 0.85em; transition: all 0.15s;
+  padding: 6px 16px;
+  text-decoration: none; color: var(--muted);
+  font-size: 0.84em; font-weight: 500;
+  letter-spacing: 0.02em;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.3s;
 }
-.nav-link:hover { background: ${THEME.hover}; color: ${THEME.text}; }
-.nav-link.nav-active { background: ${THEME.accent}22; color: ${THEME.accent}; font-weight: 600; }
-.lang-switcher select {
-  background: ${THEME.border}; color: ${THEME.text}; border: 1px solid ${THEME.hover};
-  border-radius: 6px; padding: 5px 10px; font-size: 0.82em; cursor: pointer; outline: none;
+.nav-link:hover {
+  color: var(--text);
+  border-bottom-color: var(--dimmed);
 }
-.lang-switcher select:hover { border-color: ${THEME.accent}; }
+.nav-link.nav-active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+.lang-switcher {
+  display: flex; gap: 2px;
+}
+.lang-btn {
+  background: none; border: 1px solid transparent;
+  color: var(--dimmed); font-size: 0.72em; font-weight: 600;
+  letter-spacing: 0.08em; padding: 4px 8px;
+  border-radius: 4px; cursor: pointer;
+  transition: all 0.2s; font-family: var(--font-body);
+}
+.lang-btn:hover {
+  color: var(--muted); border-color: var(--border);
+}
+.lang-btn.lang-active {
+  color: var(--gold); border-color: var(--gold);
+}
+
 .nav-hamburger {
-  display: none; background: none; border: 1px solid ${THEME.hover};
-  color: ${THEME.text}; font-size: 1.2em; padding: 4px 10px; border-radius: 6px; cursor: pointer;
+  display: none; background: none; border: none;
+  color: var(--text); font-size: 1.5em;
+  cursor: pointer; padding: 4px 8px;
+  line-height: 1;
 }
+
 @media (max-width: 768px) {
-  .nav-links { display: none; order: 3; width: 100%; justify-content: flex-start; }
+  .top-nav { padding: 12px 16px; }
+  .nav-links {
+    display: none; order: 10; width: 100%;
+    flex-direction: column; gap: 0; padding-top: 12px;
+    border-top: 1px solid var(--border); margin-top: 8px;
+  }
+  .nav-link { padding: 10px 0; border-bottom: none; }
   .top-nav.open .nav-links { display: flex; }
   .nav-hamburger { display: block; }
-  .nav-brand { flex: 1; }
+  .brand-text { font-size: 1em; }
+  .lang-switcher { margin-left: auto; }
 }
 
+/* ==================== PAGE HEADER ==================== */
 .page-header {
-  text-align: center; padding: 28px 20px 16px;
+  text-align: center;
+  padding: 48px 24px 28px;
+  position: relative;
 }
-.page-header h1 { font-size: 1.6em; color: ${THEME.accent}; margin-bottom: 6px; }
-.page-header p { color: ${THEME.muted}; font-size: 0.9em; }
+.page-header h1 {
+  font-family: var(--font-display);
+  font-size: 2em; font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.page-header p {
+  color: var(--muted); font-size: 0.92em;
+  font-weight: 400; letter-spacing: 0.01em;
+}
+.page-header::after {
+  content: '';
+  display: block; width: 48px; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  margin: 20px auto 0;
+  border-radius: 1px;
+}
 
-.cards { display: flex; gap: 15px; padding: 0 20px 20px; flex-wrap: wrap; justify-content: center; max-width: 1400px; margin: 0 auto; }
+/* ==================== CARDS ==================== */
+.cards {
+  display: flex; gap: 16px; padding: 0 32px 28px;
+  flex-wrap: wrap; justify-content: center;
+  max-width: 1400px; margin: 0 auto;
+}
 .card {
-  background: ${THEME.card}; border-radius: 10px; padding: 18px 22px; min-width: 200px;
-  text-align: center; border: 1px solid ${THEME.border}; flex: 1; max-width: 300px;
+  background: var(--card);
+  border-radius: 8px; padding: 24px 28px;
+  min-width: 220px; text-align: center;
+  border: 1px solid var(--border);
+  flex: 1; max-width: 310px;
+  position: relative; overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
-.card .country-flag { font-size: 1.6em; }
-.card .country-name { font-size: 0.82em; color: ${THEME.muted}; margin: 4px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
-.card .value { font-size: 1.7em; font-weight: bold; line-height: 1.3; }
-.card .label { color: ${THEME.muted}; font-size: 0.82em; margin-top: 4px; }
-.card .sub { color: ${THEME.dimmed}; font-size: 0.72em; margin-top: 2px; }
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.card .country-flag { font-size: 1.5em; }
+.card .country-name {
+  font-size: 0.7em; color: var(--muted);
+  margin: 6px 0 10px;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  font-weight: 600;
+}
+.card .value {
+  font-family: var(--font-display);
+  font-size: 1.8em; font-weight: 400;
+  line-height: 1.2;
+}
+.card .label { color: var(--muted); font-size: 0.8em; margin-top: 6px; }
+.card .sub { color: var(--dimmed); font-size: 0.72em; margin-top: 3px; }
 
+/* ==================== CHARTS ==================== */
 .chart-wrap {
-  padding: 10px 20px; max-width: 1400px; margin: 0 auto;
+  padding: 12px 32px; max-width: 1400px; margin: 0 auto;
 }
 .chart-box {
-  background: ${THEME.card}; border-radius: 10px; margin-bottom: 20px;
-  padding: 15px; border: 1px solid ${THEME.border}; min-height: 400px;
+  background: var(--card);
+  border-radius: 8px; margin-bottom: 24px;
+  padding: 20px; border: 1px solid var(--border);
+  min-height: 400px;
+  transition: border-color 0.3s;
+}
+.chart-box:hover {
+  border-color: var(--dimmed);
 }
 
+/* ==================== SECTIONS ==================== */
 .section-title {
-  color: ${THEME.accent}; font-size: 1.15em; font-weight: 600;
-  margin: 24px 0 12px; padding-left: 20px;
+  font-family: var(--font-display);
+  color: var(--text); font-size: 1.3em; font-weight: 400;
+  margin: 32px 0 16px; padding-left: 32px;
+  letter-spacing: -0.01em;
+  position: relative;
+}
+.section-title::before {
+  content: '';
+  position: absolute; left: 20px; top: 50%;
+  width: 4px; height: 60%; transform: translateY(-50%);
+  background: var(--gold);
+  border-radius: 2px;
 }
 
-.dash-footer {
-  text-align: center; padding: 20px; color: ${THEME.dimmed};
-  font-size: 0.82em; border-top: 1px solid ${THEME.border}; margin-top: 20px;
-}
-
+/* ==================== ANALYSIS BOX ==================== */
 .analysis-box {
-  background: ${THEME.card}; border-radius: 10px; padding: 20px 24px;
-  border: 1px solid ${THEME.border}; margin: 12px 20px; max-width: 1400px;
-  margin-left: auto; margin-right: auto; color: ${THEME.text}; line-height: 1.65;
+  background: var(--card);
+  border-radius: 8px; padding: 28px 32px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  margin: 16px 32px; max-width: 1400px;
+  margin-left: auto; margin-right: auto;
+  color: var(--text); line-height: 1.75;
 }
-.analysis-box h3 { color: ${THEME.accent}; margin-bottom: 10px; font-size: 1.05em; }
-.analysis-box p { margin-bottom: 10px; font-size: 0.9em; }
-.analysis-box code { background: ${THEME.border}; padding: 1px 6px; border-radius: 3px; font-size: 0.88em; }
+.analysis-box h3 {
+  font-family: var(--font-display);
+  color: var(--text); margin-bottom: 12px;
+  font-size: 1.15em; font-weight: 400;
+}
+.analysis-box p {
+  margin-bottom: 12px; font-size: 0.9em;
+  color: var(--muted);
+}
+.analysis-box code {
+  background: rgba(91,164,217,0.1);
+  color: var(--accent);
+  padding: 2px 7px; border-radius: 3px;
+  font-size: 0.86em;
+}
+
+/* ==================== FOOTER ==================== */
+.dash-footer {
+  text-align: center; padding: 28px 32px;
+  color: var(--dimmed); font-size: 0.78em;
+  letter-spacing: 0.03em;
+}
+.footer-rule {
+  width: 64px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 0 auto 16px;
+}
+
+/* ==================== TABLE (Rosetta, Compare) ==================== */
+table { border-collapse: collapse; }
+th {
+  font-family: var(--font-body);
+  font-weight: 600; font-size: 0.78em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ==================== MISC ==================== */
+mark {
+  background: rgba(232,196,104,0.25);
+  color: var(--text);
+  padding: 0 3px; border-radius: 2px;
+}
+
+::selection {
+  background: rgba(91,164,217,0.3);
+  color: var(--text);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--dimmed); }
 `;
 }
 
 // --- Plotly ---
 function darkLayout(title, extra) {
   return Object.assign({
-    paper_bgcolor: THEME.bg, plot_bgcolor: THEME.card,
-    font: { color: THEME.text, family: 'Segoe UI, system-ui, sans-serif', size: 12 },
-    title: { text: title, font: { color: THEME.accent, size: 15 }, x: 0.02, xanchor: 'left' },
-    xaxis: { gridcolor: THEME.border, zerolinecolor: THEME.border, tickfont: { color: THEME.muted } },
-    yaxis: { gridcolor: THEME.border, zerolinecolor: THEME.border, tickfont: { color: THEME.muted } },
-    margin: { l: 60, r: 30, t: 50, b: 50 },
-    legend: { font: { color: THEME.muted }, bgcolor: 'rgba(0,0,0,0)' },
-    hoverlabel: { bgcolor: THEME.card, bordercolor: THEME.border, font: { color: THEME.text } }
+    paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: THEME.card,
+    font: { color: THEME.text, family: "'DM Sans', system-ui, sans-serif", size: 12 },
+    title: {
+      text: title,
+      font: { color: THEME.text, size: 15, family: "'DM Serif Display', Georgia, serif" },
+      x: 0.02, xanchor: 'left'
+    },
+    xaxis: {
+      gridcolor: THEME.border, zerolinecolor: THEME.border,
+      tickfont: { color: THEME.muted, size: 11 },
+      linecolor: THEME.border
+    },
+    yaxis: {
+      gridcolor: THEME.border, zerolinecolor: THEME.border,
+      tickfont: { color: THEME.muted, size: 11 },
+      linecolor: THEME.border
+    },
+    margin: { l: 60, r: 30, t: 52, b: 50 },
+    legend: { font: { color: THEME.muted, size: 11 }, bgcolor: 'rgba(0,0,0,0)' },
+    hoverlabel: {
+      bgcolor: THEME.card, bordercolor: THEME.border,
+      font: { color: THEME.text, family: "'DM Sans', system-ui, sans-serif", size: 12 }
+    }
   }, extra || {});
 }
 
 var plotlyConfig = { responsive: true, displayModeBar: false };
 
+// --- Staggered fade-in ---
+function applyFadeIn() {
+  const targets = document.querySelectorAll('.card, .chart-box, .analysis-box, .two-worlds, .timeline');
+  targets.forEach((el, i) => {
+    el.classList.add('fade-in');
+    el.style.animationDelay = `${i * 60}ms`;
+  });
+}
+
 // --- Page init ---
 function initPage(pageId) {
+  // Google Fonts preconnect
+  const preconnect = document.createElement('link');
+  preconnect.rel = 'preconnect';
+  preconnect.href = 'https://fonts.googleapis.com';
+  document.head.appendChild(preconnect);
+  const preconnect2 = document.createElement('link');
+  preconnect2.rel = 'preconnect';
+  preconnect2.href = 'https://fonts.gstatic.com';
+  preconnect2.crossOrigin = 'anonymous';
+  document.head.appendChild(preconnect2);
+
   // Inject CSS
   const style = document.createElement('style');
   style.textContent = getCommonCSS();
   document.head.appendChild(style);
+
   // Inject nav
   document.body.insertAdjacentHTML('afterbegin', createNavHTML(pageId));
+
   // Inject footer
   document.body.insertAdjacentHTML('beforeend', createFooterHTML());
+
+  // Apply fade-in after DOM settles
+  requestAnimationFrame(() => {
+    requestAnimationFrame(applyFadeIn);
+  });
 }
