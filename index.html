@@ -47,8 +47,8 @@ function renderAbout() {
     `<h3>${t('aboutTitle')}</h3>` + tx.map(p => `<p>${p}</p>`).join('');
 }
 
-// === EMBEDDED DATA ===
-const PRICES = {"china_cny":[{"year":"2021","avg_price":46.61},{"year":"2022","avg_price":57.96},{"year":"2023","avg_price":69.04},{"year":"2024","avg_price":96.31},{"year":"2025","avg_price":66.87},{"year":"2026","avg_price":78.63}],"korea_krw":[{"year":"2015","avg_price":9145},{"year":"2016","avg_price":14242},{"year":"2017","avg_price":20845},{"year":"2018","avg_price":22752},{"year":"2019","avg_price":28159},{"year":"2020","avg_price":32853},{"year":"2021","avg_price":22697},{"year":"2022","avg_price":23930},{"year":"2023","avg_price":11791},{"year":"2024","avg_price":11737},{"year":"2025","avg_price":11594},{"year":"2026","avg_price":11823}],"eu_eur":[{"year":"2013","avg_price":4.5},{"year":"2014","avg_price":6.0},{"year":"2015","avg_price":7.7},{"year":"2016","avg_price":5.3},{"year":"2017","avg_price":5.8},{"year":"2018","avg_price":15.9},{"year":"2019","avg_price":24.8},{"year":"2020","avg_price":24.6},{"year":"2021","avg_price":53.3},{"year":"2022","avg_price":81.2},{"year":"2023","avg_price":85.0},{"year":"2024","avg_price":65.0},{"year":"2025","avg_price":68.0},{"year":"2026","avg_price":72.0}],"fx":{"KRW_USD":0.000714,"CNY_USD":0.1389,"EUR_USD":1.1}};
+// === DATA (loaded via fetch) ===
+let PRICES = null;
 
 // === KPI CARDS ===
 const KPI = [
@@ -78,6 +78,7 @@ function renderCards() {
 
 // === PRICE CHART ===
 function renderPriceChart() {
+  if (!PRICES) return;
   const fx = PRICES.fx;
   const traces = [
     {
@@ -103,16 +104,68 @@ function renderPriceChart() {
     }
   ];
 
+  // Mini-Gantt phase bands per country (top of chart)
+  const bandH = 0.028; // height of each band
+  const bandGap = 0.004;
+  const bands = [
+    // EU (row 0 — topmost)
+    { x0:'2005',x1:'2007',label:'P1',  row:0, color:THEME.countries.EU },
+    { x0:'2008',x1:'2012',label:'P2',  row:0, color:THEME.countries.EU },
+    { x0:'2013',x1:'2020',label:'P3',  row:0, color:THEME.countries.EU },
+    { x0:'2021',x1:'2026',label:'P4',  row:0, color:THEME.countries.EU },
+    // Korea (row 1)
+    { x0:'2015',x1:'2017',label:'P1',  row:1, color:THEME.countries.Korea },
+    { x0:'2018',x1:'2020',label:'P2',  row:1, color:THEME.countries.Korea },
+    { x0:'2021',x1:'2025',label:'P3',  row:1, color:THEME.countries.Korea },
+    { x0:'2026',x1:'2030',label:'P4',  row:1, color:THEME.countries.Korea },
+    // China (row 2 — bottommost band)
+    { x0:'2021',x1:'2024',label:'Power', row:2, color:THEME.countries.China },
+    { x0:'2025',x1:'2026',label:'4-Sec', row:2, color:THEME.countries.China },
+  ];
+  const bandShapes = bands.map(b => ({
+    type: 'rect', xref: 'x', yref: 'paper',
+    x0: b.x0, x1: b.x1,
+    y0: 1.005 + (2 - b.row) * (bandH + bandGap),
+    y1: 1.005 + (2 - b.row) * (bandH + bandGap) + bandH,
+    fillcolor: b.color + '55', line: { color: b.color, width: 1 }
+  }));
+  const bandLabels = bands.map(b => {
+    const midX = (parseInt(b.x0) + parseInt(b.x1)) / 2;
+    return {
+      x: String(midX), xref: 'x', yref: 'paper',
+      y: 1.005 + (2 - b.row) * (bandH + bandGap) + bandH / 2,
+      text: b.label, showarrow: false,
+      font: { color: '#e0e0e0', size: 8 }, xanchor: 'center', yanchor: 'middle'
+    };
+  });
+  // Country labels on the left
+  const countryLabels = [
+    { name: 'EU', row: 0, color: THEME.countries.EU },
+    { name: 'KR', row: 1, color: THEME.countries.Korea },
+    { name: 'CN', row: 2, color: THEME.countries.China },
+  ].map(c => ({
+    x: '2004', xref: 'x', yref: 'paper',
+    y: 1.005 + (2 - c.row) * (bandH + bandGap) + bandH / 2,
+    text: `<b>${c.name}</b>`, showarrow: false,
+    font: { color: c.color, size: 9 }, xanchor: 'right', yanchor: 'middle'
+  }));
+
   const layout = darkLayout(t('chartPrice'), {
     yaxis: { title: 'USD / tCO\u2082', gridcolor: THEME.border, zerolinecolor: THEME.border, tickfont: { color: THEME.muted } },
     xaxis: { title: t('year'), gridcolor: THEME.border, tickfont: { color: THEME.muted } },
     legend: { orientation: 'h', y: -0.15, font: { color: THEME.muted } },
-    annotations: [{
-      x: '2026', y: 0, xref: 'x', yref: 'y',
-      text: t('jpNoPrice'),
-      showarrow: false, font: { color: THEME.countries.Japan, size: 11 },
-      yshift: 10, xanchor: 'right'
-    }]
+    shapes: bandShapes,
+    margin: { t: 90, l: 60 },
+    annotations: [
+      ...bandLabels,
+      ...countryLabels,
+      {
+        x: '2026', y: 0, xref: 'x', yref: 'y',
+        text: t('jpNoPrice'),
+        showarrow: false, font: { color: THEME.countries.Japan, size: 11 },
+        yshift: 10, xanchor: 'right'
+      }
+    ]
   });
 
   Plotly.newPlot('price-chart', traces, layout, plotlyConfig);
@@ -120,8 +173,17 @@ function renderPriceChart() {
 
 // === INIT ===
 renderCards();
-renderPriceChart();
 renderAbout();
+
+// Load price data from JSON, then render chart
+fetch('data/prices.json')
+  .then(r => r.json())
+  .then(data => { PRICES = data; renderPriceChart(); })
+  .catch(err => {
+    console.error('Failed to load prices:', err);
+    document.getElementById('price-chart').innerHTML =
+      '<p style="color:#e53e3e;text-align:center;padding:40px;">Failed to load price data.</p>';
+  });
 
 // Update on language change
 window.addEventListener('langchange', () => { renderCards(); renderPriceChart(); renderAbout(); });
