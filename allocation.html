@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETS Allocation Evolution</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="shared.js"></script>
+</head>
+<body>
+<script>initPage('allocation');</script>
+
+<div class="page-header">
+  <h1>Allocation Evolution</h1>
+  <p>How each country allocates emission allowances — from Grandfathering to Auctioning</p>
+</div>
+
+<div class="chart-wrap"><div class="chart-box" id="gantt-chart"></div></div>
+
+<div class="chart-wrap"><div class="chart-box" id="method-chart"></div></div>
+
+<div class="analysis-box">
+  <h3>Allocation Method Migration Path</h3>
+  <p><strong>EU</strong>: Grandfathering (Phase 1-2) → BM + Auction (Phase 3) → CBAM-linked full auctioning (Phase 4). The most mature system, approaching 100% paid allocation for CBAM sectors by 2034.</p>
+  <p><strong>Korea</strong>: Started with 100% GF (Phase 1), introduced BM for select sectors (Phase 2), now at 90% free / 10% auction (Phase 3). Gradual but steady transition.</p>
+  <p><strong>China</strong>: Intensity-based BM from Day 1. 100% free allocation. No auction mechanism yet. Expanding from power-only to 4 sectors (steel, cement, aluminum) in 2025.</p>
+  <p><strong>Japan</strong>: GX League voluntary targets (2023). GX-ETS Phase 2 (2026) may introduce mandatory caps. Auction planned from Phase 3 (2033).</p>
+</div>
+
+<script>
+// === GANTT CHART DATA ===
+const PHASES = [
+  // EU phases
+  { country: 'EU', phase: 'Phase 1', start: 2005, end: 2007, method: 'GF', free: 95, auction: 5, color: '#2b6cb0' },
+  { country: 'EU', phase: 'Phase 2', start: 2008, end: 2012, method: 'GF+BM', free: 90, auction: 10, color: '#3182ce' },
+  { country: 'EU', phase: 'Phase 3', start: 2013, end: 2020, method: 'BM+Auction', free: 57, auction: 43, color: '#4299e1' },
+  { country: 'EU', phase: 'Phase 4', start: 2021, end: 2030, method: 'BM+Auction+CBAM', free: 40, auction: 60, color: '#63b3ed' },
+  { country: 'EU', phase: 'CBAM Full', start: 2026, end: 2034, method: 'CBAM phase-out', free: null, auction: null, color: '#90cdf4' },
+  // Korea phases
+  { country: 'Korea', phase: 'Phase 1', start: 2015, end: 2017, method: 'GF', free: 100, auction: 0, color: '#276749' },
+  { country: 'Korea', phase: 'Phase 2', start: 2018, end: 2020, method: 'GF+BM', free: 97, auction: 3, color: '#38a169' },
+  { country: 'Korea', phase: 'Phase 3', start: 2021, end: 2025, method: 'GF+BM+Auction', free: 90, auction: 10, color: '#48bb78' },
+  // China phases
+  { country: 'China', phase: 'Power BM', start: 2021, end: 2024, method: 'Intensity BM', free: 100, auction: 0, color: '#c05621' },
+  { country: 'China', phase: '4-Sector BM', start: 2025, end: 2030, method: 'Intensity BM', free: 100, auction: 0, color: '#ed8936' },
+  // Japan phases
+  { country: 'Japan', phase: 'GX League', start: 2023, end: 2025, method: 'Voluntary', free: null, auction: null, color: '#c53030' },
+  { country: 'Japan', phase: 'GX-ETS P2', start: 2026, end: 2032, method: 'GF+BM', free: null, auction: null, color: '#e53e3e' },
+  { country: 'Japan', phase: 'GX-ETS P3', start: 2033, end: 2040, method: 'Auction intro', free: null, auction: null, color: '#fc8181' },
+];
+
+function renderGantt() {
+  const countries = ['Japan', 'China', 'Korea', 'EU'];
+  const traces = PHASES.map(p => ({
+    type: 'bar',
+    orientation: 'h',
+    y: [p.country],
+    x: [p.end - p.start + 1],
+    base: p.start,
+    name: p.phase,
+    marker: { color: p.color },
+    hovertemplate: `<b>${p.country} — ${p.phase}</b><br>${p.start}-${p.end}<br>Method: ${p.method}` +
+      (p.free !== null ? `<br>Free: ${p.free}% / Auction: ${p.auction}%` : '') + '<extra></extra>',
+    text: p.phase,
+    textposition: 'inside',
+    textfont: { color: '#fff', size: 10 },
+    showlegend: false
+  }));
+
+  const layout = darkLayout('Allocation Phase Timeline (2005 → 2040)', {
+    barmode: 'overlay',
+    xaxis: { title: 'Year', range: [2004, 2041], gridcolor: THEME.border, tickfont: { color: THEME.muted }, dtick: 5 },
+    yaxis: { tickfont: { color: THEME.muted, size: 13 }, automargin: true },
+    margin: { l: 80, r: 30, t: 50, b: 50 },
+    height: 320,
+    annotations: [
+      { x: 2026, y: 1.15, yref: 'paper', text: '\u25BC CBAM Start', showarrow: false, font: { color: THEME.accent, size: 10 } }
+    ],
+    shapes: [
+      { type: 'line', x0: 2026, x1: 2026, y0: 0, y1: 1, yref: 'paper', line: { color: THEME.accent, width: 1.5, dash: 'dash' } }
+    ]
+  });
+
+  Plotly.newPlot('gantt-chart', traces, layout, plotlyConfig);
+}
+
+// === ALLOCATION METHOD STACKED BAR ===
+function renderMethodChart() {
+  const periods = [
+    { label: 'EU P1\n2005', gf: 95, bm: 0, auction: 5 },
+    { label: 'EU P3\n2013', gf: 0, bm: 57, auction: 43 },
+    { label: 'EU P4\n2021', gf: 0, bm: 40, auction: 60 },
+    { label: 'KR P1\n2015', gf: 100, bm: 0, auction: 0 },
+    { label: 'KR P2\n2018', gf: 80, bm: 17, auction: 3 },
+    { label: 'KR P3\n2021', gf: 60, bm: 30, auction: 10 },
+    { label: 'CN\n2021', gf: 0, bm: 100, auction: 0 },
+    { label: 'JP\n2026', gf: 50, bm: 50, auction: 0 },
+  ];
+
+  const traces = [
+    { name: 'Grandfathering (GF)', x: periods.map(p => p.label), y: periods.map(p => p.gf), type: 'bar', marker: { color: '#3182ce' } },
+    { name: 'Benchmark (BM)', x: periods.map(p => p.label), y: periods.map(p => p.bm), type: 'bar', marker: { color: '#48bb78' } },
+    { name: 'Auction', x: periods.map(p => p.label), y: periods.map(p => p.auction), type: 'bar', marker: { color: '#ed8936' } },
+  ];
+
+  const layout = darkLayout('Allocation Method Mix (%)', {
+    barmode: 'stack',
+    yaxis: { title: '%', range: [0, 105], gridcolor: THEME.border, tickfont: { color: THEME.muted } },
+    xaxis: { tickfont: { color: THEME.muted, size: 10 } },
+    legend: { orientation: 'h', y: -0.2, font: { color: THEME.muted } },
+    margin: { l: 50, r: 30, t: 50, b: 80 }
+  });
+
+  Plotly.newPlot('method-chart', traces, layout, plotlyConfig);
+}
+
+renderGantt();
+renderMethodChart();
+document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+</script>
+</body>
+</html>
