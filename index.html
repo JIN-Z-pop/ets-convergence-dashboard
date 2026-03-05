@@ -23,6 +23,7 @@
     <button class="phase-btn" data-phase="EU" style="--btn-c:var(--eu)">EU</button>
     <button class="phase-btn" data-phase="Korea" style="--btn-c:var(--korea)">Korea</button>
     <button class="phase-btn" data-phase="China" style="--btn-c:var(--china)">China</button>
+    <button class="phase-btn" data-phase="Japan" style="--btn-c:var(--japan)">Japan</button>
   </div>
   <div class="chart-box" id="price-chart"></div>
 </div>
@@ -103,6 +104,10 @@ const PHASE_DATA = {
     { x0: 2021, x1: 2025, label: 'Power Only', sub: '2021\u20132024' },
     { x0: 2025, x1: 2030, label: '4-Sector', sub: '2025\u2013' },
   ],
+  Japan: [
+    { x0: 2023, x1: 2026, label: 'GX League', sub: '2023\u20132025' },
+    { x0: 2026, x1: 2030, label: 'GX-ETS', sub: '2026\u2013' },
+  ],
 };
 
 let activePhase = 'all';
@@ -141,18 +146,19 @@ function renderPriceChart() {
 
   if (activePhase === 'all') {
     // === ALL MODE: Mini-Gantt bands at top ===
-    marginTop = 110;
-    const bandH = 0.038;
-    const bandGap = 0.006;
+    marginTop = 130;
+    const bandH = 0.032;
+    const bandGap = 0.005;
     const allBands = [
       { country: 'EU', row: 0 },
       { country: 'Korea', row: 1 },
       { country: 'China', row: 2 },
+      { country: 'Japan', row: 3 },
     ];
     allBands.forEach(({ country, row }) => {
       const color = THEME.countries[country];
       PHASE_DATA[country].forEach(p => {
-        const yBase = 1.01 + (2 - row) * (bandH + bandGap);
+        const yBase = 1.01 + (3 - row) * (bandH + bandGap);
         shapes.push({
           type: 'rect', xref: 'x', yref: 'paper',
           x0: String(p.x0), x1: String(p.x1),
@@ -170,8 +176,8 @@ function renderPriceChart() {
       // Country label
       annotations.push({
         x: '2003.5', xref: 'x', yref: 'paper',
-        y: 1.01 + (2 - row) * (bandH + bandGap) + bandH / 2,
-        text: `<b>${country === 'Korea' ? 'KR' : country === 'China' ? 'CN' : country}</b>`,
+        y: 1.01 + (3 - row) * (bandH + bandGap) + bandH / 2,
+        text: `<b>${{EU:'EU',Korea:'KR',China:'CN',Japan:'JP'}[country]}</b>`,
         showarrow: false,
         font: { color: color, size: 11 }, xanchor: 'right', yanchor: 'middle'
       });
@@ -186,6 +192,7 @@ function renderPriceChart() {
       EU:    ['rgba(74,144,217,0.06)','rgba(74,144,217,0.12)','rgba(74,144,217,0.18)','rgba(74,144,217,0.25)'],
       Korea: ['rgba(86,184,112,0.06)','rgba(86,184,112,0.12)','rgba(86,184,112,0.18)','rgba(86,184,112,0.25)'],
       China: ['rgba(232,148,58,0.10)','rgba(232,148,58,0.20)'],
+      Japan: ['rgba(214,69,69,0.10)','rgba(214,69,69,0.20)'],
     };
     const fills = phaseColors[country] || phases.map((_,i) => color + (i % 2 ? '10' : '18'));
 
