@@ -181,14 +181,20 @@ function renderPriceChart() {
     const country = activePhase;
     const color = THEME.countries[country];
     const phases = PHASE_DATA[country];
-    const opacities = ['18', '10', '18', '10']; // alternating
+    // Distinct fill per phase — progressively stronger tint
+    const phaseColors = {
+      EU:    ['rgba(74,144,217,0.06)','rgba(74,144,217,0.12)','rgba(74,144,217,0.18)','rgba(74,144,217,0.25)'],
+      Korea: ['rgba(86,184,112,0.06)','rgba(86,184,112,0.12)','rgba(86,184,112,0.18)','rgba(86,184,112,0.25)'],
+      China: ['rgba(232,148,58,0.10)','rgba(232,148,58,0.20)'],
+    };
+    const fills = phaseColors[country] || phases.map((_,i) => color + (i % 2 ? '10' : '18'));
 
     phases.forEach((p, i) => {
       shapes.push({
         type: 'rect', xref: 'x', yref: 'paper',
         x0: String(p.x0), x1: String(p.x1),
         y0: 0, y1: 1,
-        fillcolor: color + opacities[i % opacities.length],
+        fillcolor: fills[i],
         line: { color: color + '40', width: 1 },
         layer: 'below'
       });
