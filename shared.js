@@ -65,7 +65,8 @@ const LANG = {
     jpNoPrice: 'Japan GX-ETS: no market price yet',
     cbamNote: 'CBAM is the bridge forcing convergence \u2014 Asia must either raise carbon prices or pay the EU difference',
     euWorld: 'EU World',
-    asiaWorld: 'Asia World'
+    asiaWorld: 'Asia World',
+    phaseView: 'Phase:'
   },
   ja: {
     dashTitle: 'ETS\u7D71\u5408\u5206\u6790\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9',
@@ -111,7 +112,8 @@ const LANG = {
     jpNoPrice: '\u65E5\u672CGXETS\uFF1A\u5E02\u5834\u4FA1\u683C\u672A\u5F62\u6210',
     cbamNote: 'CBAM\u306F\u5236\u5EA6\u7D71\u5408\u3092\u4FC3\u3059\u67B6\u3051\u6A4B \u2014 \u30A2\u30B8\u30A2\u306F\u70AD\u7D20\u4FA1\u683C\u3092\u5F15\u304D\u4E0A\u3052\u308B\u304B\u3001EU\u5DEE\u984D\u3092\u652F\u6255\u3046',
     euWorld: 'EU\u306E\u4E16\u754C',
-    asiaWorld: '\u30A2\u30B8\u30A2\u306E\u4E16\u754C'
+    asiaWorld: '\u30A2\u30B8\u30A2\u306E\u4E16\u754C',
+    phaseView: '\u30D5\u30A7\u30FC\u30BA:'
   },
   ko: {
     dashTitle: 'ETS \uC218\uB834 \uB300\uC2DC\uBCF4\uB4DC',
@@ -157,7 +159,8 @@ const LANG = {
     jpNoPrice: '\uC77C\uBCF8 GX-ETS: \uC2DC\uC7A5 \uAC00\uACA9 \uBBF8\uD615\uC131',
     cbamNote: 'CBAM\uC740 \uC218\uB834\uC744 \uAC15\uC81C\uD558\uB294 \uB2E4\uB9AC \u2014 \uC544\uC2DC\uC544\uB294 \uD0C4\uC18C \uAC00\uACA9\uC744 \uC62C\uB9AC\uAC70\uB098 EU \uCC28\uC561\uC744 \uC9C0\uBD88',
     euWorld: 'EU\uC758 \uC138\uACC4',
-    asiaWorld: '\uC544\uC2DC\uC544\uC758 \uC138\uACC4'
+    asiaWorld: '\uC544\uC2DC\uC544\uC758 \uC138\uACC4',
+    phaseView: '\uD398\uC774\uC988:'
   },
   zh: {
     dashTitle: 'ETS\u8D8B\u540C\u4EEA\u8868\u677F',
@@ -203,7 +206,8 @@ const LANG = {
     jpNoPrice: '\u65E5\u672CGXETS\uFF1A\u5C1A\u65E0\u5E02\u573A\u4EF7\u683C',
     cbamNote: 'CBAM\u662F\u5F3A\u5236\u8D8B\u540C\u7684\u6865\u6881 \u2014 \u4E9A\u6D32\u987B\u63D0\u9AD8\u78B3\u4EF7\u6216\u652F\u4ED8EU\u5DEE\u989D',
     euWorld: 'EU\u4E16\u754C',
-    asiaWorld: '\u4E9A\u6D32\u4E16\u754C'
+    asiaWorld: '\u4E9A\u6D32\u4E16\u754C',
+    phaseView: '\u9636\u6BB5:'
   }
 };
 
@@ -274,6 +278,10 @@ function getCommonCSS() {
   --accent: ${THEME.accent};
   --gold: ${THEME.gold};
   --hover: ${THEME.hover};
+  --eu: ${THEME.countries.EU};
+  --korea: ${THEME.countries.Korea};
+  --china: ${THEME.countries.China};
+  --japan: ${THEME.countries.Japan};
   --font-display: 'DM Serif Display', 'Noto Serif JP', 'Noto Serif KR', 'Noto Serif SC', Georgia, serif;
   --font-body: 'DM Sans', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans SC', system-ui, sans-serif;
 }
@@ -516,6 +524,23 @@ body::after {
 .analysis-box p {
   margin-bottom: 12px; font-size: 0.9em;
   color: var(--muted);
+}
+
+/* ==================== PHASE SELECTOR ==================== */
+.phase-btn {
+  padding: 5px 14px; border-radius: 4px; font-size: 0.8em;
+  font-family: var(--font-body); font-weight: 500;
+  background: transparent; color: var(--btn-c, var(--muted));
+  border: 1px solid var(--btn-c, var(--border));
+  cursor: pointer; transition: all 0.2s;
+}
+.phase-btn:hover {
+  background: color-mix(in srgb, var(--btn-c, var(--accent)) 15%, transparent);
+}
+.phase-btn-active {
+  background: color-mix(in srgb, var(--btn-c, var(--accent)) 25%, transparent);
+  color: var(--text); border-color: var(--btn-c, var(--accent));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--btn-c, var(--accent)) 30%, transparent);
 }
 .analysis-box code {
   background: rgba(91,164,217,0.1);
