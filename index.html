@@ -199,16 +199,12 @@ function renderPriceChart() {
         layer: 'below'
       });
       const midX = (p.x0 + p.x1) / 2;
-      // Phase label + year range (both above chart area)
+      // Phase label + year range combined above chart
       annotations.push({
-        x: String(midX), xref: 'x', yref: 'paper', y: 1.06,
-        text: `<b>${p.label}</b>`, showarrow: false,
+        x: String(midX), xref: 'x', yref: 'paper', y: 1.02,
+        text: `<b>${p.label}</b><br><span style="font-size:9px">${p.sub}</span>`,
+        showarrow: false,
         font: { color: color, size: 13 }, xanchor: 'center', yanchor: 'bottom'
-      });
-      annotations.push({
-        x: String(midX), xref: 'x', yref: 'paper', y: 1.04,
-        text: p.sub, showarrow: false,
-        font: { color: color + 'AA', size: 10 }, xanchor: 'center', yanchor: 'top'
       });
     });
     marginTop = 80;
