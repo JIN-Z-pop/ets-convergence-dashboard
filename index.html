@@ -141,7 +141,7 @@ function renderPriceChart() {
     {
       x: [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030],
       y: [0, 0, 0, 0, 0, 0, 0, 0],
-      name: 'Japan GX-ETS (2026\u2013)', mode: 'lines+markers',
+      name: 'Japan GX-ETS (2026\u2013) \u2014 ' + t('jpNoPrice'), mode: 'lines+markers',
       line: { color: THEME.countries.Japan, width: 3, dash: 'dot' },
       marker: { size: 6 },
       showlegend: true
@@ -228,14 +228,6 @@ function renderPriceChart() {
     });
     marginTop = 80;
   }
-
-  // Japan annotation (always)
-  annotations.push({
-    x: '2026', y: 0, xref: 'x', yref: 'y',
-    text: t('jpNoPrice'),
-    showarrow: false, font: { color: THEME.countries.Japan, size: 12 },
-    yshift: 10, xshift: -8, xanchor: 'right'
-  });
 
   const layout = darkLayout(t('chartPrice'), {
     yaxis: { title: 'USD / tCO\u2082', gridcolor: THEME.border, zerolinecolor: THEME.border, tickfont: { color: THEME.muted } },
