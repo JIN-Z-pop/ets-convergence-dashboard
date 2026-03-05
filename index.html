@@ -199,20 +199,19 @@ function renderPriceChart() {
         layer: 'below'
       });
       const midX = (p.x0 + p.x1) / 2;
-      // Phase label at top
+      // Phase label + year range (both above chart area)
       annotations.push({
-        x: String(midX), xref: 'x', yref: 'paper', y: 1.02,
+        x: String(midX), xref: 'x', yref: 'paper', y: 1.06,
         text: `<b>${p.label}</b>`, showarrow: false,
         font: { color: color, size: 13 }, xanchor: 'center', yanchor: 'bottom'
       });
-      // Sub-label below
       annotations.push({
-        x: String(midX), xref: 'x', yref: 'paper', y: 0.97,
+        x: String(midX), xref: 'x', yref: 'paper', y: 1.04,
         text: p.sub, showarrow: false,
         font: { color: color + 'AA', size: 10 }, xanchor: 'center', yanchor: 'top'
       });
     });
-    marginTop = 60;
+    marginTop = 80;
   }
 
   // Japan annotation (always)
