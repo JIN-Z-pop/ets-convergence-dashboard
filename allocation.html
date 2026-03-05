@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ETS Allocation Evolution</title>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<script src="shared.js?v=5"></script>
+<script src="shared.js?v=6"></script>
 </head>
 <body>
 <script>initPage('allocation');</script>
@@ -15,9 +15,9 @@
   <p data-i18n="pageAllocSub"></p>
 </div>
 
-<div class="chart-wrap"><div class="chart-box" id="gantt-chart"></div></div>
+<div class="chart-wrap"><div class="chart-box" id="gantt-chart" style="min-height:350px"></div></div>
 
-<div class="chart-wrap"><div class="chart-box" id="method-chart"></div></div>
+<div class="chart-wrap"><div class="chart-box" id="method-chart" style="min-height:440px"></div></div>
 
 <div class="analysis-box" id="alloc-analysis"></div>
 
@@ -74,7 +74,7 @@ function renderGantt() {
       (p.free !== null ? `<br>Free: ${p.free}% / Auction: ${p.auction}%` : '') + '<extra></extra>',
     text: p.phase,
     textposition: 'inside',
-    textfont: { color: '#fff', size: 10 },
+    textfont: { color: '#fff', size: 13 },
     showlegend: false
   }));
 
@@ -82,10 +82,10 @@ function renderGantt() {
     barmode: 'overlay',
     xaxis: { title: t('year'), range: [2004, 2041], gridcolor: THEME.border, tickfont: { color: THEME.muted }, dtick: 5 },
     yaxis: { tickfont: { color: THEME.muted, size: 13 }, automargin: true },
-    margin: { l: 80, r: 30, t: 50, b: 50 },
-    height: 320,
+    margin: { l: 80, r: 30, t: 45, b: 45 },
+    height: 330,
     annotations: [
-      { x: 2026, y: 1.15, yref: 'paper', text: '\u25BC CBAM Start', showarrow: false, font: { color: THEME.accent, size: 10 } }
+      { x: 2026, y: 1.15, yref: 'paper', text: '\u25BC CBAM Start', showarrow: false, font: { color: THEME.accent, size: 12 } }
     ],
     shapes: [
       { type: 'line', x0: 2026, x1: 2026, y0: 0, y1: 1, yref: 'paper', line: { color: THEME.accent, width: 1.5, dash: 'dash' } }
@@ -108,9 +108,10 @@ function renderMethodChart() {
   const layout = darkLayout(t('chartMethod'), {
     barmode: 'stack',
     yaxis: { title: '%', range: [0, 105], gridcolor: THEME.border, tickfont: { color: THEME.muted } },
-    xaxis: { tickfont: { color: THEME.muted, size: 10 } },
-    legend: { orientation: 'h', y: -0.2, font: { color: THEME.muted } },
-    margin: { l: 50, r: 30, t: 50, b: 80 }
+    xaxis: { tickfont: { color: THEME.muted, size: 12 } },
+    legend: { orientation: 'h', y: -0.2, font: { color: THEME.muted, size: 13 } },
+    height: 420,
+    margin: { l: 50, r: 30, t: 40, b: 70 }
   });
 
   Plotly.newPlot('method-chart', traces, layout, plotlyConfig);

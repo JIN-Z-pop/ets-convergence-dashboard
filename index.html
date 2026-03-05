@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ETS Convergence Dashboard</title>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<script src="shared.js?v=5"></script>
+<script src="shared.js?v=6"></script>
 </head>
 <body>
 <script>initPage('index');</script>
@@ -17,7 +17,7 @@
 
 <div class="cards" id="kpi-cards"></div>
 <div class="chart-wrap">
-  <div id="phase-selector" style="display:flex;gap:8px;margin-bottom:12px;padding:0 8px;flex-wrap:wrap;align-items:center;">
+  <div id="phase-selector" style="display:flex;gap:8px;margin-bottom:4px;padding:0 8px;flex-wrap:wrap;align-items:center;">
     <span style="font-size:0.85em;color:var(--muted);margin-right:4px;" data-i18n="phaseView"></span>
     <button class="phase-btn phase-btn-active" data-phase="all">All</button>
     <button class="phase-btn" data-phase="EU" style="--btn-c:var(--eu)">EU</button>
@@ -77,10 +77,10 @@ function renderCards() {
       <div class="country-name" style="color:${k.color}">${k.country}</div>
       <div class="value" style="color:${k.color}">${k.price}</div>
       <div class="sub">${k.priceUsd}</div>
-      <div style="display:flex;justify-content:space-around;margin-top:12px;font-size:0.8em;color:${THEME.muted}">
-        <div><div style="font-weight:600;color:${THEME.text}">${k.coverage}</div>${labels.coverage}</div>
-        <div><div style="font-weight:600;color:${THEME.text}">${k.entities}</div>${labels.entities}</div>
-        <div><div style="font-weight:600;color:${THEME.text}">${k.since}</div>${labels.since}</div>
+      <div style="display:flex;justify-content:space-around;margin-top:14px;font-size:0.82em;color:${THEME.muted};gap:8px">
+        <div><div style="font-weight:600;color:${THEME.text};font-size:1.1em">${k.coverage}</div>${labels.coverage}</div>
+        <div><div style="font-weight:600;color:${THEME.text};font-size:1.1em">${k.entities}</div>${labels.entities}</div>
+        <div><div style="font-weight:600;color:${THEME.text};font-size:1.1em">${k.since}</div>${labels.since}</div>
       </div>
     </div>
   `).join('');
@@ -137,6 +137,14 @@ function renderPriceChart() {
       name: 'China-ETS (CNY\u2192USD)', mode: 'lines+markers',
       line: { color: THEME.countries.China, width: 3 },
       marker: { size: 6 }
+    },
+    {
+      x: [2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030],
+      y: [0, 0, 0, 0, 0, 0, 0, 0],
+      name: 'Japan GX-ETS (2026\u2013)', mode: 'lines+markers',
+      line: { color: THEME.countries.Japan, width: 3, dash: 'dot' },
+      marker: { size: 6 },
+      showlegend: true
     }
   ];
 
@@ -147,8 +155,8 @@ function renderPriceChart() {
   if (activePhase === 'all') {
     // === ALL MODE: Mini-Gantt bands at top ===
     marginTop = 130;
-    const bandH = 0.032;
-    const bandGap = 0.005;
+    const bandH = 0.06;
+    const bandGap = 0.03;
     const allBands = [
       { country: 'EU', row: 0 },
       { country: 'Korea', row: 1 },
@@ -166,11 +174,15 @@ function renderPriceChart() {
           fillcolor: color + '44', line: { color: color, width: 1.5 }
         });
         const midX = (p.x0 + p.x1) / 2;
+        // Short labels for mini-gantt: numbers for Phase N, abbreviations for named phases
+        const shortLabels = { 'Phase 1':'1', 'Phase 2':'2', 'Phase 3':'3', 'Phase 4':'4',
+          'Power Only':'Pwr', '4-Sector':'4S', 'GX League':'GXL', 'GX-ETS':'GX' };
+        const bandLabel = shortLabels[p.label] || p.label;
         annotations.push({
           x: String(midX), xref: 'x', yref: 'paper',
           y: yBase + bandH / 2,
-          text: `<b>${p.label}</b>`, showarrow: false,
-          font: { color: '#e0e0e0', size: 10.5 }, xanchor: 'center', yanchor: 'middle'
+          text: `<b>${bandLabel}</b>`, showarrow: false,
+          font: { color: '#e0e0e0', size: 11 }, xanchor: 'center', yanchor: 'middle'
         });
       });
       // Country label
@@ -221,16 +233,16 @@ function renderPriceChart() {
   annotations.push({
     x: '2026', y: 0, xref: 'x', yref: 'y',
     text: t('jpNoPrice'),
-    showarrow: false, font: { color: THEME.countries.Japan, size: 11 },
-    yshift: 10, xanchor: 'right'
+    showarrow: false, font: { color: THEME.countries.Japan, size: 12 },
+    yshift: 10, xshift: -8, xanchor: 'right'
   });
 
   const layout = darkLayout(t('chartPrice'), {
     yaxis: { title: 'USD / tCO\u2082', gridcolor: THEME.border, zerolinecolor: THEME.border, tickfont: { color: THEME.muted } },
     xaxis: { title: t('year'), gridcolor: THEME.border, tickfont: { color: THEME.muted }, range: [2003, 2031] },
-    legend: { orientation: 'h', y: -0.15, font: { color: THEME.muted } },
+    legend: { orientation: 'h', y: -0.32, x: 0.5, xanchor: 'center', font: { color: THEME.muted, size: 12 }, tracegroupgap: 30 },
     shapes: shapes,
-    margin: { t: marginTop, l: 60 },
+    margin: { t: marginTop, b: 80, l: 60 },
     annotations: annotations
   });
 

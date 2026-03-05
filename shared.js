@@ -290,6 +290,7 @@ function getCommonCSS() {
 
 body {
   font-family: var(--font-body);
+  font-size: 17px;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
@@ -363,7 +364,7 @@ body::after {
 .nav-link {
   padding: 6px 16px;
   text-decoration: none; color: var(--muted);
-  font-size: 0.84em; font-weight: 500;
+  font-size: 0.9em; font-weight: 500;
   letter-spacing: 0.02em;
   border-bottom: 2px solid transparent;
   transition: color 0.2s, border-color 0.3s;
@@ -383,7 +384,7 @@ body::after {
 }
 .lang-btn {
   background: none; border: 1px solid transparent;
-  color: var(--dimmed); font-size: 0.72em; font-weight: 600;
+  color: var(--dimmed); font-size: 0.8em; font-weight: 600;
   letter-spacing: 0.08em; padding: 4px 8px;
   border-radius: 4px; cursor: pointer;
   transition: all 0.2s; font-family: var(--font-body);
@@ -419,7 +420,7 @@ body::after {
 /* ==================== PAGE HEADER ==================== */
 .page-header {
   text-align: center;
-  padding: 48px 24px 28px;
+  padding: 28px 32px 18px;
   position: relative;
 }
 .page-header h1 {
@@ -445,11 +446,12 @@ body::after {
 .cards {
   display: flex; gap: 16px; padding: 0 32px 28px;
   flex-wrap: wrap; justify-content: center;
-  max-width: 1400px; margin: 0 auto;
+  max-width: 1400px; margin: 8px auto 0;
 }
 .card {
   background: var(--card);
   border-radius: 8px; padding: 24px 28px;
+  font-size: 18px;
   min-width: 220px; text-align: center;
   border: 1px solid var(--border);
   flex: 1; max-width: 310px;
@@ -462,7 +464,7 @@ body::after {
 }
 .card .country-flag { font-size: 1.5em; }
 .card .country-name {
-  font-size: 0.7em; color: var(--muted);
+  font-size: 0.82em; color: var(--muted);
   margin: 6px 0 10px;
   text-transform: uppercase; letter-spacing: 0.15em;
   font-weight: 600;
@@ -473,18 +475,18 @@ body::after {
   line-height: 1.2;
 }
 .card .label { color: var(--muted); font-size: 0.8em; margin-top: 6px; }
-.card .sub { color: var(--dimmed); font-size: 0.72em; margin-top: 3px; }
+.card .sub { color: var(--dimmed); font-size: 0.82em; margin-top: 3px; }
 
 /* ==================== CHARTS ==================== */
 .chart-wrap {
-  padding: 12px 32px; max-width: 1400px; margin: 0 auto;
+  padding: 6px 32px; max-width: 1400px; margin: 0 auto;
 }
 .chart-box {
   background: var(--card);
-  border-radius: 8px; margin-bottom: 24px;
-  padding: 20px; border: 1px solid var(--border);
-  min-height: 400px;
+  border-radius: 8px; margin-bottom: 12px;
+  padding: 8px 20px 8px; border: 1px solid var(--border);
   transition: border-color 0.3s;
+  min-height: 420px;
 }
 .chart-box:hover {
   border-color: var(--dimmed);
@@ -552,7 +554,7 @@ body::after {
 /* ==================== FOOTER ==================== */
 .dash-footer {
   text-align: center; padding: 28px 32px;
-  color: var(--dimmed); font-size: 0.78em;
+  color: var(--dimmed); font-size: 0.86em;
   letter-spacing: 0.03em;
 }
 .footer-rule {
@@ -594,12 +596,13 @@ mark {
 // --- Plotly ---
 function darkLayout(title, extra) {
   return Object.assign({
+    height: 420,
     paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: THEME.card,
     font: { color: THEME.text, family: "'DM Sans', system-ui, sans-serif", size: 12 },
     title: {
       text: title,
       font: { color: THEME.text, size: 15, family: "'DM Serif Display', Georgia, serif" },
-      x: 0.02, xanchor: 'left'
+      x: 0.02, xanchor: 'left', y: 1, yanchor: 'top', pad: { t: 4 }
     },
     xaxis: {
       gridcolor: THEME.border, zerolinecolor: THEME.border,
