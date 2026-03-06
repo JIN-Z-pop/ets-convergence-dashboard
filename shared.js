@@ -754,8 +754,10 @@ function initPage(pageId) {
   // Inject nav
   document.body.insertAdjacentHTML('afterbegin', createNavHTML(pageId));
 
-  // Inject footer
-  document.body.insertAdjacentHTML('beforeend', createFooterHTML());
+  // Inject footer after DOM is fully parsed
+  document.addEventListener('DOMContentLoaded', () => {
+    document.body.insertAdjacentHTML('beforeend', createFooterHTML());
+  });
 
   // Apply fade-in after DOM settles
   requestAnimationFrame(() => {
