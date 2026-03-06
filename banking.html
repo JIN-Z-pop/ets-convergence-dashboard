@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETS Banking Rules</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="shared.js?v=7"></script>
+</head>
+<body>
+<script>initPage('banking');</script>
+
+<div class="page-header">
+  <h1 data-i18n="pageBankingTitle"></h1>
+  <p data-i18n="pageBankingSub"></p>
+</div>
+
+<!-- Country Cards -->
+<div class="cards" id="banking-cards"></div>
+
+<!-- Chart 1: K-ETS Phase Evolution -->
+<div class="chart-wrap"><div class="chart-box" id="phase-evo-chart"></div></div>
+
+<!-- Chart 2: K-ETS Trading Volume & Price -->
+<div class="chart-wrap"><div class="chart-box" id="trading-chart"></div></div>
+
+<!-- Simulator -->
+<h3 class="section-title" id="sim-title" data-i18n="simTitle"></h3>
+<div class="chart-wrap">
+  <div class="chart-box" id="simulator-box" style="padding:24px 28px;">
+    <p style="color:var(--muted);font-size:0.88em;margin-bottom:18px;" data-i18n="simSub"></p>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px;">
+      <label style="color:var(--muted);font-size:0.88em;white-space:nowrap;" data-i18n="simNetSales"></label>
+      <input type="range" id="ns-slider" min="0" max="100000" step="1000" value="20000"
+        style="flex:1;min-width:200px;accent-color:var(--korea);">
+      <span id="ns-value" style="font-family:'DM Sans',monospace;color:var(--gold);font-size:1.1em;font-weight:600;min-width:100px;text-align:right;">20,000</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" id="sim-results"></div>
+  </div>
+</div>
+
+<!-- Chart 3: 4-Country Comparison -->
+<div class="chart-wrap"><div class="chart-box" id="country-compare-chart"></div></div>
+
+<!-- Comparison Table -->
+<div class="chart-wrap">
+  <div class="chart-box" style="padding:20px;overflow-x:auto;">
+    <table id="banking-table" style="width:100%;"></table>
+  </div>
+</div>
+
+<!-- Insights -->
+<div class="analysis-box" id="insights-box"></div>
+
+<style>
+#banking-table th { background:#1e2d3d; color:var(--accent); padding:10px 14px; text-align:left; border-bottom:2px solid var(--border); white-space:nowrap; }
+#banking-table td { padding:8px 14px; border-bottom:1px solid var(--border); color:var(--text); font-size:0.88em; }
+#banking-table tr:hover td { background:var(--hover); }
+.sim-card {
+  background: var(--bg); border:1px solid var(--border); border-radius:8px;
+  padding:18px 20px; text-align:center; transition: border-color 0.3s;
+}
+.sim-card:hover { border-color: var(--korea); }
+.sim-label { font-size:0.78em; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+.sim-value { font-family:var(--font-display); font-size:1.6em; color:var(--korea); }
+.sim-note { font-size:0.72em; color:var(--dimmed); margin-top:4px; min-height:1.2em; }
+.country-badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.82em; font-weight:600; color:#fff; }
+</style>
+
+<script>
+// === DATA ===
+let DATA = null;
+
+// Helper: extract localized string from multilingual object or plain string
+function L(obj) {
+  if (!obj) return '';
+  if (typeof obj === 'string') return obj;
+  return obj[getLang()] || obj.en || '';
+}
+
+// === BANKING CARDS ===
+function renderCards() {
+  if (!DATA) return;
+  const c = DATA.countries;
+  const items = [
+    { key: 'EU', flag: COUNTRY_FLAGS.EU, rule: L(c.EU.banking), detail: L(c.EU.banking_detail), color: THEME.countries.EU },
+    { key: 'Korea', flag: COUNTRY_FLAGS.Korea, rule: L(c.Korea.banking), detail: L(c.Korea.banking_detail), color: THEME.countries.Korea },
+    { key: 'China', flag: COUNTRY_FLAGS.China, rule: L(c.China.banking), detail: L(c.China.banking_detail), color: THEME.countries.China },
+    { key: 'Japan', flag: COUNTRY_FLAGS.Japan, rule: L(c.Japan.banking), detail: L(c.Japan.banking_detail), color: THEME.countries.Japan }
+  ];
+  document.getElementById('banking-cards').innerHTML = items.map(k => `
+    <div class="card" style="border-top:3px solid ${k.color};">
+      <div class="country-flag">${k.flag}</div>
+      <div class="country-name" style="color:${k.color}">${k.key}</div>
+      <div class="value" style="color:${k.color};font-size:1.3em;">${k.rule}</div>
+      <div class="sub" style="margin-top:8px;line-height:1.5;">${k.detail}</div>
+    </div>
+  `).join('');
+}
+
+// === CHART 1: Phase Evolution (grouped bar) ===
+function renderPhaseEvo() {
+  if (!DATA) return;
+  const phases = DATA.phases;
+  const labels = phases.map(p => p.phase + '<br>' + p.period);
+
+  const traces = [
+    {
+      name: t('freeAlloc'),
+      x: labels, y: phases.map(p => p.free_pct),
+      type: 'bar',
+      marker: { color: THEME.countries.Korea + 'cc' },
+      yaxis: 'y'
+    },
+    {
+      name: t('auctionPct'),
+      x: labels, y: phases.map(p => p.auction_pct),
+      type: 'bar',
+      marker: { color: THEME.gold + 'cc' },
+      yaxis: 'y'
+    },
+    {
+      name: t('volume') + ' (Mt)',
+      x: labels, y: phases.map(p => p.total_volume_mt),
+      type: 'scatter', mode: 'lines+markers',
+      line: { color: THEME.accent, width: 3 },
+      marker: { size: 10, color: THEME.accent },
+      yaxis: 'y2'
+    }
+  ];
+
+  const layout = darkLayout(t('chartPhaseEvo'), {
+    barmode: 'stack',
+    yaxis: { title: '%', range: [0, 110], gridcolor: THEME.border, tickfont: { color: THEME.muted } },
+    yaxis2: {
+      title: 'Mt', overlaying: 'y', side: 'right', range: [0, 160],
+      gridcolor: 'transparent', tickfont: { color: THEME.accent, size: 11 },
+      titlefont: { color: THEME.accent }
+    },
+    legend: { orientation: 'h', y: -0.18, font: { color: THEME.muted } },
+    margin: { l: 50, r: 60, t: 50, b: 80 },
+    annotations: [
+      { x: labels[1], y: 105, text: {en:'Banking<br>restriction<br>introduced',ja:'繰越制限<br>導入',ko:'이월제한<br>도입',zh:'结转限制<br>引入'}[getLang()]||'Banking<br>restriction<br>introduced', showarrow: true, arrowhead: 2, arrowcolor: THEME.countries.China, font: { color: THEME.countries.China, size: 11 }, ay: -40 }
+    ]
+  });
+
+  Plotly.newPlot('phase-evo-chart', traces, layout, plotlyConfig);
+}
+
+// === CHART 2: Trading Volume & Price ===
+function renderTrading() {
+  if (!DATA) return;
+  const td = DATA.trading;
+  const phaseColors = td.map(d => d.phase === 1 ? THEME.countries.Japan : d.phase === 2 ? THEME.countries.Korea : THEME.accent);
+
+  const traces = [
+    {
+      name: t('volume'),
+      x: td.map(d => d.year), y: td.map(d => d.volume_mt),
+      type: 'bar',
+      marker: { color: phaseColors, opacity: 0.8 },
+      yaxis: 'y'
+    },
+    {
+      name: t('priceKRW'),
+      x: td.map(d => d.year), y: td.map(d => d.avg_price_krw),
+      type: 'scatter', mode: 'lines+markers',
+      line: { color: THEME.gold, width: 3 },
+      marker: { size: 8, color: THEME.gold },
+      yaxis: 'y2'
+    }
+  ];
+
+  const layout = darkLayout(t('chartTrading'), {
+    yaxis: { title: 'Mt', gridcolor: THEME.border, tickfont: { color: THEME.muted } },
+    yaxis2: {
+      title: '\u20A9/t', overlaying: 'y', side: 'right',
+      gridcolor: 'transparent', tickfont: { color: THEME.gold, size: 11 },
+      titlefont: { color: THEME.gold }
+    },
+    legend: { orientation: 'h', y: -0.15, font: { color: THEME.muted } },
+    margin: { l: 50, r: 70, t: 50, b: 60 },
+    shapes: [
+      { type: 'rect', x0: 2017.5, x1: 2020.5, y0: 0, y1: 1, yref: 'paper', fillcolor: THEME.countries.Korea, opacity: 0.06, line: { width: 0 } },
+      { type: 'line', x0: 2017.5, x1: 2017.5, y0: 0, y1: 1, yref: 'paper', line: { color: THEME.countries.Korea, width: 1.5, dash: 'dash' } }
+    ],
+    annotations: [
+      { x: 2019, y: 1.05, yref: 'paper', text: {en:'Phase 2: Banking Restriction',ja:'Phase 2: 繰越制限',ko:'2차: 이월 제한',zh:'第二阶段: 结转限制'}[getLang()]||'Phase 2: Banking Restriction', showarrow: false, font: { color: THEME.countries.Korea, size: 11 } }
+    ]
+  });
+
+  Plotly.newPlot('trading-chart', traces, layout, plotlyConfig);
+}
+
+// === SIMULATOR ===
+function updateSimulator() {
+  if (!DATA) return;
+  const ns = parseInt(document.getElementById('ns-slider').value);
+  document.getElementById('ns-value').textContent = ns.toLocaleString();
+
+  const sim = DATA.simulator;
+  // Korea Year 1
+  const kr1_calc = ns * sim.korea.year1_multiplier;
+  const kr1 = Math.max(kr1_calc, sim.korea.year1_min);
+  const kr1_min = kr1_calc < sim.korea.year1_min;
+  // Korea Year 2
+  const kr2_calc = ns * sim.korea.year2_multiplier;
+  const kr2 = Math.max(kr2_calc, sim.korea.year2_min);
+  const kr2_min = kr2_calc < sim.korea.year2_min;
+  // China
+  const cn = sim.china.base + ns * sim.china.multiplier;
+
+  document.getElementById('sim-results').innerHTML = `
+    <div class="sim-card" style="border-color:${THEME.countries.Korea}33;">
+      <div class="sim-label" style="color:${THEME.countries.Korea};">\u{1F1F0}\u{1F1F7} Korea ${t('simYear1')}</div>
+      <div class="sim-value">${kr1.toLocaleString()}</div>
+      <div class="sim-note">${kr1_min ? '\u26A0 ' + t('simMinGuarantee') : 'NS \u00D7 5 = ' + kr1_calc.toLocaleString()}</div>
+    </div>
+    <div class="sim-card" style="border-color:${THEME.countries.Korea}33;">
+      <div class="sim-label" style="color:${THEME.countries.Korea};">\u{1F1F0}\u{1F1F7} Korea ${t('simYear2')}</div>
+      <div class="sim-value">${kr2.toLocaleString()}</div>
+      <div class="sim-note">${kr2_min ? '\u26A0 ' + t('simMinGuarantee') : 'NS \u00D7 5 = ' + kr2_calc.toLocaleString()}</div>
+    </div>
+    <div class="sim-card" style="border-color:${THEME.countries.China}33;">
+      <div class="sim-label" style="color:${THEME.countries.China};">\u{1F1E8}\u{1F1F3} China</div>
+      <div class="sim-value">${cn.toLocaleString()}</div>
+      <div class="sim-note">100K + NS \u00D7 1.5 = ${cn.toLocaleString()}</div>
+    </div>
+    <div class="sim-card" style="border-color:${THEME.countries.EU}33;">
+      <div class="sim-label" style="color:${THEME.countries.EU};">\u{1F1EA}\u{1F1FA} EU</div>
+      <div class="sim-value">\u221E</div>
+      <div class="sim-note">${{en:'Unlimited banking',ja:'無制限繰越',ko:'무제한 이월',zh:'无限制结转'}[getLang()]||'Unlimited banking'}</div>
+    </div>
+  `;
+}
+
+// === CHART 3: Country Comparison (horizontal bar) ===
+function renderCountryCompare() {
+  if (!DATA) return;
+  const c = DATA.countries;
+  const countries = ['EU', 'Korea', 'China', 'Japan'];
+  const colors = countries.map(k => THEME.countries[k]);
+
+  const traces = [
+    {
+      name: t('banking') + ' ' + t('restriction'),
+      y: countries, x: countries.map(k => c[k].strictness),
+      type: 'bar', orientation: 'h',
+      marker: { color: colors.map(c => c + 'cc') },
+      text: countries.map(k => L(c[k].banking)),
+      textposition: 'inside',
+      textfont: { color: '#fff', size: 12 },
+      hovertemplate: '<b>%{y}</b><br>%{text}<br>Strictness: %{x}/100<extra></extra>'
+    }
+  ];
+
+  const layout = darkLayout(t('chartCountryCompare'), {
+    xaxis: { title: {en:'Strictness →',ja:'厳格度 →',ko:'엄격도 →',zh:'严格度 →'}[getLang()]||'Strictness →', range: [0, 100], gridcolor: THEME.border, tickfont: { color: THEME.muted } },
+    yaxis: { tickfont: { color: THEME.muted, size: 13 }, automargin: true },
+    showlegend: false,
+    height: 320,
+    margin: { l: 80, r: 30, t: 50, b: 50 },
+    annotations: [
+      { x: 85, y: 'EU', text: {en:'MSR controls supply',ja:'MSRが供給制御',ko:'MSR 공급 제어',zh:'MSR控制供应'}[getLang()]||'MSR controls supply', showarrow: false, font: { color: THEME.dimmed, size: 10 } }
+    ]
+  });
+
+  Plotly.newPlot('country-compare-chart', traces, layout, plotlyConfig);
+}
+
+// === COMPARISON TABLE ===
+function renderTable() {
+  if (!DATA) return;
+  const c = DATA.countries;
+  const countries = ['EU', 'Korea', 'China', 'Japan'];
+  const colors = countries.map(k => THEME.countries[k]);
+  const metrics = [
+    { key: 'banking', label: t('banking') },
+    { key: 'banking_detail', label: t('restriction') },
+    { key: 'borrowing', label: t('borrowing') },
+    { key: 'offset', label: t('offset') },
+    { key: 'stabilization', label: t('stabilization') }
+  ];
+
+  let html = '<thead><tr><th>' + t('metric') + '</th>';
+  countries.forEach((k, i) => {
+    html += `<th><span class="country-badge" style="background:${colors[i]}">${COUNTRY_FLAGS[k]} ${k}</span></th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  metrics.forEach(m => {
+    html += `<tr><td style="font-weight:600;color:${THEME.accent}">${m.label}</td>`;
+    countries.forEach(k => { html += `<td>${L(c[k][m.key])}</td>`; });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  document.getElementById('banking-table').innerHTML = html;
+}
+
+// === INSIGHTS ===
+const INSIGHTS = {
+  en: [
+    '<strong>Korea\'s Evolution</strong>: Phase 1 (unlimited banking + 100% free allocation) killed market liquidity. The net-sales-based restriction (Phase 2+) forced trading, and the June 2025 expansion from NS\u00D73 to NS\u00D75 further increased flexibility while maintaining the sell-to-bank incentive.',
+    '<strong>China\'s Innovation</strong>: Trade-linked banking (Base 100K + NS \u00D7 1.5) creates a "sell more, bank more" incentive. Borrowing was abolished in 2023 after temporary use in 2021-2022. In Aug 2025, China announced a historic shift toward absolute emissions caps.',
+    '<strong>EU\'s Approach</strong>: Unlimited banking works when combined with MSR (Market Stability Reserve) which automatically absorbs excess supply. The key is indirect control rather than direct limits.',
+    '<strong>Japan\'s Entry</strong>: GX-ETS Phase 2 (mandatory from 2026) adopted unlimited banking with no borrowing \u2014 similar to the EU model. A price floor/ceiling mechanism will provide additional stability.'
+  ],
+  ja: [
+    '<strong>\u97D3\u56FD\u306E\u9032\u5316</strong>: Phase 1\uFF08\u7121\u5236\u9650\u7E70\u8D8A + \u7121\u511F\u5272\u5F53100%\uFF09\u306F\u5E02\u5834\u306E\u6D41\u52D5\u6027\u3092\u6BBA\u3057\u305F\u3002\u7D14\u58F2\u6E21\u91CF\u57FA\u6E96\uFF08Phase 2+\uFF09\u304C\u53D6\u5F15\u3092\u4FC3\u3057\u30012025\u5E746\u6708\u306BNS\u00D73\u304B\u3089NS\u00D75\u3078\u62E1\u5927\u3002\u58F2\u5374\u30A4\u30F3\u30BB\u30F3\u30C6\u30A3\u30D6\u3092\u7DAD\u6301\u3057\u3064\u3064\u67D4\u8EDF\u6027\u3092\u5411\u4E0A\u3002',
+    '<strong>\u4E2D\u56FD\u306E\u9769\u65B0</strong>: \u53D6\u5F15\u9023\u52D5\u578B\uFF08\u57FA\u790E10\u4E07 + NS \u00D7 1.5\uFF09\u306F\u300C\u58F2\u308C\u3070\u58F2\u308B\u307B\u3069\u7E70\u8D8A\u3067\u304D\u308B\u300D\u30A4\u30F3\u30BB\u30F3\u30C6\u30A3\u30D6\u3092\u751F\u307F\u51FA\u3057\u305F\u3002\u501F\u5165\u306F2023\u5E74\u306B\u5EC3\u6B62\u30022025\u5E748\u6708\u3001\u7D76\u5BFE\u30AD\u30E3\u30C3\u30D7\u3078\u306E\u6B74\u53F2\u7684\u8EE2\u63DB\u3092\u767A\u8868\u3002',
+    '<strong>EU\u306E\u30A2\u30D7\u30ED\u30FC\u30C1</strong>: \u7121\u5236\u9650\u30D0\u30F3\u30AD\u30F3\u30B0\u306FMSR\uFF08\u5E02\u5834\u5B89\u5B9A\u5316\u30EA\u30B6\u30FC\u30D6\uFF09\u3068\u7D44\u307F\u5408\u308F\u305B\u308B\u3053\u3068\u3067\u6A5F\u80FD\u3002\u904E\u5270\u4F9B\u7D66\u3092\u81EA\u52D5\u5438\u53CE\u3059\u308B\u9593\u63A5\u7684\u306A\u5236\u5FA1\u304C\u9375\u3002',
+    '<strong>\u65E5\u672C\u306E\u53C2\u5165</strong>: GX-ETS Phase 2\uFF082026\u5E74\u7FA9\u52D9\u5316\uFF09\u306F\u7121\u5236\u9650\u7E70\u8D8A\u30FB\u501F\u5165\u7981\u6B62\u3092\u63A1\u7528 \u2014 EU\u30E2\u30C7\u30EB\u306B\u8FD1\u3044\u3002\u4FA1\u683C\u4E0A\u4E0B\u9650\u5236\u5EA6\u304C\u8FFD\u52A0\u306E\u5B89\u5B9A\u6027\u3092\u63D0\u4F9B\u3002'
+  ],
+  ko: [
+    '<strong>\uD55C\uAD6D\uC758 \uC9C4\uD654</strong>: 1\uCC28(\uBB34\uC81C\uD55C \uC774\uC6D4 + \uBB34\uC0C1\uD560\uB2F9 100%)\uB294 \uC2DC\uC7A5 \uC720\uB3D9\uC131\uC744 \uC8FD\uC600\uB2E4. \uC21C\uB9E4\uB3C4\uB7C9 \uAE30\uC900(2\uCC28+)\uC774 \uAC70\uB798\uB97C \uCD09\uC9C4\uD588\uACE0, 2025\uB144 6\uC6D4 NS\u00D73\u2192NS\u00D75 \uD655\uB300\uB85C \uC720\uC5F0\uC131 \uD5A5\uC0C1. \uB9E4\uB3C4 \uC778\uC13C\uD2F0\uBE0C\uB294 \uC720\uC9C0.',
+    '<strong>\uC911\uAD6D\uC758 \uD601\uC2E0</strong>: \uAC70\uB798\uC5F0\uB3D9\uD615(\uAE30\uCD08 10\uB9CC + NS \u00D7 1.5)\uC740 "\uB9CE\uC774 \uD314\uC218\uB85D \uB9CE\uC774 \uC774\uC6D4" \uC778\uC13C\uD2F0\uBE0C\uB97C \uCC3D\uCD9C. \uCC28\uC785\uC740 2023\uB144 \uD3D0\uC9C0. 2025\uB144 8\uC6D4, \uC808\uB300\uCE21 \uCE21\uC73C\uB85C\uC758 \uC5ED\uC0AC\uC801 \uC804\uD658 \uBC1C\uD45C.',
+    '<strong>EU\uC758 \uC811\uADFC\uBC95</strong>: MSR(\uC2DC\uC7A5\uC548\uC815\uD654\uB9AC\uC800\uBE0C)\uC640 \uACB0\uD569\uD558\uBA74 \uBB34\uC81C\uD55C \uC774\uC6D4\uB3C4 \uC791\uB3D9. \uACFC\uC7C9\uACF5\uAE09\uC744 \uC790\uB3D9 \uD761\uC218\uD558\uB294 \uAC04\uC811 \uD1B5\uC81C\uAC00 \uD575\uC2EC.',
+    '<strong>\uC77C\uBCF8\uC758 \uCC38\uC5EC</strong>: GX-ETS 2\uCC28(2026\uB144 \uC758\uBB34\uD654)\uB294 \uBB34\uC81C\uD55C \uC774\uC6D4\u00B7\uCC28\uC785 \uAE08\uC9C0\uB97C \uCC44\uD0DD \u2014 EU \uBAA8\uB378\uACFC \uC720\uC0AC. \uAC00\uACA9 \uC0C1\uD558\uD55C\uC81C\uAC00 \uCD94\uAC00 \uC548\uC815\uC131 \uC81C\uACF5.'
+  ],
+  zh: [
+    '<strong>\u97E9\u56FD\u7684\u8FDB\u5316</strong>\uFF1A\u7B2C\u4E00\u9636\u6BB5\uFF08\u65E0\u9650\u7ED3\u8F6C + \u514D\u8D39\u5206\u914D100%\uFF09\u626B\u706D\u4E86\u5E02\u573A\u6D41\u52A8\u6027\u3002\u51C0\u5356\u51FA\u91CF\u57FA\u51C6\uFF08\u7B2C\u4E8C\u9636\u6BB5+\uFF09\u4FC3\u8FDB\u4E86\u4EA4\u6613\uFF0C2025\u5E746\u6708\u4ECENS\u00D73\u6269\u5927\u81F3NS\u00D75\uFF0C\u7EF4\u6301\u5356\u51FA\u6FC0\u52B1\u7684\u540C\u65F6\u63D0\u9AD8\u7075\u6D3B\u6027\u3002',
+    '<strong>\u4E2D\u56FD\u7684\u521B\u65B0</strong>\uFF1A\u4EA4\u6613\u8054\u52A8\u578B\uFF08\u57FA\u784010\u4E07 + NS \u00D7 1.5\uFF09\u521B\u9020\u4E86\u201C\u5356\u5F97\u8D8A\u591A\uFF0C\u7ED3\u8F6C\u8D8A\u591A\u201D\u7684\u6FC0\u52B1\u3002\u501F\u5165\u4E8E2023\u5E74\u5E9F\u6B62\u30022025\u5E748\u6708\uFF0C\u53D1\u5E03\u5411\u7EDD\u5BF9\u6392\u653E\u4E0A\u9650\u8F6C\u578B\u7684\u5386\u53F2\u6027\u6307\u5BFC\u610F\u89C1\u3002',
+    '<strong>EU\u7684\u65B9\u6CD5</strong>\uFF1A\u65E0\u9650\u7ED3\u8F6C\u4E0EMSR\uFF08\u5E02\u573A\u7A33\u5B9A\u50A8\u5907\uFF09\u7ED3\u5408\u65F6\u53EF\u4EE5\u53D1\u6325\u4F5C\u7528\u3002\u81EA\u52A8\u5438\u6536\u8FC7\u5269\u4F9B\u5E94\u7684\u95F4\u63A5\u63A7\u5236\u662F\u5173\u952E\u3002',
+    '<strong>\u65E5\u672C\u7684\u53C2\u4E0E</strong>\uFF1AGX-ETS\u7B2C\u4E8C\u9636\u6BB5(2026\u5E74\u4E49\u52A1\u5316)\u91C7\u7528\u65E0\u9650\u7ED3\u8F6C\u3001\u7981\u6B62\u501F\u5165 \u2014 \u4E0EEU\u6A21\u5F0F\u76F8\u4F3C\u3002\u4EF7\u683C\u4E0A\u4E0B\u9650\u5236\u5EA6\u63D0\u4F9B\u989D\u5916\u7A33\u5B9A\u6027\u3002'
+  ]
+};
+
+function renderInsights() {
+  const tx = INSIGHTS[getLang()] || INSIGHTS.en;
+  document.getElementById('insights-box').innerHTML =
+    `<h3>${t('bankingInsights')}</h3>` + tx.map(p => `<p>${p}</p>`).join('');
+}
+
+// === RENDER ALL ===
+function renderAll() {
+  renderCards();
+  renderPhaseEvo();
+  renderTrading();
+  updateSimulator();
+  renderCountryCompare();
+  renderTable();
+  renderInsights();
+}
+
+// === LOAD & INIT ===
+fetch('data/banking.json')
+  .then(r => r.json())
+  .then(data => {
+    DATA = data;
+    renderAll();
+  })
+  .catch(err => console.error('Failed to load banking data:', err));
+
+document.getElementById('ns-slider').addEventListener('input', updateSimulator);
+window.addEventListener('langchange', renderAll);
+document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+</script>
+</body>
+</html>

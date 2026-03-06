@@ -1,0 +1,192 @@
+{
+  "phases": [
+    {
+      "phase": "Phase 1",
+      "period": "2015-2017",
+      "restriction": { "en": "Unlimited", "ja": "無制限", "ko": "무제한", "zh": "无限制" },
+      "free_pct": 100,
+      "auction_pct": 0,
+      "avg_price_krw": 16355,
+      "avg_price_usd": 14,
+      "total_volume_mt": 86.2,
+      "entities": 525,
+      "bm_sectors": 3
+    },
+    {
+      "phase": "Phase 2",
+      "period": "2018-2020",
+      "restriction": { "en": "Net Sales Based", "ja": "純売渡量基準", "ko": "순매도량 기준", "zh": "净卖出量基准" },
+      "free_pct": 97,
+      "auction_pct": 3,
+      "avg_price_krw": 26990,
+      "avg_price_usd": 23,
+      "total_volume_mt": 130.5,
+      "entities": 610,
+      "bm_sectors": 7
+    },
+    {
+      "phase": "Phase 3",
+      "period": "2021-2025",
+      "restriction": { "en": "Net Sales Based", "ja": "純売渡量基準", "ko": "순매도량 기준", "zh": "净卖出量基准" },
+      "free_pct": 90,
+      "auction_pct": 10,
+      "avg_price_krw": 22670,
+      "avg_price_usd": 17,
+      "total_volume_mt": 101.0,
+      "entities": 690,
+      "bm_sectors": 12
+    },
+    {
+      "phase": "Phase 4",
+      "period": "2026-2030",
+      "restriction": { "en": "TBD (Strengthened)", "ja": "未定（強化予定）", "ko": "미정 (강화 예정)", "zh": "待定（强化）" },
+      "free_pct": 80,
+      "auction_pct": 20,
+      "avg_price_krw": null,
+      "avg_price_usd": null,
+      "total_volume_mt": null,
+      "entities": 700,
+      "bm_sectors": 15
+    }
+  ],
+  "trading": [
+    { "year": 2015, "volume_mt": 5.7, "avg_price_krw": 11007, "phase": 1 },
+    { "year": 2016, "volume_mt": 11.9, "avg_price_krw": 17179, "phase": 1 },
+    { "year": 2017, "volume_mt": 29.3, "avg_price_krw": 20879, "phase": 1 },
+    { "year": 2018, "volume_mt": 47.5, "avg_price_krw": 22118, "phase": 2 },
+    { "year": 2019, "volume_mt": 38.5, "avg_price_krw": 28440, "phase": 2 },
+    { "year": 2020, "volume_mt": 44.5, "avg_price_krw": 30411, "phase": 2 },
+    { "year": 2021, "volume_mt": 52.3, "avg_price_krw": 21895, "phase": 3 },
+    { "year": 2022, "volume_mt": 48.7, "avg_price_krw": 23450, "phase": 3 }
+  ],
+  "countries": {
+    "EU": {
+      "banking": { "en": "Unlimited", "ja": "無制限", "ko": "무제한", "zh": "无限制" },
+      "banking_detail": {
+        "en": "No restriction since 2008",
+        "ja": "2008年以降制限なし",
+        "ko": "2008년 이후 제한 없음",
+        "zh": "2008年以来无限制"
+      },
+      "borrowing": {
+        "en": "Not allowed",
+        "ja": "禁止",
+        "ko": "불허",
+        "zh": "不允许"
+      },
+      "offset": {
+        "en": "Not allowed (Phase 4)",
+        "ja": "禁止（Phase 4）",
+        "ko": "불허 (Phase 4)",
+        "zh": "不允许（第四阶段）"
+      },
+      "stabilization": {
+        "en": "MSR (Market Stability Reserve)",
+        "ja": "MSR（市場安定化リザーブ）",
+        "ko": "MSR (시장안정화준비금)",
+        "zh": "MSR（市场稳定储备）"
+      },
+      "price_usd": 79,
+      "strictness": 20
+    },
+    "Korea": {
+      "banking": { "en": "Net Sales Based", "ja": "純売渡量基準", "ko": "순매도량 기준", "zh": "净卖出量基准" },
+      "banking_detail": {
+        "en": "NS × 5 (from June 2025; was ×3)",
+        "ja": "NS × 5（2025年6月〜、旧×3）",
+        "ko": "NS × 5 (2025년 6월~, 구 ×3)",
+        "zh": "NS × 5（2025年6月起，原×3）"
+      },
+      "borrowing": {
+        "en": "10% of allocation",
+        "ja": "割当量の10%",
+        "ko": "할당량의 10%",
+        "zh": "配额的10%"
+      },
+      "offset": {
+        "en": "5% (domestic KOC only)",
+        "ja": "5%（国内KOCのみ）",
+        "ko": "5% (국내 KOC 한정)",
+        "zh": "5%（仅限国内KOC）"
+      },
+      "stabilization": {
+        "en": "K-MSR (Phase 4)",
+        "ja": "K-MSR（Phase 4）",
+        "ko": "K-MSR (4차 계획기간)",
+        "zh": "K-MSR（第四阶段）"
+      },
+      "price_usd": 8,
+      "strictness": 50
+    },
+    "China": {
+      "banking": { "en": "Trade-Linked", "ja": "取引連動型", "ko": "거래연동형", "zh": "交易联动型" },
+      "banking_detail": {
+        "en": "Base 100K + NS × 1.5 (2024-2025)",
+        "ja": "基礎10万 + NS × 1.5（2024-2025）",
+        "ko": "기초 10만 + NS × 1.5 (2024-2025)",
+        "zh": "基础10万 + NS × 1.5（2024-2025）"
+      },
+      "borrowing": {
+        "en": "Abolished since 2023 (was allowed 2021-2022)",
+        "ja": "2023年に廃止（2021-2022年は許可）",
+        "ko": "2023년 폐지 (2021-2022년 허용)",
+        "zh": "2023年废除（2021-2022年曾允许）"
+      },
+      "offset": {
+        "en": "5% (CCER, relaunched 2024)",
+        "ja": "5%（CCER、2024年再開）",
+        "ko": "5% (CCER, 2024년 재개)",
+        "zh": "5%（CCER，2024年重启）"
+      },
+      "stabilization": {
+        "en": "Gov adjusts allocation ±20%",
+        "ja": "政府が配分量を±20%調整",
+        "ko": "정부가 할당량 ±20% 조정",
+        "zh": "政府调整配额±20%"
+      },
+      "price_usd": 11,
+      "strictness": 70
+    },
+    "Japan": {
+      "banking": { "en": "Unlimited", "ja": "無制限", "ko": "무제한", "zh": "无限制" },
+      "banking_detail": {
+        "en": "Indefinite carryover (Phase 2, 2026~)",
+        "ja": "無期限繰越（Phase 2、2026年〜）",
+        "ko": "무기한 이월 (2차, 2026년~)",
+        "zh": "无期限结转（第二阶段，2026~）"
+      },
+      "borrowing": {
+        "en": "Not allowed",
+        "ja": "不許可",
+        "ko": "불허",
+        "zh": "不允许"
+      },
+      "offset": {
+        "en": "J-Credit / JCM",
+        "ja": "J-クレジット / JCM",
+        "ko": "J-Credit / JCM",
+        "zh": "J-Credit / JCM"
+      },
+      "stabilization": {
+        "en": "Price floor & ceiling (from 2026)",
+        "ja": "価格上下限制度（2026年〜）",
+        "ko": "가격 상하한제 (2026년~)",
+        "zh": "价格上下限制度（2026年起）"
+      },
+      "price_usd": 0,
+      "strictness": 15
+    }
+  },
+  "simulator": {
+    "korea": {
+      "year1_multiplier": 5,
+      "year1_min": 75000,
+      "year2_multiplier": 5,
+      "year2_min": 50000
+    },
+    "china": {
+      "base": 100000,
+      "multiplier": 1.5
+    }
+  }
+}
