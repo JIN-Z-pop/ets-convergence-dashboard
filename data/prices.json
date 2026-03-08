@@ -3,7 +3,7 @@
     {
       "year": "2021",
       "avg_price": 46.61,
-      "max_price": 58.7,
+      "max_price": 62.29,
       "min_price": 41.46,
       "total_volume": 178627350.0
     },
@@ -11,34 +11,34 @@
       "year": "2022",
       "avg_price": 57.96,
       "max_price": 60.0,
-      "min_price": 55.0,
+      "min_price": 53.0,
       "total_volume": 38093223.0
     },
     {
       "year": "2023",
       "avg_price": 69.04,
-      "max_price": 81.67,
+      "max_price": 82.79,
       "min_price": 57.0,
       "total_volume": 206267029.0
     },
     {
       "year": "2024",
       "avg_price": 96.31,
-      "max_price": 105.65,
-      "min_price": 86.86,
+      "max_price": 106.02,
+      "min_price": 86.65,
       "total_volume": 172150625.0
     },
     {
       "year": "2025",
       "avg_price": 66.87,
-      "max_price": 76.9,
-      "min_price": 51.24,
+      "max_price": 77.2,
+      "min_price": 50.34,
       "total_volume": 184822127.0
     },
     {
       "year": "2026",
       "avg_price": 78.63,
-      "max_price": 81.79,
+      "max_price": 83.4,
       "min_price": 72.5,
       "total_volume": 8998775.0
     }
@@ -46,87 +46,87 @@
   "korea_krw": [
     {
       "year": "2015",
-      "avg_price": 9145.0,
-      "max_price": 13700,
+      "avg_price": 8754.0,
+      "max_price": 12000,
       "min_price": 7860,
-      "trading_days": 911
+      "trading_days": 726
     },
     {
       "year": "2016",
-      "avg_price": 14242.0,
+      "avg_price": 11827.0,
       "max_price": 21000,
       "min_price": 7880,
-      "trading_days": 1123
+      "trading_days": 613
     },
     {
       "year": "2017",
-      "avg_price": 20845.0,
+      "avg_price": 20925.0,
       "max_price": 28000,
       "min_price": 7880,
-      "trading_days": 910
+      "trading_days": 365
     },
     {
       "year": "2018",
-      "avg_price": 22752.0,
+      "avg_price": 22753.0,
       "max_price": 28000,
       "min_price": 20000,
-      "trading_days": 989
+      "trading_days": 466
     },
     {
       "year": "2019",
-      "avg_price": 28159.0,
+      "avg_price": 28888.0,
       "max_price": 40900,
-      "min_price": 21800,
-      "trading_days": 1178
+      "min_price": 23200,
+      "trading_days": 676
     },
     {
       "year": "2020",
-      "avg_price": 32853.0,
+      "avg_price": 31109.0,
       "max_price": 42500,
       "min_price": 15000,
-      "trading_days": 846
+      "trading_days": 423
     },
     {
       "year": "2021",
-      "avg_price": 22697.0,
+      "avg_price": 22351.0,
       "max_price": 35350,
       "min_price": 10500,
-      "trading_days": 1945
+      "trading_days": 1392
     },
     {
       "year": "2022",
-      "avg_price": 23930.0,
-      "max_price": 35500,
-      "min_price": 11250,
-      "trading_days": 2156
+      "avg_price": 23440.0,
+      "max_price": 35400,
+      "min_price": 12050,
+      "trading_days": 1135
     },
     {
       "year": "2023",
-      "avg_price": 11791.0,
-      "max_price": 21000,
-      "min_price": 5850,
-      "trading_days": 1740
+      "avg_price": 11852.0,
+      "max_price": 16800,
+      "min_price": 7020,
+      "trading_days": 902
     },
     {
       "year": "2024",
-      "avg_price": 11737.0,
-      "max_price": 16000,
-      "min_price": 7500,
-      "trading_days": 3205
+      "avg_price": 9245.0,
+      "max_price": 12550,
+      "min_price": 8030,
+      "trading_days": 655
     },
     {
       "year": "2025",
-      "avg_price": 11594.0,
-      "max_price": 15450,
+      "avg_price": 9318.0,
+      "max_price": 11000,
       "min_price": 8130,
-      "trading_days": 3416
+      "trading_days": 404
     },
     {
       "year": "2026",
-      "avg_price": 11823.0,
-      "max_price": 15450,
-      "min_price": 9300,
-      "trading_days": 880
+      "avg_price": 11443.0,
+      "max_price": 13750,
+      "min_price": 10250,
+      "trading_days": 240
     }
   ],
   "eu_eur": [
