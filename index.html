@@ -62,10 +62,10 @@ let PRICES = null;
 
 // === KPI CARDS ===
 const KPI = [
-  { country: 'EU', flag: '\u{1F1EA}\u{1F1FA}', price: '\u20AC72/t', priceUsd: '~$79/t', coverage: '40%', entities: '~11,000', since: '2005', color: THEME.countries.EU },
-  { country: 'Korea', flag: '\u{1F1F0}\u{1F1F7}', price: '\u20A911,443/t', priceUsd: '~$8/t', coverage: '68%', entities: '~680', since: '2015', color: THEME.countries.Korea },
-  { country: 'China', flag: '\u{1F1E8}\u{1F1F3}', price: '\u00A578.6/t', priceUsd: '~$11/t', coverage: '60%', entities: '~3,500', since: '2021', color: THEME.countries.China },
-  { country: 'Japan', flag: '\u{1F1EF}\u{1F1F5}', price: 'GX-ETS', priceUsd: 'N/A', coverage: '60%*', entities: '~747', since: '2023', color: THEME.countries.Japan },
+  { country: 'EU', flag: '\u{1F1EA}\u{1F1FA}', price: '\u20AC72/t', priceUsd: '~$79/t', priceYear: '2026', coverage: '40%', entities: '~11,000', since: '2005', color: THEME.countries.EU },
+  { country: 'Korea', flag: '\u{1F1F0}\u{1F1F7}', price: '\u20A911,443/t', priceUsd: '~$8/t', priceYear: '2026', coverage: '68%', entities: '~680', since: '2015', color: THEME.countries.Korea },
+  { country: 'China', flag: '\u{1F1E8}\u{1F1F3}', price: '\u00A578.6/t', priceUsd: '~$11/t', priceYear: '2026', coverage: '60%', entities: '~3,500', since: '2021', color: THEME.countries.China },
+  { country: 'Japan', flag: '\u{1F1EF}\u{1F1F5}', price: 'GX-ETS', priceUsd: 'N/A', priceYear: '', coverage: '60%*', entities: '~747', since: '2023', color: THEME.countries.Japan },
 ];
 
 function renderCards() {
@@ -76,7 +76,7 @@ function renderCards() {
       <div class="country-flag">${k.flag}</div>
       <div class="country-name" style="color:${k.color}">${k.country}</div>
       <div class="value" style="color:${k.color}">${k.price}</div>
-      <div class="sub">${k.priceUsd}</div>
+      <div class="sub">${k.priceUsd}${k.priceYear ? ` (${k.priceYear} avg)` : ''}</div>
       <div style="display:flex;justify-content:space-around;margin-top:14px;font-size:0.82em;color:${THEME.muted};gap:8px">
         <div><div style="font-weight:600;color:${THEME.text};font-size:1.1em">${k.coverage}</div>${labels.coverage}</div>
         <div><div style="font-weight:600;color:${THEME.text};font-size:1.1em">${k.entities}</div>${labels.entities}</div>
