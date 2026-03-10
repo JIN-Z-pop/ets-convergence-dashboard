@@ -1,16 +1,19 @@
-"""Export data from ETS database (SQLite) to JSON for dashboard pages."""
+"""Export ETS data from SQLite database to JSON for dashboard pages."""
 import sqlite3
 import json
 import os
 from pathlib import Path
 
-DB_PATH = Path.home() / ".claude" / "databases" / "ets_data.db"
+DB_PATH = Path(os.environ.get("ETS_DB_PATH", "ets_data.db"))
 OUT_DIR = Path(__file__).resolve().parent.parent / "data"
+
+# Fields to exclude from exported JSON (internal metadata)
+STRIP_FIELDS = {"source_id", "created_at"}
 
 def query(conn, sql):
     cur = conn.execute(sql)
     cols = [d[0] for d in cur.description]
-    return [dict(zip(cols, row)) for row in cur.fetchall()]
+    return [{k: v for k, v in zip(cols, row) if k not in STRIP_FIELDS and not k.endswith("_source_id")} for row in cur.fetchall()]
 
 def export_prices(conn):
     """Price trends for Overview page."""
@@ -137,6 +140,7 @@ def export_terminology(conn):
 def main():
     if not DB_PATH.exists():
         print(f"ERROR: Database not found at {DB_PATH}")
+        print("Set ETS_DB_PATH environment variable to your database location.")
         return
     OUT_DIR.mkdir(exist_ok=True)
     conn = sqlite3.connect(str(DB_PATH))

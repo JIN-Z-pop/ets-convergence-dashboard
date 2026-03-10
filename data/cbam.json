@@ -8,9 +8,7 @@
     "impact_level": "high",
     "korea_impact": null,
     "china_impact": null,
-    "source_id": 949,
-    "notes": null,
-    "created_at": "2026-03-04 04:30:28"
+    "notes": null
   },
   {
     "id": 2,
@@ -21,9 +19,7 @@
     "impact_level": "high",
     "korea_impact": null,
     "china_impact": null,
-    "source_id": 949,
-    "notes": null,
-    "created_at": "2026-03-04 04:30:28"
+    "notes": null
   },
   {
     "id": 3,
@@ -34,9 +30,7 @@
     "impact_level": "medium",
     "korea_impact": null,
     "china_impact": null,
-    "source_id": 949,
-    "notes": null,
-    "created_at": "2026-03-04 04:30:28"
+    "notes": null
   },
   {
     "id": 4,
@@ -47,9 +41,7 @@
     "impact_level": "high",
     "korea_impact": null,
     "china_impact": null,
-    "source_id": 949,
-    "notes": null,
-    "created_at": "2026-03-04 04:30:28"
+    "notes": null
   },
   {
     "id": 5,
@@ -60,9 +52,7 @@
     "impact_level": "high",
     "korea_impact": "警戒開始",
     "china_impact": "影響限定的",
-    "source_id": 1625,
-    "notes": null,
-    "created_at": "2026-03-04 04:30:28"
+    "notes": null
   },
   {
     "id": 6,
@@ -73,9 +63,7 @@
     "impact_level": "high",
     "korea_impact": "報告義務。韓国ETS方式でほぼ対応可",
     "china_impact": "中国企業にも報告義務",
-    "source_id": 1624,
-    "notes": "#1624 ガイドライン",
-    "created_at": "2026-03-04 04:30:28"
+    "notes": "#1624 ガイドライン"
   },
   {
     "id": 7,
@@ -86,9 +74,7 @@
     "impact_level": "medium",
     "korea_impact": "算定方式の調整必要",
     "china_impact": "中国独自算定からの変換必要",
-    "source_id": 1584,
-    "notes": null,
-    "created_at": "2026-03-04 04:30:28"
+    "notes": null
   },
   {
     "id": 8,
@@ -99,9 +85,7 @@
     "impact_level": "critical",
     "korea_impact": "鉄鋼業界: 年間1,910億ウォン(BAU)",
     "china_impact": "鋼鉄・アルミ・セメント輸出に影響",
-    "source_id": 1625,
-    "notes": "#1625 30文書統合分析",
-    "created_at": "2026-03-04 04:30:28"
+    "notes": "#1625 30文書統合分析"
   },
   {
     "id": 9,
@@ -112,9 +96,7 @@
     "impact_level": "high",
     "korea_impact": null,
     "china_impact": null,
-    "source_id": 949,
-    "notes": null,
-    "created_at": "2026-03-04 04:30:28"
+    "notes": null
   },
   {
     "id": 10,
@@ -125,9 +107,7 @@
     "impact_level": "critical",
     "korea_impact": "韓国鉄鋼: EU-ETS価格との差額全額負担",
     "china_impact": "中国3業種: EU-ETS価格全額負担",
-    "source_id": 949,
-    "notes": "#949 Section 9.1",
-    "created_at": "2026-03-04 04:30:28"
+    "notes": "#949 Section 9.1"
   },
   {
     "id": 11,
@@ -138,8 +118,6 @@
     "impact_level": "high",
     "korea_impact": null,
     "china_impact": null,
-    "source_id": null,
-    "notes": "European Climate Law",
-    "created_at": "2026-03-04 04:30:28"
+    "notes": "European Climate Law"
   }
 ]

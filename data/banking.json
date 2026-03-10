@@ -3,7 +3,12 @@
     {
       "phase": "Phase 1",
       "period": "2015-2017",
-      "restriction": { "en": "Unlimited", "ja": "無制限", "ko": "무제한", "zh": "无限制" },
+      "restriction": {
+        "en": "Unlimited",
+        "ja": "無制限",
+        "ko": "무제한",
+        "zh": "无限制"
+      },
       "free_pct": 100,
       "auction_pct": 0,
       "avg_price_krw": 16355,
@@ -15,7 +20,12 @@
     {
       "phase": "Phase 2",
       "period": "2018-2020",
-      "restriction": { "en": "Net Sales Based", "ja": "純売渡量基準", "ko": "순매도량 기준", "zh": "净卖出量基准" },
+      "restriction": {
+        "en": "Net Sales Based",
+        "ja": "純売渡量基準",
+        "ko": "순매도량 기준",
+        "zh": "净卖出量基准"
+      },
       "free_pct": 97,
       "auction_pct": 3,
       "avg_price_krw": 26990,
@@ -27,7 +37,12 @@
     {
       "phase": "Phase 3",
       "period": "2021-2025",
-      "restriction": { "en": "Net Sales Based", "ja": "純売渡量基準", "ko": "순매도량 기준", "zh": "净卖出量基准" },
+      "restriction": {
+        "en": "Net Sales Based",
+        "ja": "純売渡量基準",
+        "ko": "순매도량 기준",
+        "zh": "净卖出量基准"
+      },
       "free_pct": 90,
       "auction_pct": 10,
       "avg_price_krw": 22670,
@@ -39,7 +54,12 @@
     {
       "phase": "Phase 4",
       "period": "2026-2030",
-      "restriction": { "en": "TBD (Strengthened)", "ja": "未定（強化予定）", "ko": "미정 (강화 예정)", "zh": "待定（强化）" },
+      "restriction": {
+        "en": "TBD (Strengthened)",
+        "ja": "未定（強化予定）",
+        "ko": "미정 (강화 예정)",
+        "zh": "待定（强化）"
+      },
       "free_pct": 80,
       "auction_pct": 20,
       "avg_price_krw": null,
@@ -50,18 +70,63 @@
     }
   ],
   "trading": [
-    { "year": 2015, "volume_mt": 5.7, "avg_price_krw": 11007, "phase": 1 },
-    { "year": 2016, "volume_mt": 11.9, "avg_price_krw": 17179, "phase": 1 },
-    { "year": 2017, "volume_mt": 29.3, "avg_price_krw": 20879, "phase": 1 },
-    { "year": 2018, "volume_mt": 47.5, "avg_price_krw": 22118, "phase": 2 },
-    { "year": 2019, "volume_mt": 38.5, "avg_price_krw": 28440, "phase": 2 },
-    { "year": 2020, "volume_mt": 44.5, "avg_price_krw": 30411, "phase": 2 },
-    { "year": 2021, "volume_mt": 52.3, "avg_price_krw": 21895, "phase": 3 },
-    { "year": 2022, "volume_mt": 48.7, "avg_price_krw": 23450, "phase": 3 }
+    {
+      "year": 2015,
+      "volume_mt": 5.7,
+      "avg_price_krw": 11007,
+      "phase": 1
+    },
+    {
+      "year": 2016,
+      "volume_mt": 11.9,
+      "avg_price_krw": 17179,
+      "phase": 1
+    },
+    {
+      "year": 2017,
+      "volume_mt": 29.3,
+      "avg_price_krw": 20879,
+      "phase": 1
+    },
+    {
+      "year": 2018,
+      "volume_mt": 47.5,
+      "avg_price_krw": 22118,
+      "phase": 2
+    },
+    {
+      "year": 2019,
+      "volume_mt": 38.5,
+      "avg_price_krw": 28440,
+      "phase": 2
+    },
+    {
+      "year": 2020,
+      "volume_mt": 44.5,
+      "avg_price_krw": 30411,
+      "phase": 2
+    },
+    {
+      "year": 2021,
+      "volume_mt": 52.3,
+      "avg_price_krw": 21895,
+      "phase": 3
+    },
+    {
+      "year": 2022,
+      "volume_mt": 48.7,
+      "avg_price_krw": 23450,
+      "phase": 3
+    }
   ],
   "countries": {
     "EU": {
-      "banking": { "en": "Unlimited", "ja": "無制限", "ko": "무제한", "zh": "无限制" },
+      "banking": {
+        "en": "Unlimited",
+        "ja": "無制限",
+        "ko": "무제한",
+        "zh": "无限制"
+      },
       "banking_detail": {
         "en": "No restriction since 2008",
         "ja": "2008年以降制限なし",
@@ -90,7 +155,12 @@
       "strictness": 20
     },
     "Korea": {
-      "banking": { "en": "Net Sales Based", "ja": "純売渡量基準", "ko": "순매도량 기준", "zh": "净卖出量基准" },
+      "banking": {
+        "en": "Net Sales Based",
+        "ja": "純売渡量基準",
+        "ko": "순매도량 기준",
+        "zh": "净卖出量基准"
+      },
       "banking_detail": {
         "en": "NS × 5 (from June 2025; was ×3)",
         "ja": "NS × 5（2025年6月〜、旧×3）",
@@ -119,7 +189,12 @@
       "strictness": 50
     },
     "China": {
-      "banking": { "en": "Trade-Linked", "ja": "取引連動型", "ko": "거래연동형", "zh": "交易联动型" },
+      "banking": {
+        "en": "Trade-Linked",
+        "ja": "取引連動型",
+        "ko": "거래연동형",
+        "zh": "交易联动型"
+      },
       "banking_detail": {
         "en": "Base 100K + NS × 1.5 (2024-2025)",
         "ja": "基礎10万 + NS × 1.5（2024-2025）",
@@ -148,7 +223,12 @@
       "strictness": 70
     },
     "Japan": {
-      "banking": { "en": "Unlimited", "ja": "無制限", "ko": "무제한", "zh": "无限制" },
+      "banking": {
+        "en": "Unlimited",
+        "ja": "無制限",
+        "ko": "무제한",
+        "zh": "无限制"
+      },
       "banking_detail": {
         "en": "Indefinite carryover (Phase 2, 2026~)",
         "ja": "無期限繰越（Phase 2、2026年〜）",

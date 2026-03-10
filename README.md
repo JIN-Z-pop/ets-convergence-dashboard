@@ -19,8 +19,7 @@
 
 ## Data Sources
 
-- **ETS database** (48 tables, ~26,300 rows): `raw_cea_daily`, `raw_kets_daily_price`, `ets_system_comparison`, `ets_allocation_typology`, `eu_ets_phases`, `japan_gx_ets_timeline`, `eu_ets_cbam_timeline`, `ets_terminology`
-- **research documents** (1,600+ items): ETS analysis, CBAM documents, convergence insights
+- SQLite database with ETS tables: `raw_cea_daily`, `raw_kets_daily_price`, `ets_system_comparison`, `ets_allocation_typology`, `eu_ets_phases`, `japan_gx_ets_timeline`, `eu_ets_cbam_timeline`, `ets_terminology`
 
 ## Tech Stack
 
@@ -33,7 +32,7 @@
 
 ```bash
 python scripts/export_data.py
-# Exports 5 JSON files to data/ from ETS database
+# Exports JSON files to data/ from the ETS database
 ```
 
 ## Related Projects
