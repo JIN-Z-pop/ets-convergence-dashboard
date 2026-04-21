@@ -21,7 +21,7 @@ const NAV_PAGES = [
   { id: 'rosetta', href: 'rosetta.html', en: 'Rosetta', ja: '\u30ED\u30BC\u30C3\u30BF', ko: '\uB85C\uC81C\uD0C0', zh: '\u7F57\u585E\u5854' }
 ];
 
-const LAST_UPDATED = '2026-04-20';
+const LAST_UPDATED = '2026-04-21';
 
 const LANG = {
   en: {

@@ -279,9 +279,9 @@
     },
     {
       "year": "2026",
-      "avg_price": 72.0,
-      "max_price": 80.0,
-      "min_price": 63.0,
+      "avg_price": 72.56,
+      "max_price": 86.63,
+      "min_price": 59.97,
       "phase": "Phase 4"
     }
   ],
