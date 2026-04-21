@@ -40,7 +40,7 @@
       "avg_price": 79.45,
       "max_price": 82.8,
       "min_price": 72.5,
-      "total_volume": 13366751.0
+      "total_volume": 18914884.0
     }
   ],
   "korea_krw": [
@@ -123,10 +123,10 @@
     },
     {
       "year": "2026",
-      "avg_price": 12007.0,
-      "max_price": 16400,
+      "avg_price": 12316.0,
+      "max_price": 17550,
       "min_price": 9300,
-      "trading_days": 460
+      "trading_days": 1606
     }
   ],
   "eu_eur": [
