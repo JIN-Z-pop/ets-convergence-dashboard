@@ -21,11 +21,14 @@ const NAV_PAGES = [
   { id: 'rosetta', href: 'rosetta.html', en: 'Rosetta', ja: '\u30ED\u30BC\u30C3\u30BF', ko: '\uB85C\uC81C\uD0C0', zh: '\u7F57\u585E\u5854' }
 ];
 
+const LAST_UPDATED = '2026-04-20';
+
 const LANG = {
   en: {
     dashTitle: 'ETS Convergence Dashboard',
     dashSub: '4-Country ETS Convergence & Divergence toward 2030',
     footer: 'JIN-Z-pop and his merry AI brothers | Plotly.js',
+    lastUpdated: 'Data as of',
     disclaimer: 'This tool is provided for research and educational purposes only. The authors make no warranties regarding accuracy, completeness, or fitness for any particular purpose, and accept no liability for any loss or damage arising from its use. Use of this tool is entirely at your own risk.',
     price: 'Price', coverage: 'Coverage', entities: 'Entities', since: 'Since',
     eu: 'EU', korea: 'Korea', china: 'China', japan: 'Japan',
@@ -96,6 +99,7 @@ const LANG = {
     dashTitle: 'ETS\u7D71\u5408\u5206\u6790\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9',
     dashSub: '4\u30AB\u56FDETS\u5236\u5EA6\u306E2030\u5E74\u306B\u5411\u3051\u305F\u7D71\u5408\u5206\u6790',
     footer: 'JIN-Z-pop and his merry AI brothers | Plotly.js',
+    lastUpdated: 'データ基準日',
     disclaimer: '本ツールは研究・教育目的で公開しています。内容の正確性・完全性・特定目的への適合性について一切保証せず、本ツールの利用により生じたいかなる損害についても責任を負いません。ご利用は利用者ご自身の責任において行ってください。',
     price: '\u4FA1\u683C', coverage: '\u30AB\u30D0\u30FC\u7387', entities: '\u5BFE\u8C61\u4F01\u696D', since: '\u958B\u59CB',
     eu: 'EU', korea: '\u97D3\u56FD', china: '\u4E2D\u56FD', japan: '\u65E5\u672C',
@@ -166,6 +170,7 @@ const LANG = {
     dashTitle: 'ETS \uC218\uB834 \uB300\uC2DC\uBCF4\uB4DC',
     dashSub: '4\uAC1C\uAD6D ETS \uC81C\uB3C4\uC758 2030\uB144 \uC218\uB834\uACFC \uBD84\uAE30',
     footer: 'JIN-Z-pop and his merry AI brothers | Plotly.js',
+    lastUpdated: '데이터 기준일',
     disclaimer: '본 도구는 연구·교육 목적으로 공개되었습니다. 정확성·완전성·특정 목적에 대한 적합성을 보증하지 않으며, 본 도구의 사용으로 인해 발생한 어떠한 손해에 대해서도 책임을 지지 않습니다. 이용은 전적으로 이용자 본인의 책임하에 이루어집니다.',
     price: '\uAC00\uACA9', coverage: '\uCEE4\uBC84\uC728', entities: '\uB300\uC0C1\uAE30\uC5C5', since: '\uC2DC\uC791',
     eu: 'EU', korea: '\uD55C\uAD6D', china: '\uC911\uAD6D', japan: '\uC77C\uBCF8',
@@ -236,6 +241,7 @@ const LANG = {
     dashTitle: 'ETS\u8D8B\u540C\u4EEA\u8868\u677F',
     dashSub: '\u56DB\u56FDETS\u5236\u5EA62030\u5E74\u8D8B\u540C\u4E0E\u5206\u6B67',
     footer: 'JIN-Z-pop and his merry AI brothers | Plotly.js',
+    lastUpdated: '数据截至',
     disclaimer: '本工具仅供研究与教育目的使用。作者不对其准确性、完整性或特定用途的适用性作任何保证，亦不对因使用本工具而产生的任何损失或损害承担责任。使用本工具的风险由用户自行承担。',
     price: '\u4EF7\u683C', coverage: '\u8986\u76D6\u7387', entities: '\u7EB3\u5165\u4F01\u4E1A', since: '\u542F\u52A8',
     eu: 'EU', korea: '\u97E9\u56FD', china: '\u4E2D\u56FD', japan: '\u65E5\u672C',
@@ -354,6 +360,9 @@ function createFooterHTML() {
     <div class="footer-rule"></div>
     <p class="footer-disclaimer" data-i18n="disclaimer">${t('disclaimer')}</p>
     <span data-i18n="footer">${t('footer')}</span>
+    <span class="footer-updated" style="margin-left:12px;color:var(--muted);font-size:0.85em;">
+      <span data-i18n="lastUpdated">${t('lastUpdated')}</span>: ${LAST_UPDATED}
+    </span>
   </footer>`;
 }
 
