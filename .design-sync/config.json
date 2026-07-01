@@ -1,0 +1,25 @@
+{
+  "projectId": "3f0bbfa9-57a0-46ed-8176-1ddb1ba51822",
+  "pkg": "ets-editorial",
+  "globalName": "EtsEditorial",
+  "shape": "package",
+  "buildCmd": "npm --prefix design-system run build",
+  "cssEntry": "src/styles.css",
+  "docsDir": "docs",
+  "guidelinesGlob": [],
+  "readmeHeader": ".design-sync/conventions.md",
+  "provider": { "component": "Page" },
+  "overrides": {
+    "Page": { "cardMode": "column" },
+    "TopNav": { "cardMode": "column" },
+    "PageHeader": { "cardMode": "column" },
+    "Timeline": { "cardMode": "column" },
+    "TwoWorlds": { "cardMode": "column" },
+    "DataTable": { "cardMode": "column" },
+    "CardsGrid": { "cardMode": "column" },
+    "ChartFrame": { "cardMode": "column" },
+    "AnalysisBox": { "cardMode": "column" },
+    "SearchBar": { "cardMode": "column" },
+    "DashFooter": { "cardMode": "column" }
+  }
+}
