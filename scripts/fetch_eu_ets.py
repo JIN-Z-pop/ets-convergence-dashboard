@@ -1,8 +1,10 @@
 """Fetch EU ETS daily price from Yahoo Finance (CO2.L = SparkChange Physical Carbon EUA ETC).
 
 Updates data/prices.json eu_eur[current_year] in place.
+Saves daily OHLCV to data/eu_ets.db eu_ets_daily table.
 Designed for ANS morning task automation.
 """
+import sqlite3
 import yfinance as yf
 import json
 from datetime import datetime
@@ -10,6 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PRICES_JSON = ROOT / "data" / "prices.json"
+EU_DB = ROOT / "data" / "eu_ets.db"
 TICKER = "CO2.L"  # SparkChange Physical Carbon EUA ETC (EUR)
 PHASE_MAP = {2005: "Phase 1", 2006: "Phase 1", 2007: "Phase 1",
              2008: "Phase 2", 2009: "Phase 2", 2010: "Phase 2", 2011: "Phase 2", 2012: "Phase 2",
@@ -50,6 +53,44 @@ def main():
 
     PRICES_JSON.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Updated EU {year}: avg={stats['avg_price']} max={stats['max_price']} min={stats['min_price']} ({len(cur)} trading days via {TICKER})")
+
+    # Save daily prices to eu_ets.db
+    con = sqlite3.connect(EU_DB)
+    con.execute("""
+        CREATE TABLE IF NOT EXISTS eu_ets_daily (
+            date TEXT PRIMARY KEY,
+            open_price REAL,
+            high_price REAL,
+            low_price REAL,
+            close_price REAL,
+            volume INTEGER,
+            fetched_at TEXT
+        )
+    """)
+    fetched_at = datetime.now().isoformat()
+    rows = [
+        (
+            str(idx.date()),
+            round(float(row["Open"]), 4),
+            round(float(row["High"]), 4),
+            round(float(row["Low"]), 4),
+            round(float(row["Close"]), 4),
+            int(row["Volume"]),
+            fetched_at,
+        )
+        for idx, row in hist.iterrows()
+    ]
+    cur_db = con.cursor()
+    cur_db.executemany(
+        "INSERT OR IGNORE INTO eu_ets_daily (date,open_price,high_price,low_price,close_price,volume,fetched_at) VALUES (?,?,?,?,?,?,?)",
+        rows,
+    )
+    new_count = cur_db.rowcount
+    cur_db.execute("SELECT COUNT(*), MAX(date) FROM eu_ets_daily")
+    total, latest = cur_db.fetchone()
+    con.commit()
+    con.close()
+    print(f"EU daily DB: +{new_count} new records | total={total} | latest={latest}")
     return 0
 
 
