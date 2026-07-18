@@ -208,6 +208,63 @@ def reapply_corrections(smart):
     return applied
 
 
+PERIOD_VIEW_SQL = """
+CREATE VIEW {view_name} AS
+WITH d AS (
+    SELECT *, strftime('{fmt}', date) AS period
+    FROM ets_daily
+    WHERE no_trade = 0 AND close_price IS NOT NULL
+),
+ranked AS (
+    SELECT *,
+        ROW_NUMBER() OVER (PARTITION BY market, period ORDER BY date ASC) AS rn_first,
+        ROW_NUMBER() OVER (PARTITION BY market, period ORDER BY date DESC) AS rn_last
+    FROM d
+)
+SELECT
+    market,
+    period,
+    MIN(date) AS period_start,
+    MAX(date) AS period_end,
+    MAX(CASE WHEN rn_first = 1 THEN COALESCE(open_price, close_price) END) AS open,
+    MAX(COALESCE(high_price, close_price)) AS high,
+    MIN(COALESCE(low_price, close_price)) AS low,
+    MAX(CASE WHEN rn_last = 1 THEN close_price END) AS close,
+    SUM(volume) AS volume,
+    SUM(amount) AS amount,
+    MAX(currency) AS currency,
+    COUNT(*) AS trading_days
+FROM ranked
+GROUP BY market, period
+ORDER BY market, period
+"""
+
+
+def create_period_views(smart):
+    """月次/年次 集計view (CP1充足, 奏発注 2026-07-19 [発注]月次年次view実装).
+
+    ets_dailyから導出(実表ではない・再構築不要=viewは常に最新ets_dailyを反映)。
+    規約:
+    - no_trade=1行は集計から除外(取引実績のない日を0や欠測で埋めない=L1E)。
+    - open=期間初日のCOALESCE(open_price, close_price)/close=期間終日のclose_price。
+      理由: close_priceのみ全market 100%充足(open/high/low_priceはCEA等一部market限定で、
+      KCU/KOC/CCER/EUA等は終値のみの系列=実データ物的確認2026-07-19)。open_priceがある
+      market(CEA等)は真の始値を使い、無いmarketは初日終値を代用(手計算突合でCEA 2026-06の
+      open=82.5(真の始値)と一致確認済み=COALESCE適用前は82.01(初日終値)を誤って返していた
+      defectをここで検出・修正)。
+    - high/lowはCOALESCE(high_price/low_price, close_price): 真のOHLC値がある行はそれを使い、
+      終値のみの行はclose_priceを上下限の代用値として扱う(過大/過小主張を避けるための保守的近似)。
+    - 該当期間に取引実績が1件もないmarketは行ごと不在(fabricationを避ける=L1E)。GXはこの理由で
+      ほとんどの月/年に行が存在しない(2025-11のみ実績あり)。
+    - 韓国の一次公式月次集計(korea_ets_smart.db kets_market_monthly)とは非突合(federation参照の
+      ままとし、本viewはets_daily由来の導出系と明記。突合検証は必要になった時点で別途)。
+    """
+    smart.execute("DROP VIEW IF EXISTS ets_monthly")
+    smart.execute(PERIOD_VIEW_SQL.format(view_name="ets_monthly", fmt="%Y-%m"))
+    smart.execute("DROP VIEW IF EXISTS ets_yearly")
+    smart.execute(PERIOD_VIEW_SQL.format(view_name="ets_yearly", fmt="%Y"))
+
+
 def main():
     run_at = datetime.now().isoformat()
     smart = sqlite3.connect(SMART)
@@ -238,6 +295,8 @@ def main():
     ins_corr = ensure_corrections(smart, run_at)
     applied1 = reapply_corrections(smart)
     applied2 = reapply_corrections(smart)
+
+    create_period_views(smart)
 
     smart.commit()
 

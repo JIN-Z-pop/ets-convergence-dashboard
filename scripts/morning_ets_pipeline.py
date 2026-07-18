@@ -2,18 +2,21 @@
 # -*- coding: utf-8 -*-
 """morning_ets_pipeline.py — ETS朝ルーティン統合パイプライン(P3, 実装C拡張 強化案1-3)。
 
-奏(editor) 発注 2026-07-19(P3 GO, 蒼悟鬼検証PASS後)。葉山(actor)実装。
+家内発注 2026-07-19 実装(経緯・担当=家内DD台帳2026-07-19参照)。
 
-毎朝の収集(china/korea-ets-mcp内スクリプト+EU fetch, 本パイプライン範囲外=既存のまま)の後に
-実行し、統一正本まで自動で届かせる。実行順:
+毎朝の収集(china/korea-ets-mcp内スクリプトによるスマートDB還流=本パイプライン範囲外=既存のまま)
+の後に実行し、統一正本まで自動で届かせる。朝の恒久ルーティンから1コマンドで呼ばれる前提の
+統合パイプライン。実行順:
 
-  1. fetch_gx_ets.py --date <today>  (GX-ETS当日分取得。金曜限定運用等の運用日でなくてもno_trade
+  1. fetch_eu_ets.py → sync_eua_to_gods.py  (EU-ETS当日分取得+gods_eye.db反映。
+     fetch失敗時はWARN継続=GXと同型の耐障害設計)
+  2. fetch_gx_ets.py --date <today>  (GX-ETS当日分取得。金曜限定運用等の運用日でなくてもno_trade
      記録として毎日実行して問題ない=1回のPDF fetchのみで軽量。実行自体を毎日行うことで
      取引日を後から気付く事故を防ぐ=「金曜限定だから月に数回でいい」という間引き設計は
-     やらない。設計判断: 葉山, 2026-07-19)
-  2. build_ets_market_smart.py  (統一正本再構築。冪等・全消去再構築のため incremental化の
-     コード変更は不要=既存のまま毎朝実行するだけで安全)
-  3. ギャップ自動検知: market_holidays_2026.json突合
+     やらない。設計判断 2026-07-19)
+  3. build_ets_market_smart.py  (統一正本再構築+ets_monthly/ets_yearly view再定義。冪等・
+     全消去再構築のため incremental化のコード変更は不要=既存のまま毎朝実行するだけで安全)
+  4. ギャップ自動検知: market_holidays_2026.json突合
      - CEA/CCER/KAU/EUAは「無取引=異常」対象(休日でないのに最新日付が古い→gap_alert)
      - GXは「無取引=既定」(2025年度は11-12月毎週金曜限定運用)のため対象外。
        GXについては fetch自体が成功したか(ets_sync_log直近行のstatus)のみ確認する。
@@ -99,6 +102,14 @@ def main():
     ap.add_argument("--date", default=None, help="YYYY-MM-DD (省略時=今日)")
     args = ap.parse_args()
     target_date = args.date or datetime.now().strftime("%Y-%m-%d")
+
+    ok_eu_fetch = run([sys.executable, "scripts/fetch_eu_ets.py"])
+    if not ok_eu_fetch:
+        print("[WARN] fetch_eu_ets.py failed (yfinance網断・休場等の可能性。パイプライン続行)")
+    else:
+        ok_eu_sync = run([sys.executable, "scripts/sync_eua_to_gods.py"])
+        if not ok_eu_sync:
+            print("[WARN] sync_eua_to_gods.py failed (安全ガードabort等の可能性。パイプライン続行)")
 
     ok_gx = run([sys.executable, "scripts/fetch_gx_ets.py", "--date", target_date])
     if not ok_gx:
