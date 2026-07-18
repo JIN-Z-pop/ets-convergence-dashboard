@@ -38,6 +38,9 @@ SOURCES = [
     (5, "yfinance CO2.L (SparkChange Physical Carbon EUA ETC, EUR建て)", None,
      "yfinance Ticker.history(period='2y')", "EUA出典。列名price_usdは歴史的負債=実体EUR(2026-07-18鬼検証で確定)"),
     (6, "NASDAQ ICE_EUA1 Settle (EUR)", None, None, "未使用・P2予約"),
+    (7, "JPXカーボン・クレジット市場日報", "https://www.jpx.co.jp/equities/carbon-credit/daily/index.html",
+     "PDF fetch(索引/archivesページでURL解決→PDFテーブル抽出、銘柄コード5051000行のみ抽出)",
+     "GX-ETS超過削減枠出典。設計=docs/gx_ets_acquisition_design_20260719.md、取得=scripts/fetch_gx_ets.py"),
 ]
 
 MARKET_META = [
@@ -58,7 +61,14 @@ MARKET_META = [
      "期間別market値(i-KOC21-26等)。kets_market_daily_priceのみ出典(終値のみ、OHLCV無し)"),
     ("EUA", "EU EUA(EU-ETS)", "EU-ETS", "SparkChange CO2.L ETC/ICE系", "EUR", "2021-10-18",
      "列名の歴史的負債に注意(実体はEUR・2026-07-18確定)。2026-04-22は欠損補正済(S1a, ets_correction参照)"),
-    ("GX", "日本GX-ETS", "GX-ETS", None, None, None, "P2取得設計待ち。GX-ETS試行取引2023〜"),
+    ("GX", "日本GX-ETS", "GX-ETS", "JPX(東京証券取引所)カーボン・クレジット市場", "JPY", "2025-07-01",
+     "超過削減枠(銘柄コード5051000)。取引単位1t-CO2/価格刻み1円(JPX制度概要ページ確認2026-07-19)。"
+     "series_start=機械遡及可能な索引/archivesページの実データ最古日(2026-07-19 backfill実行で確認)。"
+     "制度としての取引対象化は2024年11月〜(複数出典で月単位確認済みだが日次は未確認)だが、"
+     "archives-13.html以降は404(2026-07-19実測)=同一経路でのそれ以遠の遡及はサイト側制約で不可能、"
+     "2024-11〜2025-06分は別経路要検討(金博士様判断待ち・未着手)。"
+     "実取引はFY2025 11-12月の毎週金曜限定運用中の2025-11-14/21の2日のみ確認(価格1800円/t-CO2)。"
+     "no_trade多数(247日中245日)は想定内(特定日限定運用のため)。"),
 ]
 
 # (market, date, field, wrong_value, corrected_value, evidence, decided_by, dd_ref)
@@ -105,9 +115,14 @@ def load_ccer(smart, china, run_at):
     no_trade_count = 0
     for d, avg_price, vol, amt, fa in rows:
         no_trade = 1 if (avg_price == 0 and vol == 0) else 0
+        # no_trade日はclose/volume/amountを揃えてNULL化(蒼悟observation 2026-07-19: GX(=NULL)とCCER(=0)の
+        # volume表現不統一を解消。NULL採用理由=SQL集計整合性: AVG(volume)は無取引日を分母から正しく除外できる
+        # (偽の0を混在させるとAVGが不当に押し下げられる)。CCER源自体は0を明示するがDB層で正規化する。
         close = None if no_trade else avg_price
+        vol_out = None if no_trade else vol
+        amt_out = None if no_trade else amt
         no_trade_count += no_trade
-        data.append(("CCER", d, None, None, None, close, "CNY", vol, amt, no_trade, 3, fa))
+        data.append(("CCER", d, None, None, None, close, "CNY", vol_out, amt_out, no_trade, 3, fa))
     smart.executemany(f"INSERT INTO ets_daily ({DAILY_COLS}) VALUES ({DAILY_PLACEHOLDERS})", data)
     log(smart, run_at, "CCER", len(data), 0, None, f"loaded(no_trade={no_trade_count})")
     return len(data), no_trade_count
@@ -144,6 +159,18 @@ def load_eua(smart, gods, run_at):
     smart.executemany(f"INSERT INTO ets_daily ({DAILY_COLS}) VALUES ({DAILY_PLACEHOLDERS})", data)
     log(smart, run_at, "EUA", len(data), 0, None, "loaded")
     return len(data)
+
+
+def load_gx(smart, gods, run_at):
+    rows = gods.execute(
+        "SELECT date, open_price, high_price, low_price, close_price, volume, no_trade, fetched_at "
+        "FROM raw_gx_ets_daily ORDER BY date"
+    ).fetchall()
+    data = [("GX", d, o, h, l, c, "JPY", v, None, nt, 7, fa) for d, o, h, l, c, v, nt, fa in rows]
+    smart.executemany(f"INSERT INTO ets_daily ({DAILY_COLS}) VALUES ({DAILY_PLACEHOLDERS})", data)
+    n_notrade = sum(1 for row in data if row[9] == 1)
+    log(smart, run_at, "GX", len(data), 0, None, f"loaded(no_trade={n_notrade})")
+    return len(data), n_notrade
 
 
 def ensure_corrections(smart, run_at):
@@ -200,6 +227,13 @@ def main():
     n_ccer, n_notrade = load_ccer(smart, china, run_at)
     n_ohlcv, n_daily_src, n_daily_ins, n_daily_skip = load_kau(smart, korea, run_at)
     n_eua = load_eua(smart, gods, run_at)
+    try:
+        n_gx, n_gx_notrade = load_gx(smart, gods, run_at)
+    except sqlite3.OperationalError as e:
+        if "no such table" not in str(e):
+            raise
+        n_gx, n_gx_notrade = 0, 0
+        log(smart, run_at, "GX", 0, 0, None, "skipped(raw_gx_ets_daily not yet populated)")
 
     ins_corr = ensure_corrections(smart, run_at)
     applied1 = reapply_corrections(smart)
@@ -210,7 +244,8 @@ def main():
     total = smart.execute("SELECT COUNT(*) FROM ets_daily").fetchone()[0]
     print("=== build_ets_market_smart: initial construction ===")
     print(f"CEA={n_cea}  CCER={n_ccer}(no_trade={n_notrade})  "
-          f"KAU_ohlcv={n_ohlcv}  daily_price(src={n_daily_src} inserted={n_daily_ins} skipped={n_daily_skip})  EUA={n_eua}")
+          f"KAU_ohlcv={n_ohlcv}  daily_price(src={n_daily_src} inserted={n_daily_ins} skipped={n_daily_skip})  "
+          f"EUA={n_eua}  GX={n_gx}(no_trade={n_gx_notrade})")
     print(f"total ets_daily rows = {total}")
     print(f"corrections: newly_inserted={ins_corr}  applied_run1={applied1}  applied_run2={applied2}")
 
