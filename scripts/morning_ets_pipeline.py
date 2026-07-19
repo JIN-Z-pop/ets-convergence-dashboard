@@ -100,8 +100,24 @@ def log_pipeline_run(status, gap_alert):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default=None, help="YYYY-MM-DD (省略時=今日)")
+    ap.add_argument("--force", action="store_true", help="同日ガードを無視して強制再実行")
     args = ap.parse_args()
     target_date = args.date or datetime.now().strftime("%Y-%m-%d")
+
+    # 同日ガード: 複数pane起床がそれぞれ本パイプラインを叩くと同一収集が重複する
+    # (2026-07-19 同日8回重複の実測=葉山)。当日完走済み(OK/ALERT)ならskip。FAILは再実行を許す。
+    if not args.force:
+        today = datetime.now().strftime("%Y-%m-%d")
+        conn = sqlite3.connect(SMART)
+        done = conn.execute(
+            "SELECT COUNT(*) FROM ets_sync_log"
+            " WHERE market='PIPELINE' AND status IN ('OK','ALERT') AND substr(run_at,1,10)=?",
+            (today,),
+        ).fetchone()[0]
+        conn.close()
+        if done:
+            print(f"[SKIP] 本日({today})のPIPELINEは既に{done}回完走済み。重複実行を回避します(--forceで強制再実行)。")
+            return
 
     ok_eu_fetch = run([sys.executable, "scripts/fetch_eu_ets.py"])
     if not ok_eu_fetch:
