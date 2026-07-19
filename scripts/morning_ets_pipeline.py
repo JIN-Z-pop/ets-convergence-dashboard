@@ -77,9 +77,16 @@ def check_gaps(target_date):
     for market, holiday_key in GAP_CHECK_MARKETS:
         if is_holiday(holidays, holiday_key, target_date):
             continue
-        row = conn.execute(
-            "SELECT MAX(date) FROM ets_daily WHERE market=?", (market,)
-        ).fetchone()
+        if market == "KAU":
+            # KAUはvintage別market値(KAU15〜KAU30)で格納されるため厳密一致では常にNoneになる。
+            # 前方一致で系列全体のMAXを取り、現行vintageの最新日付を捕捉する(2026-07-20 gap_alert誤検知修正)。
+            row = conn.execute(
+                "SELECT MAX(date) FROM ets_daily WHERE market LIKE 'KAU%'"
+            ).fetchone()
+        else:
+            row = conn.execute(
+                "SELECT MAX(date) FROM ets_daily WHERE market=?", (market,)
+            ).fetchone()
         latest = row[0] if row else None
         if latest is None or latest < target_date:
             alerts.append(f"{market}: latest={latest} target={target_date} (非休日なのに未更新)")
