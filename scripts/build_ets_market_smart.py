@@ -82,22 +82,24 @@ SOURCES = [
 
 MARKET_META = [
     # P1 market定義正文v1.1(奏裁定 2026-07-18 22:14, 蒼悟逆FB反映)確定: 9 family行
+    # D2是正(oni_ets_t6 F2案b, 2026-07-20): volume_unit列追加(全market必須充足)。
+    # EUAのみ証券出来高(ETC口数)・他markets全てtCO2 — 単位混在防止(桁差1/500の理由=単位差)
     ("CEA", "中国CEA(全国ETS)", "China-ETS", "上海環境能源交易所", "CNY", "2021-07-16",
-     "全国碳配額。出典遷移: CNEEEX(〜2025-12)→carbonmarket.cn(2025-12-25〜)"),
+     "全国碳配額。出典遷移: CNEEEX(〜2025-12)→carbonmarket.cn(2025-12-25〜)", "tCO2"),
     ("CCER", "中国CCER(自主削減)", "China-ETS", "北京緑色交易所", "CNY", "2024-01-22",
-     "avg_price=0かつdaily_volume=0の日はno_trade=1(無取引日、127件)。2024-01-22は欠損補正済(ets_correction参照)"),
+     "avg_price=0かつdaily_volume=0の日はno_trade=1(無取引日、127件)。2024-01-22は欠損補正済(ets_correction参照)", "tCO2"),
     ("KAU", "韓国KAU(K-ETS 排出権・vintage別)", "K-ETS", "KRX", "KRW", "2015-01-12",
-     "vintage別market値(KAU15〜KAU30)。ohlcv系(2021-, OHLCV優先)+終値歴史(2015-)の2系統統合。重複2649件中不一致1件(KAU22 2023-07-10)はohlcv優先で採用・ets_sync_logに記録"),
+     "vintage別market値(KAU15〜KAU30)。ohlcv系(2021-, OHLCV優先)+終値歴史(2015-)の2系統統合。重複2649件中不一致1件(KAU22 2023-07-10)はohlcv優先で採用・ets_sync_logに記録", "tCO2"),
     ("KCU", "韓国KCU(相殺クレジット)", "K-ETS", "KRX", "KRW", None,
-     "vintage別market値(KCU15〜KCU26)。kets_market_daily_priceのみ出典(終値のみ、OHLCV無し)"),
+     "vintage別market値(KCU15〜KCU26)。kets_market_daily_priceのみ出典(終値のみ、OHLCV無し)", "tCO2"),
     ("KOC", "韓国KOC(オフセットクレジット)", "K-ETS", "KRX", "KRW", None,
-     "期間別market値(KOC, KOC20-22等)。kets_market_daily_priceのみ出典(終値のみ、OHLCV無し)"),
+     "期間別market値(KOC, KOC20-22等)。kets_market_daily_priceのみ出典(終値のみ、OHLCV無し)", "tCO2"),
     ("i-KCU", "韓国i-KCU(国際相殺クレジット)", "K-ETS", "KRX", "KRW", None,
-     "vintage別market値(i-KCU23〜26)。kets_market_daily_priceのみ出典(終値のみ、OHLCV無し)"),
+     "vintage別market値(i-KCU23〜26)。kets_market_daily_priceのみ出典(終値のみ、OHLCV無し)", "tCO2"),
     ("i-KOC", "韓国i-KOC(国際オフセットクレジット)", "K-ETS", "KRX", "KRW", None,
-     "期間別market値(i-KOC21-26等)。kets_market_daily_priceのみ出典(終値のみ、OHLCV無し)"),
-    ("EUA", "EU EUA(EU-ETS)", "EU-ETS", "SparkChange CO2.L ETC/ICE系", "EUR", "2005-03-09",
-     "出典遷移: FSR歴史(〜2021-10-17)→CO2.L現行(2021-10-18〜)。列名の歴史的負債に注意(実体はEUR・2026-07-18確定)。2026-04-22は欠損補正済(S1a, ets_correction参照)"),
+     "期間別market値(i-KOC21-26等)。kets_market_daily_priceのみ出典(終値のみ、OHLCV無し)", "tCO2"),
+    ("EUA", "EU EUA(EU-ETS)", "EU-ETS", "SparkChange CO2.L ETC(LSE上場)", "EUR", "2005-03-09",
+     "出典遷移: FSR歴史(〜2021-10-17)→CO2.L現行(2021-11-04〜、2021-10-18〜11-03の13日はLSE上場前ティックのためpre_listing除外)。列名の歴史的負債に注意(実体はEUR・2026-07-18確定)。2026-04-22は欠損補正済(S1a, ets_correction参照)。CO2.Lは100%現物担保ETC(ICE先物連動ではない、HANetf公式確認2026-07-20)", "ETC口数(株数)。他marketのtCO2とは非互換単位=同一軸比較禁止"),
     ("GX", "日本GX-ETS", "GX-ETS", "JPX(東京証券取引所)カーボン・クレジット市場", "JPY", "2025-07-01",
      "超過削減枠(銘柄コード5051000)。取引単位1t-CO2/価格刻み1円(JPX制度概要ページ確認2026-07-19)。"
      "series_start=機械遡及可能な索引/archivesページの実データ最古日(2026-07-19 backfill実行で確認)。"
@@ -105,7 +107,7 @@ MARKET_META = [
      "archives-13.html以降は404(2026-07-19実測)=同一経路でのそれ以遠の遡及はサイト側制約で不可能、"
      "2024-11〜2025-06分は別経路要検討(金博士様判断待ち・未着手)。"
      "実取引はFY2025 11-12月の毎週金曜限定運用中の2025-11-14/21の2日のみ確認(価格1800円/t-CO2)。"
-     "no_trade多数(247日中245日)は想定内(特定日限定運用のため)。"),
+     "no_trade多数(247日中245日)は想定内(特定日限定運用のため)。", "tCO2"),
 ]
 
 # (market, date, field, wrong_value, corrected_value, evidence, decided_by, dd_ref)
@@ -139,9 +141,16 @@ def load_cea(smart, china, run_at):
         "SELECT date, opening_price, high_price, low_price, closing_price, total_volume, total_amount, fetched_at "
         "FROM cn_ets_market_cea_daily ORDER BY date"
     ).fetchall()
-    data = [("CEA", d, o, h, l, c, "CNY", v, a, 0, 2, fa) for d, o, h, l, c, v, a, fa in rows]
+    # D1是正(oni_ets_t6 F1, 奏裁定2026-07-20): 2021-07-16(CEA取引開始日)のみ原典自体がo/h/l=0
+    # (市場初日でOHLC未公表の欠測表現・価格0元は非実勢)。close/volume/amountは史実のため不変保全。
+    # 他日のo/h/l非ゼロ値(low>close 5行・2023-12-12等)は原典忠実のため対象外(D1-2)。
+    data = []
+    for d, o, h, l, c, v, a, fa in rows:
+        if d == "2021-07-16" and o == 0 and h == 0 and l == 0:
+            o, h, l = None, None, None
+        data.append(("CEA", d, o, h, l, c, "CNY", v, a, 0, 2, fa))
     smart.executemany(f"INSERT INTO ets_daily ({DAILY_COLS}) VALUES ({DAILY_PLACEHOLDERS})", data)
-    log(smart, run_at, "CEA", len(data), 0, None, "loaded")
+    log(smart, run_at, "CEA", len(data), 0, None, "loaded(2021-07-16 o/h/l 0→NULL:市場初日欠測)")
     return len(data)
 
 
@@ -171,9 +180,19 @@ def load_kau(smart, korea, run_at):
         "SELECT date, kau_type, open_price, high_price, low_price, close_price, volume, fetched_at "
         "FROM kets_market_kau_ohlcv ORDER BY date"
     ).fetchall()
-    data_ohlcv = [(kt, d, o, h, l, c, "KRW", v, None, 0, 4, fa) for d, kt, o, h, l, c, v, fa in ohlcv_rows]
+    # D1是正(oni_ets_t6 F1): korea_ets_smart.db側collectorがOHLC breakdown未取得日をo/h/l/v=0で表現
+    # (2026-03-04一括fetch分等)。価格0ウォンは非実勢のため欠測NULLへ変換、closeのみ実勢値として残す。
+    # no_tradeは元値のまま(=0)維持: 取引自体は発生しclose有り=「OHLC無し」と「無取引」は別概念(D1-4)。
+    # raw korea_ets_smart.dbは不可侵(read-only)・変換はこのINSERT時点のみ。
+    zerofill_count = 0
+    data_ohlcv = []
+    for d, kt, o, h, l, c, v, fa in ohlcv_rows:
+        if o == 0 and h == 0 and l == 0 and v in (0, None) and c not in (None, 0):
+            zerofill_count += 1
+            o, h, l, v = None, None, None, None
+        data_ohlcv.append((kt, d, o, h, l, c, "KRW", v, None, 0, 4, fa))
     smart.executemany(f"INSERT INTO ets_daily ({DAILY_COLS}) VALUES ({DAILY_PLACEHOLDERS})", data_ohlcv)
-    log(smart, run_at, "KAU_ohlcv", len(data_ohlcv), 0, None, "loaded(priority)")
+    log(smart, run_at, "KAU_ohlcv", len(data_ohlcv), 0, None, f"loaded(priority, zerofill_to_null={zerofill_count})")
 
     before = smart.execute("SELECT COUNT(*) FROM ets_daily").fetchone()[0]
     daily_rows = korea.execute(
@@ -219,6 +238,16 @@ def load_eua(smart, gods, run_at):
     cur_data = [("EUA", d, None, None, None, p, "EUR", v, None, 0, 5, fa) for d, p, v, fa in cur_rows]
     smart.executemany(f"INSERT INTO ets_daily ({DAILY_COLS}) VALUES ({DAILY_PLACEHOLDERS})", cur_data)
     log(smart, run_at, "EUA", len(cur_data), 0, None, "loaded")
+
+    # D6是正(oni_ets_t6 F3案B, 奏執行裁定): CO2.L LSE Primary Listing=2021-11-04(HANetf公式)より前の
+    # 13行(2021-10-18〜11-03, volume=0)は上場前でvolumeの実勢性が未確認。削除せず可逆フラグのみ付与
+    # (pre_listing=1)し、集計(ets_monthly/yearly view)・配信(build_ets_market.py)側で除外する。
+    # 誠実な不確実性の保全(D6-3): 価格自体の正体(何を表す値か)は未到達のため断定しない。
+    n_pre_listing = smart.execute(
+        "UPDATE ets_daily SET pre_listing=1 WHERE market='EUA' AND source_id=5 AND date<'2021-11-04'"
+    ).rowcount
+    log(smart, run_at, "EUA_pre_listing_flag", 0, 0, None,
+        f"flagged(pre_listing={n_pre_listing}, boundary=2021-11-04 LSE listing)")
 
     return len(hist_data), len(cur_data)
 
@@ -296,7 +325,7 @@ CREATE VIEW {view_name} AS
 WITH d AS (
     SELECT *, strftime('{fmt}', date) AS period
     FROM ets_daily
-    WHERE no_trade = 0 AND close_price IS NOT NULL
+    WHERE no_trade = 0 AND close_price IS NOT NULL AND pre_listing = 0
 ),
 ranked AS (
     SELECT *,
@@ -360,7 +389,7 @@ def main():
     reset_tables(smart)
     smart.executemany("INSERT INTO ets_source (id,name,url,method,notes) VALUES (?,?,?,?,?)", SOURCES)
     smart.executemany(
-        "INSERT INTO ets_market_meta (market,name_ja,system_name,exchange,currency,series_start,notes) VALUES (?,?,?,?,?,?,?)",
+        "INSERT INTO ets_market_meta (market,name_ja,system_name,exchange,currency,series_start,notes,volume_unit) VALUES (?,?,?,?,?,?,?,?)",
         MARKET_META,
     )
 

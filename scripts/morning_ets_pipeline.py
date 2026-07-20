@@ -33,6 +33,7 @@ from datetime import datetime, timedelta
 
 ROOT = r"C:\Users\jin_z\Desktop\ets-convergence-dashboard"
 SMART = r"C:\Users\jin_z\.claude\databases\ets_market_smart.db"
+KOREA = r"C:\Users\jin_z\.claude\databases\korea_ets_smart.db"
 HOLIDAYS_PATH = r"C:\Users\jin_z\market_holidays_2026.json"
 
 # gap検知対象(GXを除く)。market値は ets_market_meta 準拠。holiday_keyはmarket_holidays_2026.jsonのtopキー。
@@ -42,6 +43,19 @@ GAP_CHECK_MARKETS = [
     ("KAU", "korea"),
     ("EUA", "eu_ets"),
 ]
+
+# F19是正(oni_ets_t6, 2026-07-20): 直近被覆率検査対象(GXは特定日限定運用のため対象外=既存のgap検知
+# 除外方針と同じ)。window_daysは「最近の穴」だけを拾う設計 — CEA等の既に原因調査・分類済みの
+# 大きな historical gap(季節性・発行前等)を毎朝再アラートしてノイズ化させないため、
+# 全履歴走査ではなく直近windowのみ見る。
+COVERAGE_CHECK_MARKETS = [
+    ("CEA", "china"),
+    ("CCER", "china"),
+    ("EUA", "eu_ets"),
+]
+COVERAGE_WINDOW_DAYS = 60
+KOREA_RECONCILE_MONTHS = 18
+KOREA_RECONCILE_TOLERANCE = 1.0
 
 
 def run(cmd):
@@ -70,13 +84,27 @@ def is_holiday(holidays, key, iso_date):
     return False
 
 
+def most_recent_business_day(holidays, key, target_date):
+    """F11是正(oni_ets_t6 D8, 2026-07-20): target_date自体ではなく、その前営業日を
+    market別休日カレンダーで逆算して返す。
+
+    旧ロジックの欠陥: `latest < target_date` は target_date=当日が非休日である限り
+    ほぼ常に真になる(当日分の終値は市場close後にしか存在しないため、朝パイプライン実行時点
+    では原理的にまだ無い=毎朝100%誤検知していた可能性)。本関数は「前営業日までは来ているべき」
+    という現実的な期待値を市場別に算出する(当日分の有無は問わない=前進的に厳しすぎない)。
+    """
+    dt = datetime.strptime(target_date, "%Y-%m-%d") - timedelta(days=1)
+    while is_holiday(holidays, key, dt.strftime("%Y-%m-%d")):
+        dt -= timedelta(days=1)
+    return dt.strftime("%Y-%m-%d")
+
+
 def check_gaps(target_date):
     holidays = load_holidays()
     conn = sqlite3.connect(SMART)
     alerts = []
     for market, holiday_key in GAP_CHECK_MARKETS:
-        if is_holiday(holidays, holiday_key, target_date):
-            continue
+        expected_latest = most_recent_business_day(holidays, holiday_key, target_date)
         if market == "KAU":
             # KAUはvintage別market値(KAU15〜KAU30)で格納されるため厳密一致では常にNoneになる。
             # 前方一致で系列全体のMAXを取り、現行vintageの最新日付を捕捉する(2026-07-20 gap_alert誤検知修正)。
@@ -88,9 +116,73 @@ def check_gaps(target_date):
                 "SELECT MAX(date) FROM ets_daily WHERE market=?", (market,)
             ).fetchone()
         latest = row[0] if row else None
-        if latest is None or latest < target_date:
-            alerts.append(f"{market}: latest={latest} target={target_date} (非休日なのに未更新)")
+        if latest is None or latest < expected_latest:
+            alerts.append(
+                f"{market}: latest={latest} expected(直近営業日)={expected_latest} target={target_date} (前営業日分が未到達)"
+            )
     conn.close()
+    return alerts
+
+
+def check_recent_coverage(target_date, window_days=COVERAGE_WINDOW_DAYS):
+    """F19是正(oni_ets_t6, 2026-07-20): 直近window内の「行そのものが無い」型の穴を検出。
+
+    check_gaps()は最新1点の鮮度のみ見るため、直近window内の途中(例: 収集が1日だけ飛んだ)を
+    見逃す。既存の棚卸し手法(全市場営業日被覆率走査)を移植し、非休日なのに
+    行が無い日を市場別休日カレンダーで判定して列挙する。CEA等の既に原因調査・分類済みの
+    大きなhistorical gapはwindow外(60日超前)のため対象外=毎朝の再アラート化を回避。
+    """
+    holidays = load_holidays()
+    window_start = (datetime.strptime(target_date, "%Y-%m-%d") - timedelta(days=window_days)).strftime("%Y-%m-%d")
+    conn = sqlite3.connect(SMART)
+    alerts = []
+    for market, holiday_key in COVERAGE_CHECK_MARKETS:
+        rows = conn.execute(
+            "SELECT date FROM ets_daily WHERE market=? AND date>=? ORDER BY date", (market, window_start)
+        ).fetchall()
+        have = {r[0] for r in rows}
+        missing = []
+        dt = datetime.strptime(window_start, "%Y-%m-%d")
+        end = datetime.strptime(target_date, "%Y-%m-%d")
+        while dt < end:
+            iso = dt.strftime("%Y-%m-%d")
+            if iso not in have and not is_holiday(holidays, holiday_key, iso):
+                missing.append(iso)
+            dt += timedelta(days=1)
+        if missing:
+            alerts.append(
+                f"{market}: 直近{window_days}日中 非休日欠落{len(missing)}件 {missing[:5]}{'...' if len(missing) > 5 else ''}"
+            )
+    conn.close()
+    return alerts
+
+
+def check_korea_monthly_reconciliation(months=KOREA_RECONCILE_MONTHS, tolerance=KOREA_RECONCILE_TOLERANCE):
+    """F19是正(oni_ets_t6, 2026-07-20): 韓国一次公式月次集計(korea_ets_smart.db kets_market_monthly)
+    と統一正本(ets_daily KAU系SUM(volume))の月次突合ゲート。
+
+    build_ets_market_smart.pyのコメントに「非突合(federation参照のまま)」と明記されている通り、
+    buildは意図的にこの一次公式値と接合していない(korea側は別系統のvintage別market値で保持する
+    設計のため)。本関数はbuildを変更せず、独立の物差しとして月次量が乖離していないかを検算する
+    後付けgate(蒼悟のT5cov.py手法を移植・直近18ヶ月・許容差1(浮動小数点誤差吸収))。
+    """
+    korea = sqlite3.connect(f"file:{KOREA}?mode=ro", uri=True)
+    smart = sqlite3.connect(f"file:{SMART}?mode=ro", uri=True)
+    rows = korea.execute(
+        "SELECT year, month, kau_exchange_vol FROM kets_market_monthly "
+        "WHERE kau_exchange_vol IS NOT NULL ORDER BY year, month"
+    ).fetchall()
+    alerts = []
+    for y, m, official_vol in rows[-months:]:
+        prefix = f"{y:04d}-{m:02d}"
+        daily_sum = smart.execute(
+            "SELECT SUM(volume) FROM ets_daily WHERE market LIKE 'KAU%' AND substr(date,1,7)=?", (prefix,)
+        ).fetchone()[0] or 0
+        diff = (official_vol or 0) - daily_sum
+        if abs(diff) >= tolerance:
+            alerts.append(f"KAU月次突合: {prefix} 公式={official_vol:.0f} 正本SUM={daily_sum:.0f} 差分={diff:.0f}")
+    korea.close()
+    smart.close()
     return alerts
 
 
@@ -146,17 +238,32 @@ def main():
         sys.exit(1)
 
     alerts = check_gaps(target_date)
-    gap_alert = "; ".join(alerts) if alerts else None
-    status = "ALERT" if alerts else "OK"
+    coverage_alerts = check_recent_coverage(target_date)
+    korea_alerts = check_korea_monthly_reconciliation()
+    all_alerts = alerts + coverage_alerts + korea_alerts
+    gap_alert = "; ".join(all_alerts) if all_alerts else None
+    status = "ALERT" if all_alerts else "OK"
     log_pipeline_run(status, gap_alert)
 
     print(f"=== morning_ets_pipeline: {status} ===")
     if alerts:
-        print("[GAP ALERTS]")
+        print("[GAP ALERTS] (直近営業日鮮度)")
         for a in alerts:
             print(f"  - {a}")
     else:
         print("gap check: no anomaly (CEA/CCER/KAU/EUA vs market_holidays_2026.json)")
+    if coverage_alerts:
+        print(f"[COVERAGE ALERTS] (直近{COVERAGE_WINDOW_DAYS}日内の欠落, F19)")
+        for a in coverage_alerts:
+            print(f"  - {a}")
+    else:
+        print(f"coverage check: no anomaly (直近{COVERAGE_WINDOW_DAYS}日, CEA/CCER/EUA, F19)")
+    if korea_alerts:
+        print("[KOREA RECONCILE ALERTS] (F19)")
+        for a in korea_alerts:
+            print(f"  - {a}")
+    else:
+        print(f"korea reconcile check: no anomaly (直近{KOREA_RECONCILE_MONTHS}ヶ月, F19)")
     print("GX: no_trade=既定のためgap検知対象外。fetch実行結果は上記[RUN]出力を参照。")
 
 
