@@ -37,10 +37,15 @@ SOURCES = [
     (4, "KRX (Korea Exchange)", None, "kets collector (ohlcv + daily_price)", "KAU/KCU/KOC全permit_type共通出典"),
     (5, "yfinance CO2.L (SparkChange Physical Carbon EUA ETC, EUR建て)", None,
      "yfinance Ticker.history(period='2y')", "EUA出典。列名price_usdは歴史的負債=実体EUR(2026-07-18鬼検証で確定)"),
-    (6, "NASDAQ ICE_EUA1 Settle (EUR)", None, None, "未使用・P2予約"),
+    (6, "NASDAQ ICE_EUA1 Settle (EUR)", None, None, "不使用確定(2026-07-20金博士様裁定・有料断念)"),
     (7, "JPXカーボン・クレジット市場日報", "https://www.jpx.co.jp/equities/carbon-credit/daily/index.html",
      "PDF fetch(索引/archivesページでURL解決→PDFテーブル抽出、銘柄コード5051000行のみ抽出)",
      "GX-ETS超過削減枠出典。設計=docs/gx_ets_acquisition_design_20260719.md、取得=scripts/fetch_gx_ets.py"),
+    (8, "FSR Figure_1.csv (Florence School of Regulation, EUI)",
+     "https://fsr.eui.eu/wp-content/uploads/2024/10/Figure_1.csv",
+     "公式配布CSV直取得(md5=43af6218d0b671f50f2e77d0f1c1cc9b・2026-07-20取得)",
+     "EUA歴史価格2005-2024。掲載頁=https://fsr.eui.eu/eu-emission-trading-system-eu-ets/。"
+     "FSR一次系列は非明示→出典表記は「FSR公表データ」(誠実な不確実性)"),
 ]
 
 MARKET_META = [
@@ -59,8 +64,8 @@ MARKET_META = [
      "vintage別market値(i-KCU23〜26)。kets_market_daily_priceのみ出典(終値のみ、OHLCV無し)"),
     ("i-KOC", "韓国i-KOC(国際オフセットクレジット)", "K-ETS", "KRX", "KRW", None,
      "期間別market値(i-KOC21-26等)。kets_market_daily_priceのみ出典(終値のみ、OHLCV無し)"),
-    ("EUA", "EU EUA(EU-ETS)", "EU-ETS", "SparkChange CO2.L ETC/ICE系", "EUR", "2021-10-18",
-     "列名の歴史的負債に注意(実体はEUR・2026-07-18確定)。2026-04-22は欠損補正済(S1a, ets_correction参照)"),
+    ("EUA", "EU EUA(EU-ETS)", "EU-ETS", "SparkChange CO2.L ETC/ICE系", "EUR", "2005-03-09",
+     "出典遷移: FSR歴史(〜2021-10-17)→CO2.L現行(2021-10-18〜)。列名の歴史的負債に注意(実体はEUR・2026-07-18確定)。2026-04-22は欠損補正済(S1a, ets_correction参照)"),
     ("GX", "日本GX-ETS", "GX-ETS", "JPX(東京証券取引所)カーボン・クレジット市場", "JPY", "2025-07-01",
      "超過削減枠(銘柄コード5051000)。取引単位1t-CO2/価格刻み1円(JPX制度概要ページ確認2026-07-19)。"
      "series_start=機械遡及可能な索引/archivesページの実データ最古日(2026-07-19 backfill実行で確認)。"
@@ -154,11 +159,35 @@ def load_kau(smart, korea, run_at):
 
 
 def load_eua(smart, gods, run_at):
-    rows = gods.execute("SELECT date, price_usd, volume, fetched_at FROM raw_eu_ets_daily ORDER BY date").fetchall()
-    data = [("EUA", d, None, None, None, p, "EUR", v, None, 0, 5, fa) for d, p, v, fa in rows]
-    smart.executemany(f"INSERT INTO ets_daily ({DAILY_COLS}) VALUES ({DAILY_PLACEHOLDERS})", data)
-    log(smart, run_at, "EUA", len(data), 0, None, "loaded")
-    return len(data)
+    """EUA歴史層(FSR, source_id=8)+現行層(CO2.L, source_id=5)の2系列mergeロード。
+
+    2026-07-19投入分(EEXオークション998行)を直接ets_dailyへ書いたところ、翌日の本スクリプト
+    再実行(reset_tables()の全消去)で消滅した反省を踏まえ、歴史データはgods_eye.db(buildソース側)に
+    恒久保持し、揮発層(ets_daily)への
+    投入は本関数が毎回行う。期間重複assertは歴史層の汚染混入を投入前に検出し中断する安全弁。
+    """
+    overlap = gods.execute(
+        "SELECT COUNT(*) FROM raw_eua_hist_fsr WHERE date >= '2021-10-18'"
+    ).fetchone()[0]
+    if overlap:
+        raise RuntimeError(
+            f"EUA hist/current overlap: raw_eua_hist_fsr has {overlap} row(s) on/after 2021-10-18 "
+            "(overlaps raw_eu_ets_daily start). Aborting load to avoid double-counting."
+        )
+
+    hist_rows = gods.execute(
+        "SELECT date, price_eur, loaded_at FROM raw_eua_hist_fsr ORDER BY date"
+    ).fetchall()
+    hist_data = [("EUA", d, None, None, None, p, "EUR", None, None, 0, 8, la) for d, p, la in hist_rows]
+    smart.executemany(f"INSERT INTO ets_daily ({DAILY_COLS}) VALUES ({DAILY_PLACEHOLDERS})", hist_data)
+    log(smart, run_at, "EUA_hist_fsr", len(hist_data), 0, None, "loaded")
+
+    cur_rows = gods.execute("SELECT date, price_usd, volume, fetched_at FROM raw_eu_ets_daily ORDER BY date").fetchall()
+    cur_data = [("EUA", d, None, None, None, p, "EUR", v, None, 0, 5, fa) for d, p, v, fa in cur_rows]
+    smart.executemany(f"INSERT INTO ets_daily ({DAILY_COLS}) VALUES ({DAILY_PLACEHOLDERS})", cur_data)
+    log(smart, run_at, "EUA", len(cur_data), 0, None, "loaded")
+
+    return len(hist_data), len(cur_data)
 
 
 def load_gx(smart, gods, run_at):
@@ -283,7 +312,7 @@ def main():
     n_cea = load_cea(smart, china, run_at)
     n_ccer, n_notrade = load_ccer(smart, china, run_at)
     n_ohlcv, n_daily_src, n_daily_ins, n_daily_skip = load_kau(smart, korea, run_at)
-    n_eua = load_eua(smart, gods, run_at)
+    n_eua_hist, n_eua_cur = load_eua(smart, gods, run_at)
     try:
         n_gx, n_gx_notrade = load_gx(smart, gods, run_at)
     except sqlite3.OperationalError as e:
@@ -304,7 +333,8 @@ def main():
     print("=== build_ets_market_smart: initial construction ===")
     print(f"CEA={n_cea}  CCER={n_ccer}(no_trade={n_notrade})  "
           f"KAU_ohlcv={n_ohlcv}  daily_price(src={n_daily_src} inserted={n_daily_ins} skipped={n_daily_skip})  "
-          f"EUA={n_eua}  GX={n_gx}(no_trade={n_gx_notrade})")
+          f"EUA_hist_fsr={n_eua_hist}+EUA_cur={n_eua_cur}(total={n_eua_hist + n_eua_cur})  "
+          f"GX={n_gx}(no_trade={n_gx_notrade})")
     print(f"total ets_daily rows = {total}")
     print(f"corrections: newly_inserted={ins_corr}  applied_run1={applied1}  applied_run2={applied2}")
 
