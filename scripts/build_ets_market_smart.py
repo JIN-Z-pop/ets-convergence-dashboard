@@ -27,6 +27,34 @@ GODS = r"C:\Users\jin_z\.claude\databases\gods_eye.db"
 DAILY_COLS = "market,date,open_price,high_price,low_price,close_price,currency,volume,amount,no_trade,source_id,fetched_at"
 DAILY_PLACEHOLDERS = ",".join("?" * 12)
 
+CREATE_ETS_AUCTION_SQL = """
+CREATE TABLE IF NOT EXISTS ets_auction (
+  auction_date TEXT NOT NULL,
+  auction_time TEXT,
+  auction_name TEXT NOT NULL,
+  contract TEXT,
+  status TEXT,
+  auction_price_eur REAL,
+  min_bid_eur REAL, max_bid_eur REAL, mean_eur REAL, median_eur REAL,
+  volume_tco2 INTEGER,
+  total_bids_tco2 INTEGER,
+  cover_ratio REAL,
+  bidders INTEGER,
+  successful_bidders INTEGER,
+  revenue_eur REAL,
+  zone TEXT,
+  file_year INTEGER NOT NULL,
+  source_id INTEGER NOT NULL REFERENCES ets_source(id),
+  fetched_at TEXT,
+  PRIMARY KEY (auction_date, auction_name)
+)
+"""
+AUCTION_COLS = ("auction_date,auction_time,auction_name,contract,status,"
+                 "auction_price_eur,min_bid_eur,max_bid_eur,mean_eur,median_eur,"
+                 "volume_tco2,total_bids_tco2,cover_ratio,bidders,successful_bidders,"
+                 "revenue_eur,zone,file_year,fetched_at,source_id")
+AUCTION_PLACEHOLDERS = ",".join("?" * 20)
+
 SOURCES = [
     (1, "CNEEEX (Shanghai Environment and Energy Exchange)", "https://overview.cneeex.com/qgtpfqjy/mrgk/",
      "web scrape (closed 2025-12)", "CEA原初出典。2025-12閉鎖"),
@@ -46,6 +74,10 @@ SOURCES = [
      "公式配布CSV直取得(md5=43af6218d0b671f50f2e77d0f1c1cc9b・2026-07-20取得)",
      "EUA歴史価格2005-2024。掲載頁=https://fsr.eui.eu/eu-emission-trading-system-eu-ets/。"
      "FSR一次系列は非明示→出典表記は「FSR公表データ」(誠実な不確実性)"),
+    (9, "EEX EUA Primary Market Auction Report", "https://public.eex-group.com/eex/eua-auction-report/index.html",
+     "local xls/xlsx (md5-pinned, data/sources/eua_hist/)",
+     "一次市場オークション結果2017-2026(価格+volume付き)。歴史層=gods_eye.raw_eua_auction_eex(恒久)。"
+     "ets_dailyには混ぜず新表ets_auctionへ格納(同日複数オークション・落札価格≠二次市場終値のため)"),
 ]
 
 MARKET_META = [
@@ -97,6 +129,7 @@ def log(smart, run_at, market, inserted, skipped, gap_alert, status):
 
 def reset_tables(smart):
     smart.execute("DELETE FROM ets_daily")
+    smart.execute("DELETE FROM ets_auction")
     smart.execute("DELETE FROM ets_market_meta")
     smart.execute("DELETE FROM ets_source")
 
@@ -188,6 +221,27 @@ def load_eua(smart, gods, run_at):
     log(smart, run_at, "EUA", len(cur_data), 0, None, "loaded")
 
     return len(hist_data), len(cur_data)
+
+
+def load_eua_auction(smart, gods, run_at):
+    """EUAオークション系列(EEX一次市場, source_id=9)ロード。
+
+    歴史層はgods_eye.db raw_eua_auction_eex(恒久・build非破壊、2026-07-20葉山投入)。本関数は
+    そこからread-onlyで読み、ets_market_smart.db側の揮発層ets_auctionへ全件再構築する。
+    ets_daily/EUA日次(id8+id5, load_eua())とは別表・非接触 — 同日複数オークション(DE/EU/PL別)が
+    あり(market,date)粒度に合わない上、落札価格と二次市場終値は意味が別のため。
+    """
+    rows = gods.execute(
+        "SELECT auction_date,auction_time,auction_name,contract,status,"
+        "auction_price_eur,min_bid_eur,max_bid_eur,mean_eur,median_eur,"
+        "volume_tco2,total_bids_tco2,cover_ratio,bidders,successful_bidders,"
+        "revenue_eur,zone,file_year,loaded_at "
+        "FROM raw_eua_auction_eex ORDER BY auction_date, auction_name"
+    ).fetchall()
+    data = [r + (9,) for r in rows]
+    smart.executemany(f"INSERT INTO ets_auction ({AUCTION_COLS}) VALUES ({AUCTION_PLACEHOLDERS})", data)
+    log(smart, run_at, "EUA_auction_eex", len(data), 0, None, "loaded")
+    return len(data)
 
 
 def load_gx(smart, gods, run_at):
@@ -298,6 +352,7 @@ def main():
     run_at = datetime.now().isoformat()
     smart = sqlite3.connect(SMART)
     smart.execute("PRAGMA foreign_keys = ON")
+    smart.execute(CREATE_ETS_AUCTION_SQL)
     china = sqlite3.connect(f"file:{CHINA}?mode=ro", uri=True)
     korea = sqlite3.connect(f"file:{KOREA}?mode=ro", uri=True)
     gods = sqlite3.connect(f"file:{GODS}?mode=ro", uri=True)
@@ -313,6 +368,7 @@ def main():
     n_ccer, n_notrade = load_ccer(smart, china, run_at)
     n_ohlcv, n_daily_src, n_daily_ins, n_daily_skip = load_kau(smart, korea, run_at)
     n_eua_hist, n_eua_cur = load_eua(smart, gods, run_at)
+    n_eua_auction = load_eua_auction(smart, gods, run_at)
     try:
         n_gx, n_gx_notrade = load_gx(smart, gods, run_at)
     except sqlite3.OperationalError as e:
@@ -330,12 +386,15 @@ def main():
     smart.commit()
 
     total = smart.execute("SELECT COUNT(*) FROM ets_daily").fetchone()[0]
+    total_auction = smart.execute("SELECT COUNT(*) FROM ets_auction").fetchone()[0]
     print("=== build_ets_market_smart: initial construction ===")
     print(f"CEA={n_cea}  CCER={n_ccer}(no_trade={n_notrade})  "
           f"KAU_ohlcv={n_ohlcv}  daily_price(src={n_daily_src} inserted={n_daily_ins} skipped={n_daily_skip})  "
           f"EUA_hist_fsr={n_eua_hist}+EUA_cur={n_eua_cur}(total={n_eua_hist + n_eua_cur})  "
+          f"EUA_auction_eex={n_eua_auction}  "
           f"GX={n_gx}(no_trade={n_gx_notrade})")
     print(f"total ets_daily rows = {total}")
+    print(f"total ets_auction rows = {total_auction}")
     print(f"corrections: newly_inserted={ins_corr}  applied_run1={applied1}  applied_run2={applied2}")
 
     china.close(); korea.close(); gods.close(); smart.close()
