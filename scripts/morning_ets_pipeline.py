@@ -52,6 +52,7 @@ COVERAGE_CHECK_MARKETS = [
     ("CEA", "china"),
     ("CCER", "china"),
     ("EUA", "eu_ets"),
+    ("KAU", "korea"),
 ]
 COVERAGE_WINDOW_DAYS = 60
 KOREA_RECONCILE_MONTHS = 18
@@ -137,9 +138,17 @@ def check_recent_coverage(target_date, window_days=COVERAGE_WINDOW_DAYS):
     conn = sqlite3.connect(SMART)
     alerts = []
     for market, holiday_key in COVERAGE_CHECK_MARKETS:
-        rows = conn.execute(
-            "SELECT date FROM ets_daily WHERE market=? AND date>=? ORDER BY date", (market, window_start)
-        ).fetchall()
+        if market == "KAU":
+            # KAUはvintage別market値(KAU15〜KAU30)で格納されるため、check_gaps()と同じ理由で
+            # 前方一致+DISTINCT dateにより系列全体の営業日カバレッジを見る(2026-07-21 KAU25統一DB側
+            # coverage未対応=祝日07-17を個別スクリプト側でのみ検知していた統一性ギャップの是正)。
+            rows = conn.execute(
+                "SELECT DISTINCT date FROM ets_daily WHERE market LIKE 'KAU%' AND date>=? ORDER BY date", (window_start,)
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT date FROM ets_daily WHERE market=? AND date>=? ORDER BY date", (market, window_start)
+            ).fetchall()
         have = {r[0] for r in rows}
         missing = []
         dt = datetime.strptime(window_start, "%Y-%m-%d")
@@ -257,7 +266,8 @@ def main():
         for a in coverage_alerts:
             print(f"  - {a}")
     else:
-        print(f"coverage check: no anomaly (直近{COVERAGE_WINDOW_DAYS}日, CEA/CCER/EUA, F19)")
+        markets_label = "/".join(m for m, _ in COVERAGE_CHECK_MARKETS)
+        print(f"coverage check: no anomaly (直近{COVERAGE_WINDOW_DAYS}日, {markets_label}, F19)")
     if korea_alerts:
         print("[KOREA RECONCILE ALERTS] (F19)")
         for a in korea_alerts:
