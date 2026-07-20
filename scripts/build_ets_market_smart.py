@@ -57,7 +57,9 @@ AUCTION_PLACEHOLDERS = ",".join("?" * 20)
 
 SOURCES = [
     (1, "CNEEEX (Shanghai Environment and Energy Exchange)", "https://overview.cneeex.com/qgtpfqjy/mrgk/",
-     "web scrape (closed 2025-12)", "CEA原初出典。2025-12閉鎖"),
+     "web scrape (収集は2025-12まで、現行出典はid2)",
+     "CEA原初出典。当家の収集は2025-12まで(現行出典はid2 carbonmarket.cn)。"
+     "サイト自体は2026-07-21実測で稼働確認(生HTTP 200・個別URL到達可、oni_ets_t7 CEA backfill 180件で実証)"),
     (2, "carbonmarket.cn", "https://carbonmarket.cn/ets/cets/",
      "HTML table scrape (Table1掛牌+Table2大宗)", "CEA現行出典(2025-12-25〜)。china smartに出自列が無いため全CEA行をid2扱い(簡潔優先、遷移史はmeta.notesに記載)"),
     (3, "CCER Official (Beijing Green Exchange)", "https://www.ccer.com.cn/wcm/ccer/html/2502lshq/index.html",
