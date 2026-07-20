@@ -1,0 +1,59 @@
+﻿Year,entry/exit,reason,count
+2005,entry,Extended sector coverage,102
+2005,entry,Initial coverage,9914
+2006,entry,Extended sector coverage,17
+2006,entry,Initial coverage,451
+2007,entry,Extended country coverage,363
+2007,entry,Extended sector coverage,3
+2007,entry,Initial coverage,268
+2008,entry,Extended country coverage,106
+2008,entry,Extended sector coverage,53
+2008,entry,Initial coverage,835
+2009,entry,Extended sector coverage,1
+2009,entry,Initial coverage,238
+2010,entry,Extended sector coverage,8
+2010,entry,Initial coverage,210
+2011,entry,Extended sector coverage,7
+2011,entry,Initial coverage,170
+2012,entry,Extended country coverage,27
+2012,entry,Extended sector coverage,1282
+2012,entry,Initial coverage,140
+2013,entry,Extended country coverage,56
+2013,entry,Extended sector coverage,656
+2013,entry,Initial coverage,1239
+2014,entry,Extended sector coverage,37
+2014,entry,Initial coverage,128
+2015,entry,Extended sector coverage,33
+2015,entry,Initial coverage,103
+2016,entry,Extended sector coverage,35
+2016,entry,Initial coverage,131
+2017,entry,Extended sector coverage,47
+2017,entry,Initial coverage,160
+2018,entry,Extended sector coverage,67
+2018,entry,Initial coverage,143
+2019,entry,Extended sector coverage,30
+2019,entry,Initial coverage,121
+2020,entry,Extended sector coverage,15
+2020,entry,Initial coverage,92
+2021,entry,Extended sector coverage,30
+2021,entry,Initial coverage,133
+2022,entry,Extended sector coverage,23
+2022,entry,Initial coverage,85
+2006,exit,Other,-1
+2007,exit,Other,-12
+2008,exit,Other,-316
+2009,exit,Other,-158
+2010,exit,Other,-270
+2011,exit,Other,-192
+2012,exit,Other,-251
+2013,exit,Other,-1178
+2014,exit,Other,-280
+2015,exit,Other,-321
+2016,exit,Other,-276
+2017,exit,Other,-233
+2018,exit,Other,-205
+2019,exit,Other,-195
+2020,exit,Other,-261
+2021,exit,Brexit,-1549
+2021,exit,Other,-373
+2022,exit,Other,-113
