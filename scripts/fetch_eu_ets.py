@@ -68,6 +68,10 @@ def main():
         )
     """)
     fetched_at = datetime.now().isoformat()
+    # NaN close_price (thin/pending session, e.g. Close未確定) はsqlite3書込み時に無音でNULLへ
+    # 変換され、INSERT OR IGNOREのためその日付キーが永久欠損として固定されてしまう。
+    # 行自体を作らず日付キーを空けておくことで、翌日以降の再取得で自然に埋まるようにする。
+    incomplete_dates = [str(idx.date()) for idx, row in hist.iterrows() if row[["Open", "High", "Low", "Close"]].isna().any()]
     rows = [
         (
             str(idx.date()),
@@ -79,7 +83,10 @@ def main():
             fetched_at,
         )
         for idx, row in hist.iterrows()
+        if not row[["Open", "High", "Low", "Close"]].isna().any()
     ]
+    if incomplete_dates:
+        print(f"[skip] {len(incomplete_dates)} incomplete (NaN OHLC) date(s) not inserted, will retry next run: {incomplete_dates}")
     cur_db = con.cursor()
     cur_db.executemany(
         "INSERT OR IGNORE INTO eu_ets_daily (date,open_price,high_price,low_price,close_price,volume,fetched_at) VALUES (?,?,?,?,?,?,?)",
