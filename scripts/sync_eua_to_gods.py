@@ -113,11 +113,14 @@ def main():
     # NOTE: still inside the same uncommitted transaction opened by the UPDATE above.
     total_before_insert = gods.execute("SELECT COUNT(*) FROM raw_eu_ets_daily").fetchone()[0]
     src_rows = eu.execute("SELECT date, close_price, volume FROM eu_ets_daily ORDER BY date").fetchall()
-    null_price_rows = [(d, v) for d, c, v in src_rows if c is None]
-    if null_price_rows:
-        print(f"[skip] {len(null_price_rows)} row(s) with NULL close_price in eu_ets_daily — not genuine "
-              f"observations (source gap), excluded from sync (not inserted as-is): {null_price_rows}")
-    insert_rows = [(d, round(float(c), 2), int(v), now) for d, c, v in src_rows if c is not None]
+    # 2026-08-01鬼検証: close_priceだけを見ていたが、下流で int(v) も撃つためvolume単独NULLでも
+    # 同型に落ちる。float()/int()を掛ける列を過不足なく判定列にする(検査対象=書込み対象)。
+    incomplete_rows = [(d, c, v) for d, c, v in src_rows if c is None or v is None]
+    if incomplete_rows:
+        print(f"[skip] {len(incomplete_rows)} row(s) with NULL close_price/volume in eu_ets_daily — not "
+              f"genuine observations (source gap), excluded from sync (not inserted as-is): {incomplete_rows}")
+    insert_rows = [(d, round(float(c), 2), int(v), now) for d, c, v in src_rows
+                   if c is not None and v is not None]
     gods.executemany(
         "INSERT OR IGNORE INTO raw_eu_ets_daily (date, price_usd, volume, fetched_at) VALUES (?,?,?,?)",
         insert_rows,

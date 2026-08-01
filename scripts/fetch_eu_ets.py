@@ -71,7 +71,11 @@ def main():
     # NaN close_price (thin/pending session, e.g. Close未確定) はsqlite3書込み時に無音でNULLへ
     # 変換され、INSERT OR IGNOREのためその日付キーが永久欠損として固定されてしまう。
     # 行自体を作らず日付キーを空けておくことで、翌日以降の再取得で自然に埋まるようにする。
-    incomplete_dates = [str(idx.date()) for idx, row in hist.iterrows() if row[["Open", "High", "Low", "Close"]].isna().any()]
+    # 2026-08-01鬼検証: 判定列がOHLCの4列だけだったため、Volume単独NaNの行が素通りし
+    # int(row["Volume"])でValueErrorになる同型の穴が残っていた。int()変換もINSERT OR IGNORE
+    # の不可逆性もVolumeを含む5列に等しく効くので、判定列を書込み列と一致させる。
+    REQUIRED_COLS = ["Open", "High", "Low", "Close", "Volume"]
+    incomplete_dates = [str(idx.date()) for idx, row in hist.iterrows() if row[REQUIRED_COLS].isna().any()]
     rows = [
         (
             str(idx.date()),
@@ -83,10 +87,11 @@ def main():
             fetched_at,
         )
         for idx, row in hist.iterrows()
-        if not row[["Open", "High", "Low", "Close"]].isna().any()
+        if not row[REQUIRED_COLS].isna().any()
     ]
     if incomplete_dates:
-        print(f"[skip] {len(incomplete_dates)} incomplete (NaN OHLC) date(s) not inserted, will retry next run: {incomplete_dates}")
+        print(f"[skip] {len(incomplete_dates)} incomplete (NaN in {'/'.join(REQUIRED_COLS)}) date(s) "
+              f"not inserted, will retry next run: {incomplete_dates}")
     cur_db = con.cursor()
     cur_db.executemany(
         "INSERT OR IGNORE INTO eu_ets_daily (date,open_price,high_price,low_price,close_price,volume,fetched_at) VALUES (?,?,?,?,?,?,?)",
