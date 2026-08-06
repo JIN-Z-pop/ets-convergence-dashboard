@@ -44,6 +44,16 @@ GAP_CHECK_MARKETS = [
     ("EUA", "eu_ets"),
 ]
 
+# 既知の発表ラグ許容(営業日単位、市場別)。0=前営業日必須(緩和なし)。
+# 実測根拠(ets_sync_log PIPELINE ALERT履歴, 2026-07-19〜2026-08-07): CEA(carbonmarket.cn)と
+# EUA(yfinance)は月に数回、ソース側の発表そのものが1営業日遅れ、次回実行で自己解消するパターンを
+# 繰り返す(07-22/07-30/08-01/08-02=CEA、08-04=EUA。実行順序は全件で正常=china/koreaコレクター実行後に
+# build_ets_market_smart.pyが走っていることを確認済み。原因はソース側発表タイミングであり収集障害ではない)。
+# CCER/KAUには同型の実績なし=0のまま維持(実績のない市場まで一律に緩めると本当の障害検知が遅れるため)。
+# 緩和は check_gaps()の「直近1点」判定のみに限定。真の複数日gapは check_recent_coverage()のF19 60日窓が
+# 別軸(許容日数の影響を受けない)で捕捉するため、検知能力の後退にはならない。
+GAP_LAG_TOLERANCE = {"CEA": 1, "CCER": 0, "KAU": 0, "EUA": 1}
+
 # F19是正(oni_ets_t6, 2026-07-20): 直近被覆率検査対象(GXは特定日限定運用のため対象外=既存のgap検知
 # 除外方針と同じ)。window_daysは「最近の穴」だけを拾う設計 — CEA等の既に原因調査・分類済みの
 # 大きな historical gap(季節性・発行前等)を毎朝再アラートしてノイズ化させないため、
@@ -106,6 +116,8 @@ def check_gaps(target_date):
     alerts = []
     for market, holiday_key in GAP_CHECK_MARKETS:
         expected_latest = most_recent_business_day(holidays, holiday_key, target_date)
+        for _ in range(GAP_LAG_TOLERANCE.get(market, 0)):
+            expected_latest = most_recent_business_day(holidays, holiday_key, expected_latest)
         if market == "KAU":
             # KAUはvintage別market値(KAU15〜KAU30)で格納されるため厳密一致では常にNoneになる。
             # 前方一致で系列全体のMAXを取り、現行vintageの最新日付を捕捉する(2026-07-20 gap_alert誤検知修正)。
@@ -118,8 +130,10 @@ def check_gaps(target_date):
             ).fetchone()
         latest = row[0] if row else None
         if latest is None or latest < expected_latest:
+            tol = GAP_LAG_TOLERANCE.get(market, 0)
+            tol_note = f",許容{tol}営業日込み" if tol else ""
             alerts.append(
-                f"{market}: latest={latest} expected(直近営業日)={expected_latest} target={target_date} (前営業日分が未到達)"
+                f"{market}: latest={latest} expected(直近営業日{tol_note})={expected_latest} target={target_date} (許容超過で未到達)"
             )
     conn.close()
     return alerts
