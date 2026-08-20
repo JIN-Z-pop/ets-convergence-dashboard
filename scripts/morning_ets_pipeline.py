@@ -26,12 +26,14 @@ Usage: python scripts/morning_ets_pipeline.py [--date YYYY-MM-DD]  (省略時=�
 """
 import argparse
 import json
+import os
 import subprocess
 import sqlite3
 import sys
 from datetime import datetime, timedelta
 
 ROOT = r"C:\Users\jin_z\Desktop\ets-convergence-dashboard"
+GX_COVERAGE_MONTHS_BACK = 3  # 直近~90日相当をカバー(他市場のF19 60日窓より広めの安全マージン)
 SMART = r"C:\Users\jin_z\.claude\databases\ets_market_smart.db"
 KOREA = r"C:\Users\jin_z\.claude\databases\korea_ets_smart.db"
 HOLIDAYS_PATH = r"C:\Users\jin_z\market_holidays_2026.json"
@@ -209,6 +211,53 @@ def check_korea_monthly_reconciliation(months=KOREA_RECONCILE_MONTHS, tolerance=
     return alerts
 
 
+def check_and_backfill_gx_coverage(target_date, months_back=GX_COVERAGE_MONTHS_BACK):
+    """GX-ETS coverage対象化(2026-08-20 金博士様GO「gap/coverage検知の対象化」)。
+
+    背景: GXは他市場と違い「無取引=既定」(2025年度は11-12月毎週金曜限定運用)のため
+    GAP_CHECK_MARKETS/COVERAGE_CHECK_MARKETSから意図的に除外されている。しかしこれは
+    「実取引の有無」を問わない話であって、「日報PDFそのものが存在するのに記録が
+    raw_gx_ets_daily(gods_eye.db)に無い」という別種の見逃しは検知できていなかった。
+    実例(2026-08-20発見): 2026-08-17〜19の3営業日分のPDFは解決可能だったが記録が
+    欠落していた。原因=毎日の実行が`--date <today>`単発のみで、「当日分が未公表→
+    翌日以降にPDF が遅れて公開される」ケースの再取得(backfill)が組み込まれていなかった
+    構造的な穴。
+
+    設計: 他市場のような休日カレンダー突合ではなく、fetch_gx_ets.list_available_dates()
+    が返す「PDFリンクが実在する日付集合」そのものを正とし、raw_gx_ets_dailyとの差分を
+    missingとして検知する。検知したら該当日をfetch_gx_ets.py --dateで自動再取得し
+    (CEA/CCER/KRXコレクターの「遡及で自動的に穴を塞ぐ」設計思想と揃える)、それでも
+    埋まらない日だけをalertとして返す。当日(target_date)自体はまだ未公表の可能性が
+    高いため対象外(通常のfetch_gx_ets.py --date実行側でカバー済み)。
+    """
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    if this_dir not in sys.path:
+        sys.path.insert(0, this_dir)
+    from fetch_gx_ets import list_available_dates, yyyymmdd_to_iso, GODS_DB as GX_GODS
+
+    url_map = list_available_dates(months_back=months_back)
+    conn = sqlite3.connect(GX_GODS)
+    have = {r[0] for r in conn.execute("SELECT date FROM raw_gx_ets_daily").fetchall()}
+    conn.close()
+
+    all_isos = {yyyymmdd_to_iso(ymd) for ymd in url_map}
+    missing = sorted(iso for iso in all_isos if iso < target_date and iso not in have)
+    if not missing:
+        return []
+
+    print(f"[GX-COVERAGE] 記録漏れ{len(missing)}件検知、自動backfillを試みます: {missing}")
+    for iso in missing:
+        run([sys.executable, "scripts/fetch_gx_ets.py", "--date", iso])
+
+    conn = sqlite3.connect(GX_GODS)
+    have_after = {r[0] for r in conn.execute("SELECT date FROM raw_gx_ets_daily").fetchall()}
+    conn.close()
+    still_missing = [d for d in missing if d not in have_after]
+    if still_missing:
+        return [f"GX coverage: 自動backfill後も記録漏れ残存 {still_missing}"]
+    return []
+
+
 def log_pipeline_run(status, gap_alert):
     conn = sqlite3.connect(SMART)
     conn.execute(
@@ -254,6 +303,8 @@ def main():
         # 当日分が未公表(まだ日報が出ていない等)の可能性もあるため、失敗しても後続は続行する。
         print(f"[WARN] fetch_gx_ets.py failed for {target_date} (日報未公表の可能性。パイプライン続行)")
 
+    gx_coverage_alerts = check_and_backfill_gx_coverage(target_date)
+
     ok_build = run([sys.executable, "scripts/build_ets_market_smart.py"])
     if not ok_build:
         log_pipeline_run("FAIL(build)", None)
@@ -263,7 +314,7 @@ def main():
     alerts = check_gaps(target_date)
     coverage_alerts = check_recent_coverage(target_date)
     korea_alerts = check_korea_monthly_reconciliation()
-    all_alerts = alerts + coverage_alerts + korea_alerts
+    all_alerts = alerts + coverage_alerts + korea_alerts + gx_coverage_alerts
     gap_alert = "; ".join(all_alerts) if all_alerts else None
     status = "ALERT" if all_alerts else "OK"
     log_pipeline_run(status, gap_alert)
@@ -288,7 +339,12 @@ def main():
             print(f"  - {a}")
     else:
         print(f"korea reconcile check: no anomaly (直近{KOREA_RECONCILE_MONTHS}ヶ月, F19)")
-    print("GX: no_trade=既定のためgap検知対象外。fetch実行結果は上記[RUN]出力を参照。")
+    if gx_coverage_alerts:
+        print("[GX COVERAGE ALERTS] (記録漏れ=PDFは存在するが取得できていない日、自動backfill後もなお残存)")
+        for a in gx_coverage_alerts:
+            print(f"  - {a}")
+    else:
+        print(f"GX coverage check: no anomaly (直近{GX_COVERAGE_MONTHS_BACK}ヶ月分, 記録漏れ0件/自動backfillで解消)。no_trade自体は既定のため対象外。")
 
 
 if __name__ == "__main__":
