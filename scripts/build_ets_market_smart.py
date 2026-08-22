@@ -16,6 +16,7 @@ ets_correction/ets_sync_log は追記専用(履歴として蓄積・消さない
 
 Usage: python scripts/build_ets_market_smart.py   (ets-convergence-dashboardルートから)
 """
+import re
 import sqlite3
 from datetime import datetime
 
@@ -26,6 +27,45 @@ GODS = r"C:\Users\jin_z\.claude\databases\gods_eye.db"
 
 DAILY_COLS = "market,date,open_price,high_price,low_price,close_price,currency,volume,amount,no_trade,source_id,fetched_at"
 DAILY_PLACEHOLDERS = ",".join("?" * 12)
+
+# market_family導出: series code(53種) -> ets_market_meta family(9種)。
+# 規則: 末尾2桁(任意で-2桁)をvintageとして剥ぐ。bare一致優先、剥いでもmetaに無ければ未解決(None)。
+# 全53コードが決定的に解決することを導入時(2026-08-22)に全数検証済み(陽性対照つき)。
+VINTAGE = re.compile(r"\d{2}(-\d{2})?$")
+
+
+def to_family(code, families):
+    if code in families:
+        return code
+    stripped = VINTAGE.sub("", code)
+    if stripped and stripped in families:
+        return stripped
+    return None
+
+
+def apply_market_family(smart, run_at):
+    """全load+corrections後にmarket_familyを一括導出(pre_listingフラグと同型の後段UPDATE)。
+
+    毎朝の全消去再構築で全行NULLに戻り、本関数が再導出する(冪等)。未解決コードは
+    素通しにせずNULLのまま残し、ets_sync_logのgap_alertで可視化する(読み手=監査器の
+    market_family検査)。
+    """
+    families = set(r[0] for r in smart.execute("SELECT market FROM ets_market_meta"))
+    codes = [r[0] for r in smart.execute("SELECT DISTINCT market FROM ets_daily")]
+    unresolved = []
+    n_updated = 0
+    for code in codes:
+        fam = to_family(code, families)
+        if fam is None:
+            unresolved.append(code)
+            continue
+        n_updated += smart.execute(
+            "UPDATE ets_daily SET market_family=? WHERE market=?", (fam, code)
+        ).rowcount
+    gap = "market_family unresolved: %s" % sorted(unresolved) if unresolved else None
+    log(smart, run_at, "MARKET_FAMILY", n_updated, 0, gap,
+        "derived(codes=%d, families=%d, unresolved=%d)" % (len(codes), len(families), len(unresolved)))
+    return n_updated, unresolved
 
 CREATE_ETS_AUCTION_SQL = """
 CREATE TABLE IF NOT EXISTS ets_auction (
@@ -412,6 +452,8 @@ def main():
     applied1 = reapply_corrections(smart)
     applied2 = reapply_corrections(smart)
 
+    n_fam, fam_unresolved = apply_market_family(smart, run_at)
+
     create_period_views(smart)
 
     smart.commit()
@@ -427,6 +469,7 @@ def main():
     print(f"total ets_daily rows = {total}")
     print(f"total ets_auction rows = {total_auction}")
     print(f"corrections: newly_inserted={ins_corr}  applied_run1={applied1}  applied_run2={applied2}")
+    print(f"market_family: updated={n_fam}  unresolved={fam_unresolved if fam_unresolved else 'なし'}")
 
     china.close(); korea.close(); gods.close(); smart.close()
 
