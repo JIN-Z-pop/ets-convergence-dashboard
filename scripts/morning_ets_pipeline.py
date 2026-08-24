@@ -164,7 +164,7 @@ def stage_sync():
     return []
 
 
-def run_in(cmd, cwd):
+def run_in(cmd, cwd, pythonpath=None):
     """run()同様だがcwdを指定できる版(china/korea-ets-mcpはパッケージ相対import前提=cwd必須)。
 
     🔴S6サンドボックス検証で実発見(2026-08-23): cwd自体が存在しない場合
@@ -173,10 +173,22 @@ def run_in(cmd, cwd):
     ("1市場/1機能の失敗が他を止めない"というstage J設計の前提=WARN継続を破壊する)。
     china/korea-ets-mcpディレクトリが将来移動/削除された場合も同型で全損しうるため、
     ここでOSErrorを捕捉しFalse(=呼び出し元でWARN継続)へ倒す。
+
+    🔴S8初回機械実行で実発見(2026-08-25): 上記docstringの「cwd必須」は
+    **cwdだけで足りる**という前提を含んでいたが実体は違った。両repoともパッケージは
+    src/レイアウト(src/china_ets_mcp/)のため、cwdをrepo直下にしてもsrcはsys.pathに
+    入らず ModuleNotFoundError で必ず失敗する(両方向対照で確認: PYTHONPATH無し=再現/
+    src=解消)。結果stage Jが毎朝失敗し公開HTML 2本が停滞した。手順書(ANSの手紙)側には
+    最初から `PYTHONPATH=src` が書かれており、pipeline統合時に落ちた=設計と実体の乖離
+    (bias#135)。envはWindowsで完全置換となるため os.environ を必ず継承する。
     """
     print(f"[RUN in {cwd}] {' '.join(cmd)}")
+    env = None
+    if pythonpath:
+        env = {**os.environ, "PYTHONPATH": pythonpath}
+        print(f"[RUN env] PYTHONPATH={pythonpath}")
     try:
-        p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
+        p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, env=env)
     except OSError as e:
         print(f"[WARN] cwd起動失敗(継続): {cwd}: {e}", file=sys.stderr)
         return False
@@ -193,9 +205,11 @@ def stage_html_refresh():
     korea-ets-mcpは在る前提=失敗は異常。今回のダミーパスは検証用の人為であって常態ではない)。
     """
     alerts = []
-    if not run_in([sys.executable, "-m", "china_ets_mcp.cli"], CHINA_MCP_DIR):
+    if not run_in([sys.executable, "-m", "china_ets_mcp.cli"], CHINA_MCP_DIR,
+                  pythonpath=os.path.join(CHINA_MCP_DIR, "src")):
         alerts.append("stage J(china html再生成) failed - WARN継続")
-    if not run_in([sys.executable, "-m", "korea_ets_mcp.cli"], KOREA_MCP_DIR):
+    if not run_in([sys.executable, "-m", "korea_ets_mcp.cli"], KOREA_MCP_DIR,
+                  pythonpath=os.path.join(KOREA_MCP_DIR, "src")):
         alerts.append("stage J(korea html再生成) failed - WARN継続")
     alerts += check_html_freshness(
         "china", CHINA_HTML, SMART, "SELECT MAX(date) FROM ets_daily WHERE market IN ('CEA','CCER')"
