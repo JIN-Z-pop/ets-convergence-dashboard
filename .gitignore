@@ -4,12 +4,15 @@
 !README.md
 # 内部設定・作業用DB (非公開)
 .security-allowlist.json
+scripts/run_morning_pipeline.bat
+logs/
 data/*.db
 # 標準
 __pycache__/
 *.pyc
 *.egg-info/
 .venv/
+.claude-worktrees/
 # design-sync (claude.ai/design 同期) — 生成物・作業ファイルのみ除外
 .ds-sync/
 ds-bundle/
