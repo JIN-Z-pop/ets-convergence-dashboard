@@ -17,6 +17,7 @@ sha256[:12]=e3345225de51)。
   I check_gaps/check_recent_coverage/korea_reconcile (既存smart層検査・alert集約)
   J china/korea docs/index.html再生成+鮮度自己検査 (新設)
   K 監査器 ets_db_audit.py (ERROR>0=alert)
+  M 着地確認 3repoの未commit/未push検知 (検知のみ・commit/pushはしない。2026-08-28新設)
   L 結果集約→ets_sync_log(STAGES要約・§2X-5)+alertファイル書出(§2h')
 
 同日ガード(既存流用・変更なし): 当日PIPELINE行がOK/ALERTならskip(--forceで強制)。
@@ -56,6 +57,13 @@ CHINA_MCP_DIR = r"C:\Users\jin_z\Desktop\china-ets-mcp"
 KOREA_MCP_DIR = r"C:\Users\jin_z\Desktop\korea-ets-mcp"
 CHINA_HTML = os.path.join(CHINA_MCP_DIR, "docs", "index.html")
 KOREA_HTML = os.path.join(KOREA_MCP_DIR, "docs", "index.html")
+
+# stage M(着地確認)の対象。公開branch名はrepoごとに異なるため定数に持たず実測解決する。
+GIT_REPOS = [
+    ("convergence", ROOT),
+    ("china", CHINA_MCP_DIR),
+    ("korea", KOREA_MCP_DIR),
+]
 
 # gap検知対象(GXを除く)。market値は ets_market_meta 準拠。holiday_keyはmarket_holidays_2026.jsonのtopキー。
 GAP_CHECK_MARKETS = [
@@ -253,6 +261,82 @@ def stage_audit():
         return []
     line = _extract_result_line(out, "SUMMARY:")
     return [f"stage K(ets_db_audit): {line or ('exit=%d' % rc)}"]
+
+
+def _git(args, cwd, raw=False):
+    """git実行。(ok, stdout)を返す。git不在・タイムアウトも失敗として扱い例外を外へ出さない。
+
+    raw=True は strip() を掛けない。status --porcelain は先頭2文字が状態列で
+    1行目の先頭が空白になりうるため、strip()するとパスが1文字欠ける(実測で検出)。
+    """
+    try:
+        p = subprocess.run(["git"] + args, cwd=cwd, capture_output=True, text=True,
+                           encoding="utf-8", errors="replace", timeout=60)
+        return p.returncode == 0, (p.stdout if raw else p.stdout.strip())
+    except (OSError, subprocess.SubprocessError) as e:
+        return False, str(e)
+
+
+def _publish_branch(cwd):
+    """公開branchを origin/HEAD から解決する。解決不能ならNone。
+
+    main/master決め打ちを避けるための実測解決。実測(2026-08-28)で3リポジトリの
+    公開branchは master / public / master と揃っておらず、決め打ちの差分コマンドは
+    fatalで空を返す=「未pushが無い」と読み違える経路になる。
+    """
+    ok, out = _git(["symbolic-ref", "refs/remotes/origin/HEAD"], cwd)
+    prefix = "refs/remotes/"
+    if ok and out.startswith(prefix):
+        return out[len(prefix):]
+    return None
+
+
+def stage_landing_check():
+    """stage M: 成果物の着地(commit/push)確認。
+
+    stage JはHTMLを再生成するが、再生成物が公開へ着地したかは従来どの検査も見て
+    いなかった。pipelineがOKと宣言しても未commit/未pushのまま公開が止まりうる
+    (実測2026-08-28: 機械完走の一方でprices.jsonは未commitのまま残っていた)。
+
+    捕捉 = 追跡ファイルの未commit変更件数 / 公開branchへ未pushのcommit数 /
+           公開branchの解決可否。
+    非捕捉 = 公開サイトが実際に配信している内容(Pagesビルド結果) / untrackedファイル
+           (意図的な非公開物と区別できないため数えない) / commit内容の妥当性。
+
+    本stageは検知のみ。commitもpushも行わない(公開行為は人の判断に残す)。
+    """
+    alerts = []
+    for label, repo in GIT_REPOS:
+        if not os.path.isdir(os.path.join(repo, ".git")):
+            alerts.append(f"stage M({label}): gitリポジトリが見当たらない {repo}")
+            continue
+        ok, out = _git(["status", "--porcelain", "--untracked-files=no"], repo, raw=True)
+        if not ok:
+            alerts.append(f"stage M({label}): git status失敗 {out[:120]}")
+            continue
+        dirty = [ln for ln in out.splitlines() if ln.strip()]
+        dirty_paths = [ln[3:] for ln in dirty]
+        branch = _publish_branch(repo)
+        if branch is None:
+            alerts.append(f"stage M({label}): 公開branchをorigin/HEADから解決できない"
+                          f"(未push件数は判定不能=OKに倒さない)")
+            unpushed = None
+        else:
+            ok2, out2 = _git(["log", f"{branch}..HEAD", "--oneline"], repo)
+            if not ok2:
+                alerts.append(f"stage M({label}): 未push件数の取得に失敗 {out2[:120]}")
+                unpushed = None
+            else:
+                unpushed = len([ln for ln in out2.splitlines() if ln.strip()])
+        if dirty:
+            alerts.append(f"stage M({label}): 未commitの追跡ファイル{len(dirty)}件 "
+                          f"[{', '.join(dirty_paths[:3])}]")
+        if unpushed:
+            alerts.append(f"stage M({label}): {branch}へ未pushのcommit{unpushed}件")
+        print(f"[INFO ] LANDING       {label}: 未commit{len(dirty)}件 / "
+              f"未push{'判定不能' if unpushed is None else str(unpushed) + '件'} "
+              f"(公開branch={branch or '解決不能'})")
+    return alerts
 
 
 def write_alert_file(status, target_date, all_alerts):
@@ -553,6 +637,7 @@ def main():
 
     record("J", stage_html_refresh())
     record("K", stage_audit())
+    record("M", stage_landing_check())
 
     # §2h「完遂」の再定義: J(HTML鮮度)/K(監査器)のalertもrecord()でall_alertsへ
     # 集約済みのため、ここで初めてstatus判定する時点で両方が反映されている=
