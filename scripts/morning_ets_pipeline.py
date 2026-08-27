@@ -192,7 +192,7 @@ def run_in(cmd, cwd, pythonpath=None):
     入らず ModuleNotFoundError で必ず失敗する(両方向対照で確認: PYTHONPATH無し=再現/
     src=解消)。結果stage Jが毎朝失敗し公開HTML 2本が停滞した。手順書(ANSの手紙)側には
     最初から `PYTHONPATH=src` が書かれており、pipeline統合時に落ちた=設計と実体の乖離
-    (bias#135)。envはWindowsで完全置換となるため os.environ を必ず継承する。
+    envはWindowsで完全置換となるため os.environ を必ず継承する。
     """
     print(f"[RUN in {cwd}] {' '.join(cmd)}")
     env = None

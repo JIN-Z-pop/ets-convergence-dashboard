@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """load_eua_hist_fsr.py — EUA歴史価格(FSR Figure_1.csv)をgods_eye.dbの恒久層テーブルへ投入。
 
-奏(editor) spec 2026-07-20発注 (eua_hist_permanent_load_spec_20260720.md) / 葉山(actor)実装。
+spec 2026-07-20 (eua_hist_permanent_load_spec_20260720.md) に基づく実装。
 経緯: 2026-07-19にEEXオークション998行を直接ets_dailyへ投入したところ翌build時のDELETE→
 全再構築で消滅(2026-07-20発覚)。恒久投入へ設計転換した結果が本spec。
 

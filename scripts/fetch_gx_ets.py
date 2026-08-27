@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """fetch_gx_ets.py — GX-ETS(超過削減枠)取得スクリプト。
 
-奏(editor) 発注 2026-07-19(金博士様GO)。葉山(actor)実装。設計正本=docs/gx_ets_acquisition_design_20260719.md。
+2026-07-19 設計・実装。設計文書=docs/gx_ets_acquisition_design_20260719.md。
 
 出典: JPXカーボン・クレジット市場日報(PDF, 営業日ごと)
 https://www.jpx.co.jp/equities/carbon-credit/daily/index.html

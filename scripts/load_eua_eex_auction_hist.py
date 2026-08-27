@@ -8,7 +8,7 @@ ets_market_smart.db.ets_auction は build_ets_market_smart.py が毎朝DELETE→
 全再構築する揮発層 — 直接そちら側へINSERTしてはならない(2026-07-19の教訓、
 EEXデータを直接ets_dailyへ投入し翌rebuildで消滅した事故を繰り返さないこと)。
 
-奏(editor) spec: eua_eex_auction_load_spec_20260720.md / 葉山(actor)実装。
+spec: eua_eex_auction_load_spec_20260720.md に基づく実装。
 
 投入元: data/sources/eua_hist/eex_auction_{2017..2026}.{xls|xlsx} 全10ファイル
         (md5はSOURCES.mdに記録済み・投入前に照合)

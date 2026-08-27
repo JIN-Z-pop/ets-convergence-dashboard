@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """build_ets_market_smart.py — ETS一元化P1: 統一正本DB(ets_market_smart.db)構築スクリプト。
 
-奏(editor) P1発注 2026-07-18夜(金博士様GO)。葉山(actor)実装。系譜=家内DD台帳2026-07-18(鬼検証是正/保全P0)参照。
+2026-07-18 設計・実装。検証と保全の一環として整備。
 
 既存ソースDB(china_ets_smart.db / korea_ets_smart.db / gods_eye.db)は読み取り専用(read-only URI接続)。
 本スクリプトが書き込むのは ets_market_smart.db(新設・単一正本)のみ。
@@ -107,7 +107,7 @@ SOURCES = [
     (4, "KRX (Korea Exchange)", None, "kets collector (ohlcv + daily_price)", "KAU/KCU/KOC全permit_type共通出典"),
     (5, "yfinance CO2.L (SparkChange Physical Carbon EUA ETC, EUR建て)", None,
      "yfinance Ticker.history(period='2y')", "EUA出典。列名price_usdは歴史的負債=実体EUR(2026-07-18鬼検証で確定)"),
-    (6, "NASDAQ ICE_EUA1 Settle (EUR)", None, None, "不使用確定(2026-07-20金博士様裁定・有料断念)"),
+    (6, "NASDAQ ICE_EUA1 Settle (EUR)", None, None, "不使用確定(2026-07-20・有料につき断念)"),
     (7, "JPXカーボン・クレジット市場日報", "https://www.jpx.co.jp/equities/carbon-credit/daily/index.html",
      "PDF fetch(索引/archivesページでURL解決→PDFテーブル抽出、銘柄コード5051000行のみ抽出)",
      "GX-ETS超過削減枠出典。設計=docs/gx_ets_acquisition_design_20260719.md、取得=scripts/fetch_gx_ets.py"),
@@ -123,7 +123,7 @@ SOURCES = [
 ]
 
 MARKET_META = [
-    # P1 market定義正文v1.1(奏裁定 2026-07-18 22:14, 蒼悟逆FB反映)確定: 9 family行
+    # market定義 v1.1(2026-07-18・レビュー反映)確定: 9 family行
     # D2是正(oni_ets_t6 F2案b, 2026-07-20): volume_unit列追加(全market必須充足)。
     # EUAのみ証券出来高(ETC口数)・他markets全てtCO2 — 単位混在防止(桁差1/500の理由=単位差)
     ("CEA", "中国CEA(全国ETS)", "China-ETS", "上海環境能源交易所", "CNY", "2021-07-16",
@@ -147,7 +147,7 @@ MARKET_META = [
      "series_start=機械遡及可能な索引/archivesページの実データ最古日(2026-07-19 backfill実行で確認)。"
      "制度としての取引対象化は2024年11月〜(複数出典で月単位確認済みだが日次は未確認)だが、"
      "archives-13.html以降は404(2026-07-19実測)=同一経路でのそれ以遠の遡及はサイト側制約で不可能、"
-     "2024-11〜2025-06分は別経路要検討(金博士様判断待ち・未着手)。"
+     "2024-11〜2025-06分は別経路要検討(判断待ち・未着手)。"
      "実取引はFY2025 11-12月の毎週金曜限定運用中の2025-11-14/21の2日のみ確認(価格1800円/t-CO2)。"
      "no_trade多数(247日中245日)は想定内(特定日限定運用のため)。", "tCO2"),
 ]
@@ -156,7 +156,7 @@ MARKET_META = [
 CORRECTIONS = [
     ("CCER", "2024-01-22", "close_price", "0.0", "63.51",
      "daily_amount 23835280 / daily_volume 375315 = 63.5074 (round 2)",
-     "奏(金博士様承認 DEFECT-C, regression復元裁定 2026-07-18夜)", "3148"),
+     "DEFECT-C regression復元(2026-07-18)", "3148"),
 ]
 
 ALLOWED_CORRECTION_FIELDS = {
@@ -204,7 +204,7 @@ def load_ccer(smart, china, run_at):
     no_trade_count = 0
     for d, avg_price, vol, amt, fa in rows:
         no_trade = 1 if (avg_price == 0 and vol == 0) else 0
-        # no_trade日はclose/volume/amountを揃えてNULL化(蒼悟observation 2026-07-19: GX(=NULL)とCCER(=0)の
+        # no_trade日はclose/volume/amountを揃えてNULL化(2026-07-19 観察: GX(=NULL)とCCER(=0)の
         # volume表現不統一を解消。NULL採用理由=SQL集計整合性: AVG(volume)は無取引日を分母から正しく除外できる
         # (偽の0を混在させるとAVGが不当に押し下げられる)。CCER源自体は0を明示するがDB層で正規化する。
         close = None if no_trade else avg_price
@@ -297,7 +297,7 @@ def load_eua(smart, gods, run_at):
 def load_eua_auction(smart, gods, run_at):
     """EUAオークション系列(EEX一次市場, source_id=9)ロード。
 
-    歴史層はgods_eye.db raw_eua_auction_eex(恒久・build非破壊、2026-07-20葉山投入)。本関数は
+    歴史層はgods_eye.db raw_eua_auction_eex(恒久・build非破壊、2026-07-20投入)。本関数は
     そこからread-onlyで読み、ets_market_smart.db側の揮発層ets_auctionへ全件再構築する。
     ets_daily/EUA日次(id8+id5, load_eua())とは別表・非接触 — 同日複数オークション(DE/EU/PL別)が
     あり(market,date)粒度に合わない上、落札価格と二次市場終値は意味が別のため。
