@@ -59,10 +59,14 @@ CHINA_HTML = os.path.join(CHINA_MCP_DIR, "docs", "index.html")
 KOREA_HTML = os.path.join(KOREA_MCP_DIR, "docs", "index.html")
 
 # stage M(着地確認)の対象。公開branch名はrepoごとに異なるため定数に持たず実測解決する。
+# 第4要素=(DBの相対パス, 最新日クエリ)。追跡下のSQLiteは読み書きの有無に関わらず
+# 実行のたびにバイナリが変わる(実測2026-08-28: サイズ同一・差分0行のままdirty化)ため、
+# バイナリ差分でalert化すると毎朝WARNが立ち続け検査が何も言わなくなる。
+# DBは「commit済み版の最新日 vs 作業版の最新日」という意味の軸で見る。
 GIT_REPOS = [
-    ("convergence", ROOT),
-    ("china", CHINA_MCP_DIR),
-    ("korea", KOREA_MCP_DIR),
+    ("convergence", ROOT, None),
+    ("china", CHINA_MCP_DIR, ("data/china_ets.db", "SELECT MAX(date) FROM cea_daily")),
+    ("korea", KOREA_MCP_DIR, ("data/korea_ets.db", "SELECT MAX(date) FROM kets_kau_ohlcv")),
 ]
 
 # gap検知対象(GXを除く)。market値は ets_market_meta 準拠。holiday_keyはmarket_holidays_2026.jsonのtopキー。
@@ -291,6 +295,47 @@ def _publish_branch(cwd):
     return None
 
 
+def _committed_db_max_date(repo, db_rel, query, ref="HEAD"):
+    """commit済み版のDBから最新日を読む。取得不能ならNone(=判定不能)。
+
+    公開されているのは作業ツリーではなくcommit済みの中身なので、
+    「公開データが古いままか」はこの版を読まないと分からない。
+    """
+    tmp = os.path.join(LOGS_DIR, "_committed_db_tmp.sqlite")
+    try:
+        p = subprocess.run(["git", "show", f"{ref}:{db_rel}"], cwd=repo,
+                           capture_output=True, timeout=120)
+        if p.returncode != 0 or not p.stdout:
+            return None
+        with open(tmp, "wb") as f:
+            f.write(p.stdout)
+        conn = sqlite3.connect(f"file:{tmp}?mode=ro", uri=True)
+        row = conn.execute(query).fetchone()
+        conn.close()
+        return row[0] if row else None
+    except (OSError, subprocess.SubprocessError, sqlite3.Error):
+        return None
+    finally:
+        if os.path.exists(tmp):
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+
+
+def _worktree_db_max_date(repo, db_rel, query):
+    path = os.path.join(repo, db_rel.replace("/", os.sep))
+    if not os.path.exists(path):
+        return None
+    try:
+        conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+        row = conn.execute(query).fetchone()
+        conn.close()
+        return row[0] if row else None
+    except sqlite3.Error:
+        return None
+
+
 def stage_landing_check():
     """stage M: 成果物の着地(commit/push)確認。
 
@@ -298,15 +343,16 @@ def stage_landing_check():
     いなかった。pipelineがOKと宣言しても未commit/未pushのまま公開が止まりうる
     (実測2026-08-28: 機械完走の一方でprices.jsonは未commitのまま残っていた)。
 
-    捕捉 = 追跡ファイルの未commit変更件数 / 公開branchへ未pushのcommit数 /
-           公開branchの解決可否。
+    捕捉 = 追跡ファイル(DBを除く)の未commit変更件数 / 公開branchへ未pushのcommit数 /
+           公開branchの解決可否 / commit済みDBの最新日が作業版より古いこと。
     非捕捉 = 公開サイトが実際に配信している内容(Pagesビルド結果) / untrackedファイル
-           (意図的な非公開物と区別できないため数えない) / commit内容の妥当性。
+           (意図的な非公開物と区別できないため数えない) / commit内容の妥当性 /
+           DBのバイナリ差分(実行のたびに変わるためcommit漏れの指標にならない)。
 
     本stageは検知のみ。commitもpushも行わない(公開行為は人の判断に残す)。
     """
     alerts = []
-    for label, repo in GIT_REPOS:
+    for label, repo, db_spec in GIT_REPOS:
         if not os.path.isdir(os.path.join(repo, ".git")):
             alerts.append(f"stage M({label}): gitリポジトリが見当たらない {repo}")
             continue
@@ -314,8 +360,10 @@ def stage_landing_check():
         if not ok:
             alerts.append(f"stage M({label}): git status失敗 {out[:120]}")
             continue
-        dirty = [ln for ln in out.splitlines() if ln.strip()]
-        dirty_paths = [ln[3:] for ln in dirty]
+        all_dirty = [ln[3:] for ln in out.splitlines() if ln.strip()]
+        dirty_paths = [p for p in all_dirty if not p.endswith(".db")]
+        dirty = dirty_paths
+        db_skipped = len(all_dirty) - len(dirty_paths)
         branch = _publish_branch(repo)
         if branch is None:
             alerts.append(f"stage M({label}): 公開branchをorigin/HEADから解決できない"
@@ -333,9 +381,27 @@ def stage_landing_check():
                           f"[{', '.join(dirty_paths[:3])}]")
         if unpushed:
             alerts.append(f"stage M({label}): {branch}へ未pushのcommit{unpushed}件")
+
+        db_note = ""
+        if db_spec:
+            db_rel, db_query = db_spec
+            committed = _committed_db_max_date(repo, db_rel, db_query)
+            worktree = _worktree_db_max_date(repo, db_rel, db_query)
+            if committed is None or worktree is None:
+                alerts.append(f"stage M({label}): DB最新日を読めない"
+                              f"(commit済={committed} 作業版={worktree}) = 判定不能")
+                db_note = " / DB最新日=判定不能"
+            elif committed < worktree:
+                alerts.append(f"stage M({label}): 公開DBが古い "
+                              f"commit済={committed} < 作業版={worktree} ({db_rel})")
+                db_note = f" / DB commit済={committed} < 作業版={worktree}"
+            else:
+                db_note = f" / DB最新日={committed}(一致)"
+
         print(f"[INFO ] LANDING       {label}: 未commit{len(dirty)}件 / "
               f"未push{'判定不能' if unpushed is None else str(unpushed) + '件'} "
-              f"(公開branch={branch or '解決不能'})")
+              f"(公開branch={branch or '解決不能'}){db_note}"
+              f"{f' / DBバイナリ差分{db_skipped}件は非対象' if db_skipped else ''}")
     return alerts
 
 
