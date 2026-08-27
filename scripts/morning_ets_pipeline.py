@@ -59,15 +59,20 @@ CHINA_HTML = os.path.join(CHINA_MCP_DIR, "docs", "index.html")
 KOREA_HTML = os.path.join(KOREA_MCP_DIR, "docs", "index.html")
 
 # stage M(着地確認)の対象。公開branch名はrepoごとに異なるため定数に持たず実測解決する。
-# 第4要素=(DBの相対パス, 最新日クエリ)。追跡下のSQLiteは読み書きの有無に関わらず
-# 実行のたびにバイナリが変わる(実測2026-08-28: サイズ同一・差分0行のままdirty化)ため、
-# バイナリ差分でalert化すると毎朝WARNが立ち続け検査が何も言わなくなる。
-# DBは「commit済み版の最新日 vs 作業版の最新日」という意味の軸で見る。
+# 第4要素=(DBの相対パス, 最新日クエリ, 未着地日数クエリ)。
+# 追跡下のSQLiteは読み書きの有無に関わらず実行のたびにバイナリが変わる
+# (実測2026-08-28: サイズ同一・差分0行のままdirty化)ため、バイナリ差分では見ない。
+# DBは「commit済み版に載っていない営業日が何日分あるか」で見る。
 GIT_REPOS = [
     ("convergence", ROOT, None),
-    ("china", CHINA_MCP_DIR, ("data/china_ets.db", "SELECT MAX(date) FROM cea_daily")),
-    ("korea", KOREA_MCP_DIR, ("data/korea_ets.db", "SELECT MAX(date) FROM kets_kau_ohlcv")),
+    ("china", CHINA_MCP_DIR, ("data/china_ets.db", "SELECT MAX(date) FROM cea_daily",
+                              "SELECT COUNT(*) FROM cea_daily WHERE date > ?")),
+    ("korea", KOREA_MCP_DIR, ("data/korea_ets.db", "SELECT MAX(date) FROM kets_kau_ohlcv",
+                              "SELECT COUNT(DISTINCT date) FROM kets_kau_ohlcv WHERE date > ?")),
 ]
+# 未着地が何営業日分たまったらalertにするか。1=当日取得分のみ未着地(pipelineはcommitしない
+# ため機械実行の時点では必ずこの状態=正常)。2以上=前日以前の分も着地しておらず放置されている。
+LANDING_LAG_ALERT_DAYS = 2
 
 # gap検知対象(GXを除く)。market値は ets_market_meta 準拠。holiday_keyはmarket_holidays_2026.jsonのtopキー。
 GAP_CHECK_MARKETS = [
@@ -323,13 +328,13 @@ def _committed_db_max_date(repo, db_rel, query, ref="HEAD"):
                 pass
 
 
-def _worktree_db_max_date(repo, db_rel, query):
+def _worktree_db_query(repo, db_rel, query, params=()):
     path = os.path.join(repo, db_rel.replace("/", os.sep))
     if not os.path.exists(path):
         return None
     try:
         conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
-        row = conn.execute(query).fetchone()
+        row = conn.execute(query, params).fetchone()
         conn.close()
         return row[0] if row else None
     except sqlite3.Error:
@@ -343,8 +348,16 @@ def stage_landing_check():
     いなかった。pipelineがOKと宣言しても未commit/未pushのまま公開が止まりうる
     (実測2026-08-28: 機械完走の一方でprices.jsonは未commitのまま残っていた)。
 
-    捕捉 = 追跡ファイル(DBを除く)の未commit変更件数 / 公開branchへ未pushのcommit数 /
-           公開branchの解決可否 / commit済みDBの最新日が作業版より古いこと。
+    alertに上げるのは「放置」と「構造的異常」だけ。本pipelineはstage JでHTMLを再生成
+    するがcommitはしないため、機械実行の時点では必ず未着地になる。これをそのまま
+    alertにすると毎朝ALERTが立ち続け、本物の異常が埋もれる(実測2026-08-28: alert化
+    した初版は通し実行でstatusをOKからALERTへ変えた)。よって当日分の未着地は
+    INFOに留め、前日以前も着地していない場合にのみalertへ上げる。
+
+    捕捉(alert) = 未pushのcommit(機械はcommitしないので存在すれば取りこぼし) /
+           未着地が LANDING_LAG_ALERT_DAYS 営業日分以上たまっていること /
+           gitリポジトリ不在・status失敗・公開branch解決不能・DB読取不能。
+    捕捉(INFO のみ) = 未commitの追跡ファイル件数 / 当日分だけの未着地。
     非捕捉 = 公開サイトが実際に配信している内容(Pagesビルド結果) / untrackedファイル
            (意図的な非公開物と区別できないため数えない) / commit内容の妥当性 /
            DBのバイナリ差分(実行のたびに変わるためcommit漏れの指標にならない)。
@@ -376,25 +389,30 @@ def stage_landing_check():
                 unpushed = None
             else:
                 unpushed = len([ln for ln in out2.splitlines() if ln.strip()])
-        if dirty:
-            alerts.append(f"stage M({label}): 未commitの追跡ファイル{len(dirty)}件 "
-                          f"[{', '.join(dirty_paths[:3])}]")
         if unpushed:
             alerts.append(f"stage M({label}): {branch}へ未pushのcommit{unpushed}件")
 
         db_note = ""
         if db_spec:
-            db_rel, db_query = db_spec
-            committed = _committed_db_max_date(repo, db_rel, db_query)
-            worktree = _worktree_db_max_date(repo, db_rel, db_query)
+            db_rel, db_max_query, db_lag_query = db_spec
+            committed = _committed_db_max_date(repo, db_rel, db_max_query)
+            worktree = _worktree_db_query(repo, db_rel, db_max_query)
             if committed is None or worktree is None:
                 alerts.append(f"stage M({label}): DB最新日を読めない"
                               f"(commit済={committed} 作業版={worktree}) = 判定不能")
                 db_note = " / DB最新日=判定不能"
             elif committed < worktree:
-                alerts.append(f"stage M({label}): 公開DBが古い "
-                              f"commit済={committed} < 作業版={worktree} ({db_rel})")
-                db_note = f" / DB commit済={committed} < 作業版={worktree}"
+                lag = _worktree_db_query(repo, db_rel, db_lag_query, (committed,))
+                if lag is None:
+                    alerts.append(f"stage M({label}): 未着地日数を数えられない = 判定不能")
+                    db_note = " / DB未着地=判定不能"
+                elif lag >= LANDING_LAG_ALERT_DAYS:
+                    alerts.append(f"stage M({label}): 公開DBに未着地の日が{lag}営業日分 "
+                                  f"(commit済={committed} < 作業版={worktree}) — 前日以前も未着地")
+                    db_note = f" / DB未着地{lag}営業日分(commit済={committed})"
+                else:
+                    db_note = (f" / DB未着地{lag}営業日分=当日分のみ"
+                               f"(commit済={committed} 作業版={worktree})")
             else:
                 db_note = f" / DB最新日={committed}(一致)"
 
