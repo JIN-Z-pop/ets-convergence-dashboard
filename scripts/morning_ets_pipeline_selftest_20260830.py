@@ -11,10 +11,14 @@
     (git diffで新規追加コード=stage_publish_freshness関数+record呼び出し1行+表示ラベル1箇所
     +docstring1箇所のみであることを実体確認・main()全体の実行は副作用が大きいため見送り、
     diffベースの確認で代替=非対象として明記)。
+(d) cp932陰性対照: 呼び出し元環境のPYTHONIOENCODINGがcp932でも、subprocess.run(env=...)
+    でのUTF-8上書きにより子プロセスの[WARN]行が正しく2件取れること(修正前は子プロセスが
+    `≈`(U+2248)でUnicodeEncodeErrorを送出しWARN行0件=「判定不能」に化けていた)。
 
 Usage: python scripts/morning_ets_pipeline_selftest_20260830.py
 """
 import importlib.util
+import os
 import sys
 from pathlib import Path
 
@@ -61,12 +65,31 @@ def run():
     check("(b') 復元確認: CHECK_ETS_FRESHNESS_PATHが元の値に戻っている",
           m.CHECK_ETS_FRESHNESS_PATH == original_path)
 
+    # (d) cp932陰性対照: 呼び出し元env(PYTHONIOENCODING)をcp932に一時上書きしても、
+    # subprocess.run側のenc/env明示によりWARN行が正しく2件取れることを確認
+    original_encoding = os.environ.get("PYTHONIOENCODING")
+    os.environ["PYTHONIOENCODING"] = "cp932"
+    try:
+        result_d = m.stage_publish_freshness()
+    finally:
+        if original_encoding is None:
+            os.environ.pop("PYTHONIOENCODING", None)
+        else:
+            os.environ["PYTHONIOENCODING"] = original_encoding
+    stall_count_d = sum(1 for a in result_d if a.startswith("[WARN][滞留]"))
+    check("(d) cp932陰性対照: 呼び出し元env=cp932でも[WARN][滞留]が2件取れる(判定不能に化けない)",
+          stall_count_d == 2, f"result_d={result_d}")
+
+    # (d') 復元確認: os.environ書き換えが漏れていないか
+    check("(d') 復元確認: PYTHONIOENCODING環境変数が元の状態に戻っている",
+          os.environ.get("PYTHONIOENCODING") == original_encoding)
+
     print("\n(c) 回帰確認は本selftestでは非対象(main()全体実行は副作用大につき見送り)。"
           "git diffでstage_publish_freshness関数の新規追加+record呼び出し1行+表示ラベル1箇所"
           "+docstring1箇所のみであることを別途確認済み(既存stage関数のコード自体は無変更)。")
 
     print(f"\n=== {'ALL PASS' if fails == 0 else f'{fails} FAIL(S)'} "
-          f"(4ケース・対象=stage_publish_freshness()単体・非対象=main()全体の回帰実行) ===")
+          f"(6ケース・対象=stage_publish_freshness()単体・非対象=main()全体の回帰実行) ===")
     return 0 if fails == 0 else 1
 
 

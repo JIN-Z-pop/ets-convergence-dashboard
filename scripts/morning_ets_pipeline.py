@@ -437,7 +437,10 @@ def stage_publish_freshness():
 
     捕捉 = check_ets_freshness.pyのexit code!=0(滞留・停止・時刻異常・JSON欠落・
            built_at欠落・DB不在等、同スクリプトのdocstringどおり)。
-    非捕捉 = check_ets_freshness.py自体の判定ロジックの正しさ。
+    非捕捉 = check_ets_freshness.py自体の判定ロジックの正しさ。加えて、本stageが見るのは
+           bc-app側ローカルの protected_json/ 配下のJSON(=手元でbuild済みのファイル)であり、
+           CloudFrontに配信済みのJSONそのものではない。N=okは「手元JSONが新しい」までしか
+           言わない(配信側の鮮度は別途確認が要る)。
 
     例外(スクリプト不在・timeout等)はOKに倒さず「判定不能」alertとして返す(#136例外3値:
     ok/warn/判定不能を区別し、沈黙して緑にしない)。rc!=0なのに[WARN]行が1つも無い場合
@@ -447,6 +450,8 @@ def stage_publish_freshness():
         result = subprocess.run(
             [sys.executable, CHECK_ETS_FRESHNESS_PATH],
             capture_output=True, text=True, timeout=120,
+            encoding="utf-8", errors="replace",
+            env={**os.environ, "PYTHONIOENCODING": "utf-8"},
         )
     except Exception as e:
         return [f"[FRESHNESS] 判定不能: {e}"]
@@ -806,7 +811,7 @@ def main():
         for a in new_stage_alerts:
             print(f"  - {a}")
     else:
-        print("stage A/B/C/D/E/J/K: no anomaly")
+        print("stage A/B/C/D/E/J/K/M/N: no anomaly")
     print(f"STAGES summary: {' '.join(f'{k}={v}' for k, v in stage_status.items())}")
     print(f"[ALERT-FILE] {ALERT_PATH}")
 
