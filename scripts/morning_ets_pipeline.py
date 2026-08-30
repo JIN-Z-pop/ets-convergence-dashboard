@@ -18,6 +18,8 @@ sha256[:12]=e3345225de51)。
   J china/korea docs/index.html再生成+鮮度自己検査 (新設)
   K 監査器 ets_db_audit.py (ERROR>0=alert)
   M 着地確認 3repoの未commit/未push検知 (検知のみ・commit/pushはしない。2026-08-28新設)
+  N 公開JSON鮮度検査 check_ets_freshness.py呼び出し (既存器の朝ルーチン配線のみ・
+    判定ロジックは既存検収済・触らない。2026-08-30新設)
   L 結果集約→ets_sync_log(STAGES要約・§2X-5)+alertファイル書出(§2h')
 
 同日ガード(既存流用・変更なし): 当日PIPELINE行がOK/ALERTならskip(--forceで強制)。
@@ -423,6 +425,40 @@ def stage_landing_check():
     return alerts
 
 
+CHECK_ETS_FRESHNESS_PATH = r"C:\Users\jin_z\blue-carbon-app\data\check_ets_freshness.py"
+
+
+def stage_publish_freshness():
+    """stage N: 公開JSON(ets_market.json/ets_correlation.json)の鮮度検査(既存器の朝ルーチン配線)。
+
+    既存器 check_ets_freshness.py は[滞留]/[停止]を正しく検知しているが朝ルーチンに
+    未配線だった。本stageはsubprocessで1回叩き、rc!=0ならstdoutの[WARN]行をalertsとして
+    返すだけで、判定ロジック自体には手を入れない(既存検収済・本stageの対象外)。
+
+    捕捉 = check_ets_freshness.pyのexit code!=0(滞留・停止・時刻異常・JSON欠落・
+           built_at欠落・DB不在等、同スクリプトのdocstringどおり)。
+    非捕捉 = check_ets_freshness.py自体の判定ロジックの正しさ。
+
+    例外(スクリプト不在・timeout等)はOKに倒さず「判定不能」alertとして返す(#136例外3値:
+    ok/warn/判定不能を区別し、沈黙して緑にしない)。rc!=0なのに[WARN]行が1つも無い場合
+    (スクリプト自体のクラッシュ等、想定外の失敗形)も同様に「判定不能」とする。
+    """
+    try:
+        result = subprocess.run(
+            [sys.executable, CHECK_ETS_FRESHNESS_PATH],
+            capture_output=True, text=True, timeout=120,
+        )
+    except Exception as e:
+        return [f"[FRESHNESS] 判定不能: {e}"]
+    if result.returncode == 0:
+        return []
+    warn_lines = [ln for ln in result.stdout.splitlines() if ln.startswith("[WARN]")]
+    if not warn_lines:
+        return [f"[FRESHNESS] 判定不能: rc={result.returncode} だが[WARN]行が見つからない "
+                f"(stderr={result.stderr[:200]!r})"]
+    return warn_lines
+
+
 def write_alert_file(status, target_date, all_alerts):
     """stage L(§2h'): alertをファイルへ全置換書出(機械=書く/AIが読んで=送る、の機械側半分)。
 
@@ -722,6 +758,7 @@ def main():
     record("J", stage_html_refresh())
     record("K", stage_audit())
     record("M", stage_landing_check())
+    record("N", stage_publish_freshness())
 
     # §2h「完遂」の再定義: J(HTML鮮度)/K(監査器)のalertもrecord()でall_alertsへ
     # 集約済みのため、ここで初めてstatus判定する時点で両方が反映されている=
@@ -765,7 +802,7 @@ def main():
                         if a not in alerts and a not in coverage_alerts
                         and a not in korea_alerts and a not in gx_coverage_alerts]
     if new_stage_alerts:
-        print("[STAGE ALERTS] (A/B collector・C korea・D gap_check・E sync・J html鮮度・K audit)")
+        print("[STAGE ALERTS] (A/B collector・C korea・D gap_check・E sync・J html鮮度・K audit・N 公開鮮度)")
         for a in new_stage_alerts:
             print(f"  - {a}")
     else:
