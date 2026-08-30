@@ -11,6 +11,8 @@ sha256[:12]=e3345225de51)。
   C korea fetch_krx_ets.py (絶対パス呼び・移設せず WARN継続)
   D carbon_gap_check.py (repo層gap検査・READ-ONLY・alert化継続)
   E sync_smart_market.py (exit 0=OK/1=alert/2=凍結flag=INFO扱いでskip)
+  P price_anomaly_detect.py 価格異常検知 (2026-08-31新設。恒久配線。
+    alertは複合ルール=CEA 3軸以上が最新データ日で発火した時のみ。単軸は鳴らさない)
   F fetch_eu_ets.py→sync_eua_to_gods.py (既存・WARN継続)
   G fetch_gx_ets.py --date + GX coverage自動backfill (既存・WARN継続)
   H build_ets_market_smart.py (既存・FAILでabort)
@@ -150,6 +152,48 @@ def stage_korea_fetch():
     """
     if not run([sys.executable, KOREA_FETCH_SCRIPT]):
         return ["stage C(korea fetch_krx_ets.py) failed - WARN継続"]
+    return []
+
+
+def stage_price_anomaly():
+    """stage P: 価格異常検知(china-ets-mcp/scripts/price_anomaly_detect.py)の恒久配線。
+
+    背景: 検知器は作られていたが毎朝手順へ未配線のままで、
+    「ALERT累積0件」が『検査して0件』ではなく『検査していないから0件』という
+    代理指標になっていた(2026-08-31実測: pipeline内0参照・当日logに痕跡0)。ここで配線する。
+
+    alert方針(警報疲れ回避・2026-08-31):
+      ・鳴らすのは**複合ルール(CEA 3軸以上同時発火)が最新データ日で成立した時のみ**。
+      ・単軸発火は基準率26.5%(年約64日)につき鳴らさない=検知器の出力内に留める。
+      ・過去の発火日(全史10日)は毎朝の再掲をしない。鳴らすのは「新しい1日」だけ。
+
+    この関数が答えない問い(非対象範囲):
+      ・閾値の妥当性 / CCERへの複合ルール適用(1軸のみで構造上到達不能=非適用)
+      ・最新データ日より前の発火(=履歴。検知器本体の出力で見る)
+    """
+    rc, out = run_capture([sys.executable, os.path.join("scripts", "price_anomaly_detect.py")],
+                          cwd=CHINA_MCP_DIR)
+    if rc != 0:
+        return [f"stage P(price_anomaly_detect) failed - exit={rc}"]
+
+    # 判定はstdoutの文言ではなくDB実体から取る(出力形式の変更で静かに壊れないように)。
+    db = os.path.join(CHINA_MCP_DIR, "data", "china_ets.db")
+    try:
+        conn = sqlite3.connect(db)
+        latest = conn.execute("SELECT MAX(date) FROM cea_daily").fetchone()[0]
+        row = conn.execute(
+            "SELECT metric_value FROM price_anomaly_metrics WHERE market='CEA' "
+            "AND metric_name='axes_fired_count' AND triggered=1 AND date=?",
+            (latest,),
+        ).fetchone()
+        conn.close()
+    except sqlite3.Error as e:
+        return [f"stage P(price_anomaly_detect): DB読取失敗 {e}"]
+
+    if row:
+        return [f"stage P: CEA {latest} に {int(row[0])}軸 同時発火(複合ALERT・要確認)"]
+    print(f"[INFO ] PRICE_ANOMALY  CEA最新日={latest}: 複合ルール(3軸以上)の発火なし。"
+          f"単軸発火は検知器出力側で確認(本stageは鳴らさない)")
     return []
 
 
@@ -718,6 +762,7 @@ def main():
     record("C", stage_korea_fetch())
     record("D", stage_gap_check())
     record("E", stage_sync())
+    record("P", stage_price_anomaly())
 
     # F: yfinance網断/休場は常態的に起きうる失敗につきalert化しない(常態/異常軸・
     # approved 08-23。stage_statusのwarnはSTAGES要約に残るが
@@ -807,11 +852,11 @@ def main():
                         if a not in alerts and a not in coverage_alerts
                         and a not in korea_alerts and a not in gx_coverage_alerts]
     if new_stage_alerts:
-        print("[STAGE ALERTS] (A/B collector・C korea・D gap_check・E sync・J html鮮度・K audit・N 公開鮮度)")
+        print("[STAGE ALERTS] (A/B collector・C korea・D gap_check・E sync・P 価格異常・J html鮮度・K audit・N 公開鮮度)")
         for a in new_stage_alerts:
             print(f"  - {a}")
     else:
-        print("stage A/B/C/D/E/J/K/M/N: no anomaly")
+        print("stage A/B/C/D/E/P/J/K/M/N: no anomaly")
     print(f"STAGES summary: {' '.join(f'{k}={v}' for k, v in stage_status.items())}")
     print(f"[ALERT-FILE] {ALERT_PATH}")
 
