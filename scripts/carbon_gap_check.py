@@ -7,7 +7,7 @@ any missing dates the source still exposes); this checker makes any remaining
 hole VISIBLE so a silently-skipped/crashed cycle can never hide a permanent loss.
 
 Uses market_holidays_2026.json to know which days SHOULD have data, so weekends
-and holidays are never mis-flagged as gaps. Chinese (CEA/CCER) and Korean (KAU25)
+and holidays are never mis-flagged as gaps. Chinese (CEA/CCER) and Korean (KAU)
 calendars differ (e.g. 2026-06-19 Dragon Boat: closed in CN, open in KR), so each
 market is checked against its own calendar.
 
@@ -85,6 +85,43 @@ def db_dates(db, query):
         con.close()
 
 
+def db_vintages(db, query):
+    """Return {date: set(vintage_label)} from a (date, vintage) query."""
+    con = sqlite3.connect(db)
+    try:
+        out = {}
+        for (d, vintage) in con.execute(query):
+            try:
+                dt = datetime.date.fromisoformat(str(d))
+            except ValueError:
+                continue
+            out.setdefault(dt, set()).add(str(vintage))
+        return out
+    finally:
+        con.close()
+
+
+def detect_vintage_drop(date_vintages):
+    """Pure fn: {date: vintage_set} -> (dropped_set, latest_date, prev_date).
+
+    Compares the two most recent dates present in the data (no calendar lookup
+    needed - "most recent 2 trading days" is just the data's own last 2 dates).
+    Returns (set(), None, None) when there are fewer than 2 dates to compare.
+    """
+    dates = sorted(date_vintages)
+    if len(dates) < 2:
+        return set(), None, None
+    prev_d, latest_d = dates[-2], dates[-1]
+    dropped = date_vintages[prev_d] - date_vintages[latest_d]
+    return dropped, latest_d, prev_d
+
+
+def fmt_vintage_drop(dropped, prev_d):
+    names = ",".join(sorted(dropped))
+    return (f"  !! VINTAGE-DROP: {names} (last={prev_d.isoformat()}) -- "
+            f"annual rollover likely if Aug-Sep; verify KRX listing")
+
+
 def check_market(name, dates, closures, today, lookback, cal_start=None):
     if not dates:
         return {"name": name, "latest": None, "interior": [], "trailing": [], "status": "NODATA"}
@@ -111,7 +148,7 @@ def run(lookback, today=None):
     markets = [
         ("CEA  ", CHINA_DB, "SELECT date FROM cea_daily", china),
         ("CCER ", CHINA_DB, "SELECT date FROM ccer_daily", china),
-        ("KAU25", KOREA_DB, "SELECT date FROM kets_kau_ohlcv WHERE kau_type='KAU25'", korea),
+        ("KAU  ", KOREA_DB, "SELECT DISTINCT date FROM kets_kau_ohlcv WHERE kau_type LIKE 'KAU%'", korea),
     ]
     print(f"=== carbon_gap_check  (today={today}, lookback={lookback}d) ===")
     results = []
@@ -130,11 +167,26 @@ def run(lookback, today=None):
         print(line)
     interior_hit = [r for r in results if r.get("interior")]
     err_hit = [r for r in results if r.get("status") in ("DBERR", "NODATA")]
+
+    dropped, latest_d, prev_d = set(), None, None
+    try:
+        vintages = db_vintages(KOREA_DB, "SELECT date, kau_type FROM kets_kau_ohlcv WHERE kau_type LIKE 'KAU%'")
+        dropped, latest_d, prev_d = detect_vintage_drop(vintages)
+    except sqlite3.Error as e:
+        print(f"  VINTAGE-DROP check DB ERROR: {e}")
+    if dropped:
+        print(fmt_vintage_drop(dropped, prev_d))
+
     print("-" * 60)
-    if interior_hit or err_hit:
+    if interior_hit or err_hit or dropped:
         parts = [f"{r['name'].strip()}:{fmt(r['interior'])}" for r in interior_hit]
         parts += [f"{r['name'].strip()}:{r['status']}" for r in err_hit]
-        print(f"RESULT: ATTENTION -> {', '.join(parts)}  (re-run collectors; if persists, source/out-of-window -> report)")
+        if dropped:
+            parts.append(f"VINTAGE-DROP:{','.join(sorted(dropped))}")
+        tail = ("(annual rollover likely if Aug-Sep -- verify KRX listing)"
+                if (dropped and not interior_hit and not err_hit)
+                else "(re-run collectors; if persists, source/out-of-window -> report)")
+        print(f"RESULT: ATTENTION -> {', '.join(parts)}  {tail}")
         return 1
     lag_hit = [r for r in results if r.get("trailing")]
     if lag_hit:
@@ -184,6 +236,24 @@ def self_test():
     r3 = check_market("TEST", full, china, today, lookback)
     if r3["status"] != "OK":
         print(f"  FAIL: complete set not OK -> {r3}"); ok = False
+
+    # 5) vintage drop: KAU25 present the prior day, gone on the latest day
+    dv_drop = {
+        datetime.date(2026, 8, 31): {"KAU25", "KAU26"},
+        datetime.date(2026, 9, 1): {"KAU26"},
+    }
+    dropped, _, prev_d = detect_vintage_drop(dv_drop)
+    if dropped != {"KAU25"} or prev_d != datetime.date(2026, 8, 31):
+        print(f"  FAIL: vintage drop not detected -> {dropped, prev_d}"); ok = False
+
+    # 6) all vintages continue -> no alarm (#127.N: the opposite-answer case must be checked too)
+    dv_continue = {
+        datetime.date(2026, 8, 31): {"KAU25", "KAU26"},
+        datetime.date(2026, 9, 1): {"KAU25", "KAU26"},
+    }
+    dropped2, _, _ = detect_vintage_drop(dv_continue)
+    if dropped2:
+        print(f"  FAIL: false vintage-drop alarm on continuous data -> {dropped2}"); ok = False
 
     print("SELF-TEST:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
