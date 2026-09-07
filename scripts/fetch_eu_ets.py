@@ -1,13 +1,15 @@
 """Fetch EU ETS daily price from Yahoo Finance (CO2.L = SparkChange Physical Carbon EUA ETC).
 
-Updates data/prices.json eu_eur[current_year] in place.
-Saves daily OHLCV to data/eu_ets.db eu_ets_daily table.
+Saves daily OHLCV to data/eu_ets.db eu_ets_daily table (single source of truth).
+Computes data/prices.json eu_eur[current_year] stats from that table instead of the live
+snapshot, so the published value only changes on a day new rows are actually recorded.
 Designed for ANS morning task automation.
 """
 import sqlite3
 import yfinance as yf
 import json
 from datetime import datetime
+from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -20,6 +22,45 @@ PHASE_MAP = {2005: "Phase 1", 2006: "Phase 1", 2007: "Phase 1",
              2018: "Phase 3", 2019: "Phase 3", 2020: "Phase 3"}
 
 
+def half_up(value):
+    """2-decimal round-half-up (avoids float round()'s banker's-rounding split on .xx5)."""
+    return float(Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+
+
+def year_stats_from_db(con, year):
+    """Return (n, avg, max, min) for a given year from eu_ets_daily. n=0 -> (0, None, None, None)."""
+    cur = con.execute(
+        "SELECT COUNT(*), AVG(close_price), MAX(close_price), MIN(close_price) "
+        "FROM eu_ets_daily WHERE date LIKE ?",
+        (f"{year}-%",),
+    )
+    n, avg, mx, mn = cur.fetchone()
+    if n == 0:
+        return 0, None, None, None
+    return n, avg, mx, mn
+
+
+def decide_update(year_stats, existing_row, year, phase_map):
+    """year_stats: (n, avg, max, min) from year_stats_from_db.
+    existing_row: current eu_eur[year] dict, or None if not present yet.
+    Returns (action, new_row) with action in {"UNCHANGED", "CHANGED", "NO_ROWS"}.
+    NO_ROWS carries new_row=None (nothing to write).
+    """
+    n, avg, mx, mn = year_stats
+    if n == 0:
+        return "NO_ROWS", None
+    new_row = {
+        "year": str(year),
+        "avg_price": half_up(avg),
+        "max_price": half_up(mx),
+        "min_price": half_up(mn),
+        "phase": phase_map.get(year, "Phase 4"),
+    }
+    if existing_row == new_row:
+        return "UNCHANGED", new_row
+    return "CHANGED", new_row
+
+
 def main():
     year = datetime.now().year
     t = yf.Ticker(TICKER)
@@ -30,31 +71,16 @@ def main():
 
     cur = hist[hist.index.year == year]["Close"]
     if cur.empty:
-        print(f"ERROR: no {year} rows in {TICKER} history")
+        print(f"no {year} rows yet (expected in early January)")
+        return 0
+
+    # eu_ets.db is the single source of truth for the published stats below; if it is
+    # missing we must not silently create a fresh (incomplete) one and compute from that,
+    # so bail out before touching sqlite3.connect at all.
+    if not EU_DB.exists():
+        print(f"eu_ets.db missing: {EU_DB}")
         return 1
 
-    stats = {
-        "year": str(year),
-        "avg_price": round(float(cur.mean()), 2),
-        "max_price": round(float(cur.max()), 2),
-        "min_price": round(float(cur.min()), 2),
-        "phase": PHASE_MAP.get(year, "Phase 4"),
-    }
-
-    data = json.loads(PRICES_JSON.read_text(encoding="utf-8"))
-    updated = False
-    for i, row in enumerate(data["eu_eur"]):
-        if row["year"] == str(year):
-            data["eu_eur"][i] = stats
-            updated = True
-            break
-    if not updated:
-        data["eu_eur"].append(stats)
-
-    PRICES_JSON.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Updated EU {year}: avg={stats['avg_price']} max={stats['max_price']} min={stats['min_price']} ({len(cur)} trading days via {TICKER})")
-
-    # Save daily prices to eu_ets.db
     con = sqlite3.connect(EU_DB)
     con.execute("""
         CREATE TABLE IF NOT EXISTS eu_ets_daily (
@@ -101,8 +127,34 @@ def main():
     cur_db.execute("SELECT COUNT(*), MAX(date) FROM eu_ets_daily")
     total, latest = cur_db.fetchone()
     con.commit()
-    con.close()
     print(f"EU daily DB: +{new_count} new records | total={total} | latest={latest}")
+
+    year_stats = year_stats_from_db(con, year)
+    con.close()
+
+    if year_stats[0] == 0:
+        print(f"no {year} rows yet (expected in early January)")
+        return 0
+
+    data = json.loads(PRICES_JSON.read_text(encoding="utf-8"))
+    existing_idx = next((i for i, row in enumerate(data["eu_eur"]) if row["year"] == str(year)), None)
+    existing_row = data["eu_eur"][existing_idx] if existing_idx is not None else None
+
+    action, new_row = decide_update(year_stats, existing_row, year, PHASE_MAP)
+
+    if action == "UNCHANGED":
+        print(f"UNCHANGED EU {year}: avg={new_row['avg_price']} max={new_row['max_price']} min={new_row['min_price']}")
+    else:
+        print(f"CHANGED EU {year}: {existing_row} -> {new_row}")
+        if existing_idx is not None:
+            data["eu_eur"][existing_idx] = new_row
+        else:
+            data["eu_eur"].append(new_row)
+        PRICES_JSON.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    n = year_stats[0]
+    print(f"Updated EU {year}: avg={new_row['avg_price']} max={new_row['max_price']} min={new_row['min_price']} "
+          f"({n} trading days from eu_ets.db; live hist {len(cur)} rows, +{new_count} new)")
     return 0
 
 
