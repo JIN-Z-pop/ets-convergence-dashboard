@@ -3,6 +3,8 @@
 Run inside a git worktree of this repo: ROOT resolves relative to this file's location,
 so it always operates on the worktree's own data/, never production data.
 
+PROD_ROOT is derived from git (main worktree); set ETS_PROD_ROOT to override.
+
 Usage:
     python scripts/tests/test_fetch_eu_ets_db_source.py --run
     python scripts/tests/test_fetch_eu_ets_db_source.py --pre   (freeze production baseline)
@@ -10,6 +12,7 @@ Usage:
 import argparse
 import importlib.util
 import json
+import os
 import shutil
 import sqlite3
 import subprocess
@@ -25,7 +28,22 @@ EU_DB = ROOT / "data" / "eu_ets.db"
 sys.path.insert(0, str(ROOT / "scripts"))
 import fetch_eu_ets  # noqa: E402
 
-PROD_ROOT = Path(r"C:\Users\jin_z\Desktop\ets-convergence-dashboard")
+
+def _main_worktree(root):
+    """Production checkout = this repo's main worktree (first entry of `git worktree list`).
+    Override with ETS_PROD_ROOT when running outside a linked worktree layout."""
+    env = os.environ.get("ETS_PROD_ROOT")
+    if env:
+        return Path(env).resolve()
+    out = subprocess.run(["git", "-C", str(root), "worktree", "list", "--porcelain"],
+                         capture_output=True, text=True, check=True).stdout
+    for line in out.splitlines():
+        if line.startswith("worktree "):
+            return Path(line[len("worktree "):]).resolve()
+    raise RuntimeError("cannot resolve the main worktree of this repo")
+
+
+PROD_ROOT = _main_worktree(ROOT)
 PROD_PRICES_JSON = PROD_ROOT / "data" / "prices.json"
 PROD_EU_DB = PROD_ROOT / "data" / "eu_ets.db"
 
@@ -388,6 +406,7 @@ def run_selftests():
 
 
 def run_all():
+    print(f"PROD_ROOT={PROD_ROOT}")
     checks = [check_1a, check_1b, check_1c, check_1d, check_1e, check_1f, check_1g,
               check_2, check_3, check_4]
     for c in checks:
