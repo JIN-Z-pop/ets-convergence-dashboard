@@ -126,7 +126,7 @@ SOURCES = [
 
 MARKET_META = [
     # market定義 v1.1(2026-07-18・レビュー反映)確定: 9 family行
-    # D2是正(F2案b, 2026-07-20): volume_unit列追加(全market必須充足)。
+    # 2026-07-20 fix: volume_unit列追加(全market必須充足)。
     # EUAのみ証券出来高(ETC口数)・他markets全てtCO2 — 単位混在防止(桁差1/500の理由=単位差)
     ("CEA", "中国CEA(全国ETS)", "China-ETS", "上海環境能源交易所", "CNY", "2021-07-16",
      "全国碳配額。出典遷移: CNEEEX(〜2025-12)→carbonmarket.cn(2025-12-25〜)", "tCO2"),
@@ -185,7 +185,7 @@ def load_cea(smart, china, run_at):
         "SELECT date, opening_price, high_price, low_price, closing_price, total_volume, total_amount, fetched_at "
         "FROM cn_ets_market_cea_daily ORDER BY date"
     ).fetchall()
-    # D1是正(maintainer decision, 2026-07-20): 2021-07-16(CEA取引開始日)のみ原典自体がo/h/l=0
+    # 2026-07-20 fix: 2021-07-16(CEA取引開始日)のみ原典自体がo/h/l=0
     # (市場初日でOHLC未公表の欠測表現・価格0元は非実勢)。close/volume/amountは史実のため不変保全。
     # 他日のo/h/l非ゼロ値(low>close 5行・2023-12-12等)は原典忠実のため対象外(D1-2)。
     data = []
@@ -224,7 +224,7 @@ def load_kau(smart, korea, run_at):
         "SELECT date, kau_type, open_price, high_price, low_price, close_price, volume, fetched_at "
         "FROM kets_market_kau_ohlcv ORDER BY date"
     ).fetchall()
-    # D1是正: korea_ets_smart.db側collectorがOHLC breakdown未取得日をo/h/l/v=0で表現
+    # korea_ets_smart.db側collectorがOHLC breakdown未取得日をo/h/l/v=0で表現
     # (2026-03-04一括fetch分等)。価格0ウォンは非実勢のため欠測NULLへ変換、closeのみ実勢値として残す。
     # no_tradeは元値のまま(=0)維持: 取引自体は発生しclose有り=「OHLC無し」と「無取引」は別概念(D1-4)。
     # raw korea_ets_smart.dbは不可侵(read-only)・変換はこのINSERT時点のみ。
@@ -283,7 +283,7 @@ def load_eua(smart, gods, run_at):
     smart.executemany(f"INSERT INTO ets_daily ({DAILY_COLS}) VALUES ({DAILY_PLACEHOLDERS})", cur_data)
     log(smart, run_at, "EUA", len(cur_data), 0, None, "loaded")
 
-    # D6是正(maintainer decision): CO2.L LSE Primary Listing=2021-11-04(HANetf公式)より前の
+    # CO2.L LSE Primary Listing=2021-11-04(HANetf公式)より前の
     # 13行(2021-10-18〜11-03, volume=0)は上場前でvolumeの実勢性が未確認。削除せず可逆フラグのみ付与
     # (pre_listing=1)し、集計(ets_monthly/yearly view)・配信(build_ets_market.py)側で除外する。
     # 誠実な不確実性の保全(D6-3): 価格自体の正体(何を表す値か)は未到達のため断定しない。

@@ -99,7 +99,7 @@ GAP_CHECK_MARKETS = [
 # 別軸(許容日数の影響を受けない)で捕捉するため、検知能力の後退にはならない。
 GAP_LAG_TOLERANCE = {"CEA": 1, "CCER": 0, "KAU": 0, "EUA": 1}
 
-# F19是正(2026-07-20): 直近被覆率検査対象(GXは特定日限定運用のため対象外=既存のgap検知
+# 2026-07-20 fix: 直近被覆率検査対象(GXは特定日限定運用のため対象外=既存のgap検知
 # 除外方針と同じ)。window_daysは「最近の穴」だけを拾う設計 — CEA等の既に原因調査・分類済みの
 # 大きな historical gap(季節性・発行前等)を毎朝再アラートしてノイズ化させないため、
 # 全履歴走査ではなく直近windowのみ見る。
@@ -546,7 +546,7 @@ def is_holiday(holidays, key, iso_date):
 
 
 def most_recent_business_day(holidays, key, target_date):
-    """F11是正(D8, 2026-07-20): target_date自体ではなく、その前営業日を
+    """2026-07-20 fix: target_date自体ではなく、その前営業日を
     market別休日カレンダーで逆算して返す。
 
     旧ロジックの欠陥: `latest < target_date` は target_date=当日が非休日である限り
@@ -590,7 +590,7 @@ def check_gaps(target_date):
 
 
 def check_recent_coverage(target_date, window_days=COVERAGE_WINDOW_DAYS):
-    """F19是正(2026-07-20): 直近window内の「行そのものが無い」型の穴を検出。
+    """2026-07-20 fix: 直近window内の「行そのものが無い」型の穴を検出。
 
     check_gaps()は最新1点の鮮度のみ見るため、直近window内の途中(例: 収集が1日だけ飛んだ)を
     見逃す。既存の棚卸し手法(全市場営業日被覆率走査)を移植し、非休日なのに
@@ -631,7 +631,7 @@ def check_recent_coverage(target_date, window_days=COVERAGE_WINDOW_DAYS):
 
 
 def check_korea_monthly_reconciliation(months=KOREA_RECONCILE_MONTHS, tolerance=KOREA_RECONCILE_TOLERANCE):
-    """F19是正(2026-07-20): 韓国一次公式月次集計(korea_ets_smart.db kets_market_monthly)
+    """2026-07-20 fix: 韓国一次公式月次集計(korea_ets_smart.db kets_market_monthly)
     と統一正本(ets_daily KAU系SUM(volume))の月次突合ゲート。
 
     build_ets_market_smart.pyのコメントに「非突合(federation参照のまま)」と明記されている通り、
