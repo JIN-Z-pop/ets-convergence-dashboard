@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""load_eua_hist_fsr.py — EUA歴史価格(FSR Figure_1.csv)をgods_eye.dbの恒久層テーブルへ投入。
+"""load_eua_hist_fsr.py — EUA歴史価格(FSR Figure_1.csv)をmetrics DBの恒久層テーブルへ投入。
 
 spec 2026-07-20 (eua_hist_permanent_load_spec_20260720.md) に基づく実装。
 経緯: 2026-07-19にEEXオークション998行を直接ets_dailyへ投入したところ翌build時のDELETE→
 全再構築で消滅(2026-07-20発覚)。恒久投入へ設計転換した結果が本spec。
 
-設計原則(上記消滅事故の教訓): 恒久データはbuildソース側(gods_eye.db)に置く。
+設計原則(上記消滅事故の教訓): 恒久データはbuildソース側(metrics DB)に置く。
 ets_market_smart.db.ets_daily は build_ets_market_smart.py が毎朝DELETE→全再構築する揮発層。
 
 投入元: data/sources/eua_hist/fsr_Figure_1.csv (md5=43af6218d0b671f50f2e77d0f1c1cc9b)
@@ -20,9 +20,12 @@ import csv
 import hashlib
 import sqlite3
 from datetime import datetime
+from pathlib import Path
 
-GODS = r"C:\Users\jin_z\.claude\databases\gods_eye.db"
-CSV_PATH = r"C:\Users\jin_z\Desktop\ets-convergence-dashboard\data\sources\eua_hist\fsr_Figure_1.csv"
+from local_paths import require
+
+GODS = require("metrics_db")
+CSV_PATH = str(Path(__file__).resolve().parent.parent / "data" / "sources" / "eua_hist" / "fsr_Figure_1.csv")
 EXPECTED_MD5 = "43af6218d0b671f50f2e77d0f1c1cc9b"
 CUTOFF = datetime(2021, 10, 17)
 

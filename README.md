@@ -35,6 +35,13 @@ python scripts/export_data.py
 # Exports JSON files to data/ from the ETS database
 ```
 
+## Local Configuration
+
+Some maintenance scripts under `scripts/` read machine-local file paths (databases,
+sibling repos) from a config file kept outside this repo. Copy
+`config/local_paths.example.json` to `~/.ets-convergence/local_paths.json` (or point the
+`ETS_LOCAL_PATHS` environment variable at your own file) and fill in the values.
+
 ## Related Projects
 
 - [korea-ets-mcp](https://github.com/JIN-Z-pop/korea-ets-mcp) — Korea ETS MCP server + dashboard

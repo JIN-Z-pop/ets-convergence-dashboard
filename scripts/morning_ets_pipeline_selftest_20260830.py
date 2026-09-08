@@ -52,7 +52,7 @@ def run():
 
     # (b) 例外経路: CHECK_ETS_FRESHNESS_PATHを壊す(モジュール属性を一時差し替え・後で復元)
     original_path = m.CHECK_ETS_FRESHNESS_PATH
-    m.CHECK_ETS_FRESHNESS_PATH = r"C:\Users\jin_z\does_not_exist_20260830.py"
+    m.CHECK_ETS_FRESHNESS_PATH = r"C:\nonexistent\does_not_exist_20260830.py"
     try:
         result_b = m.stage_publish_freshness()
     finally:

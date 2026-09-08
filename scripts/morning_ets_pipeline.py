@@ -28,9 +28,9 @@ sha256[:12]=e3345225de51)。
 
 🔴S7本番切替時のschtasks登録コマンド形の記録のみ(§2X-6・登録自体はS7実施・本日は未登録):
   タスク名 ETS_MorningPipeline / DAILY 04:50 JST
-  cmd /c cd /d "C:\\Users\\jin_z\\Desktop\\ets-convergence-dashboard" && "<python実体フルパス>" ^
-    "C:\\Users\\jin_z\\Desktop\\ets-convergence-dashboard\\scripts\\morning_ets_pipeline.py" ^
-    >> "C:\\Users\\jin_z\\Desktop\\ets-convergence-dashboard\\logs\\morning_pipeline.log" 2>&1
+  cmd /c cd /d "<repo>" && "<python実体フルパス>" ^
+    "<repo>\\scripts\\morning_ets_pipeline.py" ^
+    >> "<repo>\\logs\\morning_pipeline.log" 2>&1
   前提: logs\\ ディレクトリの存在(S7①'で機械に依らず先に作成・mkdir自体は本pipeline冒頭にも
   安全のため実装済み=二重防御)。既存 CarbonMarket_AnomalyDetect(7:30/12:00)・
   ClaudeAutoWake-Morning(05:00)は触らない。
@@ -45,20 +45,23 @@ import subprocess
 import sqlite3
 import sys
 from datetime import datetime, timedelta
+from pathlib import Path
 
-ROOT = r"C:\Users\jin_z\Desktop\ets-convergence-dashboard"
+from local_paths import require
+
+ROOT = str(Path(__file__).resolve().parent.parent)
 GX_COVERAGE_MONTHS_BACK = 3  # 直近~90日相当をカバー(他市場のF19 60日窓より広めの安全マージン)
-SMART = r"C:\Users\jin_z\.claude\databases\ets_market_smart.db"
-KOREA = r"C:\Users\jin_z\.claude\databases\korea_ets_smart.db"
-HOLIDAYS_PATH = r"C:\Users\jin_z\market_holidays_2026.json"
+SMART = require("smart_db")
+KOREA = require("korea_smart_db")
+HOLIDAYS_PATH = require("holidays_json")
 
 # P1+P2+P4統合(ets_morning_unify_surgery_spec_20260823.md v0.7 sha=e3345225de51)
 LOGS_DIR = os.path.join(ROOT, "logs")
 ALERT_PATH = os.path.join(LOGS_DIR, "morning_alert_latest.txt")
-KOREA_FETCH_SCRIPT = r"C:\Users\jin_z\Desktop\korea-ets-mcp\scripts\fetch_krx_ets.py"
-AUDIT_SCRIPT = r"C:\Users\jin_z\Desktop\neural-core\data\tests\ets_db_audit.py"
-CHINA_MCP_DIR = r"C:\Users\jin_z\Desktop\china-ets-mcp"
-KOREA_MCP_DIR = r"C:\Users\jin_z\Desktop\korea-ets-mcp"
+KOREA_FETCH_SCRIPT = require("korea_fetch_script")
+AUDIT_SCRIPT = require("audit_script")
+CHINA_MCP_DIR = require("china_mcp_dir")
+KOREA_MCP_DIR = require("korea_mcp_dir")
 CHINA_HTML = os.path.join(CHINA_MCP_DIR, "docs", "index.html")
 KOREA_HTML = os.path.join(KOREA_MCP_DIR, "docs", "index.html")
 
@@ -96,7 +99,7 @@ GAP_CHECK_MARKETS = [
 # 別軸(許容日数の影響を受けない)で捕捉するため、検知能力の後退にはならない。
 GAP_LAG_TOLERANCE = {"CEA": 1, "CCER": 0, "KAU": 0, "EUA": 1}
 
-# F19是正(oni_ets_t6, 2026-07-20): 直近被覆率検査対象(GXは特定日限定運用のため対象外=既存のgap検知
+# F19是正(2026-07-20): 直近被覆率検査対象(GXは特定日限定運用のため対象外=既存のgap検知
 # 除外方針と同じ)。window_daysは「最近の穴」だけを拾う設計 — CEA等の既に原因調査・分類済みの
 # 大きな historical gap(季節性・発行前等)を毎朝再アラートしてノイズ化させないため、
 # 全履歴走査ではなく直近windowのみ見る。
@@ -219,7 +222,7 @@ def stage_sync():
     """
     rc, out = run_capture([sys.executable, "scripts/sync_smart_market.py"])
     if rc == 2:
-        print("[INFO] stage E(sync_smart_market.py) は凍結中(SYNC_FREEZE_oni_ets.flag)。alert化せずskip記録。")
+        print("[INFO] stage E(sync_smart_market.py) は凍結中(freeze flagファイル)。alert化せずskip記録。")
         return []
     if rc == 1:
         line = _extract_result_line(out, "RESULT: FAIL")
@@ -469,7 +472,7 @@ def stage_landing_check():
     return alerts
 
 
-CHECK_ETS_FRESHNESS_PATH = r"C:\Users\jin_z\blue-carbon-app\data\check_ets_freshness.py"
+CHECK_ETS_FRESHNESS_PATH = require("check_ets_freshness_script")
 
 
 def stage_publish_freshness():
@@ -543,7 +546,7 @@ def is_holiday(holidays, key, iso_date):
 
 
 def most_recent_business_day(holidays, key, target_date):
-    """F11是正(oni_ets_t6 D8, 2026-07-20): target_date自体ではなく、その前営業日を
+    """F11是正(D8, 2026-07-20): target_date自体ではなく、その前営業日を
     market別休日カレンダーで逆算して返す。
 
     旧ロジックの欠陥: `latest < target_date` は target_date=当日が非休日である限り
@@ -587,7 +590,7 @@ def check_gaps(target_date):
 
 
 def check_recent_coverage(target_date, window_days=COVERAGE_WINDOW_DAYS):
-    """F19是正(oni_ets_t6, 2026-07-20): 直近window内の「行そのものが無い」型の穴を検出。
+    """F19是正(2026-07-20): 直近window内の「行そのものが無い」型の穴を検出。
 
     check_gaps()は最新1点の鮮度のみ見るため、直近window内の途中(例: 収集が1日だけ飛んだ)を
     見逃す。既存の棚卸し手法(全市場営業日被覆率走査)を移植し、非休日なのに
@@ -628,7 +631,7 @@ def check_recent_coverage(target_date, window_days=COVERAGE_WINDOW_DAYS):
 
 
 def check_korea_monthly_reconciliation(months=KOREA_RECONCILE_MONTHS, tolerance=KOREA_RECONCILE_TOLERANCE):
-    """F19是正(oni_ets_t6, 2026-07-20): 韓国一次公式月次集計(korea_ets_smart.db kets_market_monthly)
+    """F19是正(2026-07-20): 韓国一次公式月次集計(korea_ets_smart.db kets_market_monthly)
     と統一正本(ets_daily KAU系SUM(volume))の月次突合ゲート。
 
     build_ets_market_smart.pyのコメントに「非突合(federation参照のまま)」と明記されている通り、
@@ -662,7 +665,7 @@ def check_and_backfill_gx_coverage(target_date, months_back=GX_COVERAGE_MONTHS_B
     背景: GXは他市場と違い「無取引=既定」(2025年度は11-12月毎週金曜限定運用)のため
     GAP_CHECK_MARKETS/COVERAGE_CHECK_MARKETSから意図的に除外されている。しかしこれは
     「実取引の有無」を問わない話であって、「日報PDFそのものが存在するのに記録が
-    raw_gx_ets_daily(gods_eye.db)に無い」という別種の見逃しは検知できていなかった。
+    raw_gx_ets_daily(metrics DB)に無い」という別種の見逃しは検知できていなかった。
     実例(2026-08-20発見): 2026-08-17〜19の3営業日分のPDFは解決可能だったが記録が
     欠落していた。原因=毎日の実行が`--date <today>`単発のみで、「当日分が未公表→
     翌日以降にPDF が遅れて公開される」ケースの再取得(backfill)が組み込まれていなかった

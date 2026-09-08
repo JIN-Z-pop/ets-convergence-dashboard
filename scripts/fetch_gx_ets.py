@@ -11,9 +11,9 @@ https://www.jpx.co.jp/equities/carbon-credit/daily/index.html
 2段階fetch: (1)索引/archivesページHTMLから対象日PDFのURLを解決(ハッシュ様セグメントは
 日付から予測不可のため必須) (2)PDFをテーブル抽出(pdfplumber)し銘柄コード5051000行を読む。
 
-書込み先: gods_eye.db の raw_gx_ets_daily (新設・build_ets_market_smart.pyのEU/raw_eu_ets_daily
+書込み先: metrics DB の raw_gx_ets_daily (新設・build_ets_market_smart.pyのEU/raw_eu_ets_daily
 パターンに倣う read-only-source用の中間staging層)。ets_market_smart.db 本体はbuild_ets_market_smart.py
-側でのみ書き込む(本スクリプトはgods_eye.dbのみ書込み)。
+側でのみ書き込む(本スクリプトはmetrics DBのみ書込み)。
 
 Usage:
   python scripts/fetch_gx_ets.py --date 2026-07-17          # 単日
@@ -32,9 +32,11 @@ from datetime import datetime, date
 
 import pdfplumber
 
+from local_paths import require
+
 INDEX_URL = "https://www.jpx.co.jp/equities/carbon-credit/daily/index.html"
 ARCHIVE_URL_FMT = "https://www.jpx.co.jp/equities/carbon-credit/daily/archives-{:02d}.html"
-GODS_DB = r"C:\Users\jin_z\.claude\databases\gods_eye.db"
+GODS_DB = require("metrics_db")
 TICKER = "5051000"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 

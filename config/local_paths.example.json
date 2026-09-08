@@ -1,0 +1,15 @@
+{
+  "metrics_db": "<absolute path to the shared metrics sqlite database>",
+  "smart_db": "<absolute path to the EU ETS smart sqlite database>",
+  "china_smart_db": "<absolute path to the China ETS smart sqlite database>",
+  "korea_smart_db": "<absolute path to the Korea ETS smart sqlite database>",
+  "china_repo_db": "<absolute path to the China ETS collector repo's sqlite database>",
+  "korea_repo_db": "<absolute path to the Korea ETS collector repo's sqlite database>",
+  "china_mcp_dir": "<absolute path to the China ETS collector repo directory>",
+  "korea_mcp_dir": "<absolute path to the Korea ETS collector repo directory>",
+  "korea_fetch_script": "<absolute path to the Korea ETS fetch script>",
+  "audit_script": "<absolute path to the ETS DB audit script>",
+  "holidays_json": "<absolute path to the market holidays JSON file>",
+  "freeze_flag": "<absolute path to the sync freeze flag file>",
+  "check_ets_freshness_script": "<absolute path to the ETS freshness check script>"
+}

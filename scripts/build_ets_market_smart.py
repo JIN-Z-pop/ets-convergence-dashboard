@@ -4,7 +4,7 @@
 
 2026-07-18 設計・実装。検証と保全の一環として整備。
 
-既存ソースDB(china_ets_smart.db / korea_ets_smart.db / gods_eye.db)は読み取り専用(read-only URI接続)。
+既存ソースDB(china/korea smart DBとmetrics DB)は読み取り専用(read-only URI接続)。
 本スクリプトが書き込むのは ets_market_smart.db(新設・単一正本)のみ。
 
 再構築可能(冪等): 実行の都度 ets_daily/ets_market_meta/ets_source を全消去して再構築する。
@@ -20,10 +20,12 @@ import re
 import sqlite3
 from datetime import datetime
 
-SMART = r"C:\Users\jin_z\.claude\databases\ets_market_smart.db"
-CHINA = r"C:\Users\jin_z\.claude\databases\china_ets_smart.db"
-KOREA = r"C:\Users\jin_z\.claude\databases\korea_ets_smart.db"
-GODS = r"C:\Users\jin_z\.claude\databases\gods_eye.db"
+from local_paths import require
+
+SMART = require("smart_db")
+CHINA = require("china_smart_db")
+KOREA = require("korea_smart_db")
+GODS = require("metrics_db")
 
 DAILY_COLS = "market,date,open_price,high_price,low_price,close_price,currency,volume,amount,no_trade,source_id,fetched_at"
 DAILY_PLACEHOLDERS = ",".join("?" * 12)
@@ -99,7 +101,7 @@ SOURCES = [
     (1, "CNEEEX (Shanghai Environment and Energy Exchange)", "https://overview.cneeex.com/qgtpfqjy/mrgk/",
      "web scrape (収集は2025-12まで、現行出典はid2)",
      "CEA原初出典。当家の収集は2025-12まで(現行出典はid2 carbonmarket.cn)。"
-     "サイト自体は2026-07-21実測で稼働確認(生HTTP 200・個別URL到達可、oni_ets_t7 CEA backfill 180件で実証)"),
+     "サイト自体は2026-07-21実測で稼働確認(生HTTP 200・個別URL到達可、CEA backfill 180件で実証)"),
     (2, "carbonmarket.cn", "https://carbonmarket.cn/ets/cets/",
      "HTML table scrape (Table1掛牌+Table2大宗)", "CEA現行出典(2025-12-25〜)。china smartに出自列が無いため全CEA行をid2扱い(簡潔優先、遷移史はmeta.notesに記載)"),
     (3, "CCER Official (Beijing Green Exchange)", "https://www.ccer.com.cn/wcm/ccer/html/2502lshq/index.html",
@@ -118,13 +120,13 @@ SOURCES = [
      "FSR一次系列は非明示→出典表記は「FSR公表データ」(誠実な不確実性)"),
     (9, "EEX EUA Primary Market Auction Report", "https://public.eex-group.com/eex/eua-auction-report/index.html",
      "local xls/xlsx (md5-pinned, data/sources/eua_hist/)",
-     "一次市場オークション結果2017-2026(価格+volume付き)。歴史層=gods_eye.raw_eua_auction_eex(恒久)。"
+     "一次市場オークション結果2017-2026(価格+volume付き)。歴史層=metrics DB.raw_eua_auction_eex(恒久)。"
      "ets_dailyには混ぜず新表ets_auctionへ格納(同日複数オークション・落札価格≠二次市場終値のため)"),
 ]
 
 MARKET_META = [
     # market定義 v1.1(2026-07-18・レビュー反映)確定: 9 family行
-    # D2是正(oni_ets_t6 F2案b, 2026-07-20): volume_unit列追加(全market必須充足)。
+    # D2是正(F2案b, 2026-07-20): volume_unit列追加(全market必須充足)。
     # EUAのみ証券出来高(ETC口数)・他markets全てtCO2 — 単位混在防止(桁差1/500の理由=単位差)
     ("CEA", "中国CEA(全国ETS)", "China-ETS", "上海環境能源交易所", "CNY", "2021-07-16",
      "全国碳配額。出典遷移: CNEEEX(〜2025-12)→carbonmarket.cn(2025-12-25〜)", "tCO2"),
@@ -183,7 +185,7 @@ def load_cea(smart, china, run_at):
         "SELECT date, opening_price, high_price, low_price, closing_price, total_volume, total_amount, fetched_at "
         "FROM cn_ets_market_cea_daily ORDER BY date"
     ).fetchall()
-    # D1是正(oni_ets_t6 F1, 奏裁定2026-07-20): 2021-07-16(CEA取引開始日)のみ原典自体がo/h/l=0
+    # D1是正(maintainer decision, 2026-07-20): 2021-07-16(CEA取引開始日)のみ原典自体がo/h/l=0
     # (市場初日でOHLC未公表の欠測表現・価格0元は非実勢)。close/volume/amountは史実のため不変保全。
     # 他日のo/h/l非ゼロ値(low>close 5行・2023-12-12等)は原典忠実のため対象外(D1-2)。
     data = []
@@ -222,7 +224,7 @@ def load_kau(smart, korea, run_at):
         "SELECT date, kau_type, open_price, high_price, low_price, close_price, volume, fetched_at "
         "FROM kets_market_kau_ohlcv ORDER BY date"
     ).fetchall()
-    # D1是正(oni_ets_t6 F1): korea_ets_smart.db側collectorがOHLC breakdown未取得日をo/h/l/v=0で表現
+    # D1是正: korea_ets_smart.db側collectorがOHLC breakdown未取得日をo/h/l/v=0で表現
     # (2026-03-04一括fetch分等)。価格0ウォンは非実勢のため欠測NULLへ変換、closeのみ実勢値として残す。
     # no_tradeは元値のまま(=0)維持: 取引自体は発生しclose有り=「OHLC無し」と「無取引」は別概念(D1-4)。
     # raw korea_ets_smart.dbは不可侵(read-only)・変換はこのINSERT時点のみ。
@@ -248,7 +250,7 @@ def load_kau(smart, korea, run_at):
     log(smart, run_at, "KAU_KCU_KOC_daily_price", actual_inserted, skipped, None,
         "loaded(ohlcv-overlap skipped)")
     log(smart, run_at, "KAU22", 0, 0, None,
-        "ohlcv/daily_price重複2649件中不一致1件: KAU22 2023-07-10 ohlcv=10300 vs daily_price=10350 → ohlcv優先採用(奏裁定 2026-07-18)")
+        "ohlcv/daily_price重複2649件中不一致1件: KAU22 2023-07-10 ohlcv=10300 vs daily_price=10350 → ohlcv優先採用(maintainer decision, 2026-07-18)")
     return len(data_ohlcv), len(data_daily), actual_inserted, skipped
 
 
@@ -256,7 +258,7 @@ def load_eua(smart, gods, run_at):
     """EUA歴史層(FSR, source_id=8)+現行層(CO2.L, source_id=5)の2系列mergeロード。
 
     2026-07-19投入分(EEXオークション998行)を直接ets_dailyへ書いたところ、翌日の本スクリプト
-    再実行(reset_tables()の全消去)で消滅した反省を踏まえ、歴史データはgods_eye.db(buildソース側)に
+    再実行(reset_tables()の全消去)で消滅した反省を踏まえ、歴史データはmetrics DB(buildソース側)に
     恒久保持し、揮発層(ets_daily)への
     投入は本関数が毎回行う。期間重複assertは歴史層の汚染混入を投入前に検出し中断する安全弁。
     """
@@ -281,7 +283,7 @@ def load_eua(smart, gods, run_at):
     smart.executemany(f"INSERT INTO ets_daily ({DAILY_COLS}) VALUES ({DAILY_PLACEHOLDERS})", cur_data)
     log(smart, run_at, "EUA", len(cur_data), 0, None, "loaded")
 
-    # D6是正(oni_ets_t6 F3案B, 奏執行裁定): CO2.L LSE Primary Listing=2021-11-04(HANetf公式)より前の
+    # D6是正(maintainer decision): CO2.L LSE Primary Listing=2021-11-04(HANetf公式)より前の
     # 13行(2021-10-18〜11-03, volume=0)は上場前でvolumeの実勢性が未確認。削除せず可逆フラグのみ付与
     # (pre_listing=1)し、集計(ets_monthly/yearly view)・配信(build_ets_market.py)側で除外する。
     # 誠実な不確実性の保全(D6-3): 価格自体の正体(何を表す値か)は未到達のため断定しない。
@@ -297,7 +299,7 @@ def load_eua(smart, gods, run_at):
 def load_eua_auction(smart, gods, run_at):
     """EUAオークション系列(EEX一次市場, source_id=9)ロード。
 
-    歴史層はgods_eye.db raw_eua_auction_eex(恒久・build非破壊、2026-07-20投入)。本関数は
+    歴史層はmetrics DB raw_eua_auction_eex(恒久・build非破壊、2026-07-20投入)。本関数は
     そこからread-onlyで読み、ets_market_smart.db側の揮発層ets_auctionへ全件再構築する。
     ets_daily/EUA日次(id8+id5, load_eua())とは別表・非接触 — 同日複数オークション(DE/EU/PL別)が
     あり(market,date)粒度に合わない上、落札価格と二次市場終値は意味が別のため。
@@ -395,7 +397,7 @@ ORDER BY market, period
 
 
 def create_period_views(smart):
-    """月次/年次 集計view (CP1充足, 奏発注 2026-07-19 [発注]月次年次view実装).
+    """月次/年次 集計view (maintainer request, 2026-07-19 実装).
 
     ets_dailyから導出(実表ではない・再構築不要=viewは常に最新ets_dailyを反映)。
     規約:

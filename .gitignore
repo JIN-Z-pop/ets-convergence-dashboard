@@ -12,7 +12,8 @@ __pycache__/
 *.pyc
 *.egg-info/
 .venv/
-.claude-worktrees/
+*-worktrees/
+config/local_paths.json
 # design-sync (claude.ai/design 同期) — 生成物・作業ファイルのみ除外
 .ds-sync/
 ds-bundle/

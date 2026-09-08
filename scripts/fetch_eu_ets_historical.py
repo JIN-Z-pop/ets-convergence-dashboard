@@ -1,7 +1,7 @@
 """Fetch EU ETS historical daily prices from NASDAQ Data Link (CHRIS/ICE_EUA1).
 
 Fills the gap: 2008-01-01 to 2021-10-17 (before CO2.L ETF listing).
-Stores results in gods_eye.db raw_eu_ets_daily and outputs CSV.
+Stores results in the metrics DB raw_eu_ets_daily and outputs CSV.
 
 Usage:
     python fetch_eu_ets_historical.py --api-key YOUR_KEY
@@ -13,7 +13,9 @@ import sqlite3
 from datetime import datetime, date
 from pathlib import Path
 
-DB_PATH = Path.home() / ".claude" / "databases" / "gods_eye.db"
+from local_paths import require
+
+DB_PATH = Path(require("metrics_db"))
 CSV_OUT = Path(__file__).parent.parent / "data" / "eu_ets_daily_historical.csv"
 
 # Gap to fill: CO2.L starts 2021-10-18, so we fetch up to 2021-10-17

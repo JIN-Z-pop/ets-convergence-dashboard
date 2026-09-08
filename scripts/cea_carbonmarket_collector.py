@@ -106,7 +106,7 @@ def merge_and_insert(listed_rows: list[dict], block_rows: list[dict]):
         cum_vol += total_vol
         cum_amt += total_amt
 
-        # Integrity guard (oni_ets_t10, 2026-07-21): listed_volume=0 while block_volume>0
+        # Integrity guard (maintainer decision, 2026-07-21): listed_volume=0 while block_volume>0
         # is the exact shape of a 24-row bug found in a 2026-03 backfill (source unidentified).
         # Never silently accept it -- flag for manual review instead of trusting the source blindly.
         if row["listed_volume"] == 0 and block["block_volume"] > 0:

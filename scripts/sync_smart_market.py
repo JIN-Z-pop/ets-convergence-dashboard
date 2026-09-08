@@ -22,22 +22,24 @@ import sqlite3
 import sys
 from datetime import datetime
 
-# ---- oni_ets 凍結ガード (approved 2026-07-21) ----
-# repo側是正(t11)完了までsyncを凍結する。全量ミラーがsmart側のoni_ets成果
+from local_paths import require
+
+# ---- 凍結ガード (approved 2026-07-21) ----
+# repo側是正(t11)完了までsyncを凍結する。全量ミラーがsmart側の是正成果
 # (364行追加+289行是正)をrepo旧値へ巻き戻すのを防ぐ機械ガード。
 # 解除条件: t11完了+repo=smart一致検証後にフラグ削除。詳細=フラグファイル本文。
-FREEZE_FLAG = r"C:\Users\jin_z\SYNC_FREEZE_oni_ets.flag"
+FREEZE_FLAG = require("freeze_flag")
 if os.path.exists(FREEZE_FLAG):
-    print("[FROZEN] sync_smart_market.py は意図的に凍結中 (oni_ets t11進行中, 2026-07-21)")
+    print("[FROZEN] sync_smart_market.py は意図的に凍結中 (t11進行中, 2026-07-21)")
     print("  これはエラーではありません。修復・フラグ削除・再実行は不要です。")
     print(f"  理由と解除条件: {FREEZE_FLAG} を参照。")
     sys.exit(2)
 # ---- 凍結ガードここまで ----
 
-REPO_CHINA = r"C:\Users\jin_z\Desktop\china-ets-mcp\data\china_ets.db"
-REPO_KOREA = r"C:\Users\jin_z\Desktop\korea-ets-mcp\data\korea_ets.db"
-SMART_CHINA = r"C:\Users\jin_z\.claude\databases\china_ets_smart.db"
-SMART_KOREA = r"C:\Users\jin_z\.claude\databases\korea_ets_smart.db"
+REPO_CHINA = require("china_repo_db")
+REPO_KOREA = require("korea_repo_db")
+SMART_CHINA = require("china_smart_db")
+SMART_KOREA = require("korea_smart_db")
 
 # (smart_db, meta_table, [(smart_table, repo_db, repo_table, sum_col)])
 SYNC_MAP = [

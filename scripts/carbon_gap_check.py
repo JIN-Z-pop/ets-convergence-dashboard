@@ -31,9 +31,11 @@ import json
 import sqlite3
 import sys
 
-HOLIDAYS = r"C:\Users\jin_z\market_holidays_2026.json"
-CHINA_DB = r"C:\Users\jin_z\Desktop\china-ets-mcp\data\china_ets.db"
-KOREA_DB = r"C:\Users\jin_z\Desktop\korea-ets-mcp\data\korea_ets.db"
+from local_paths import require
+
+HOLIDAYS = require("holidays_json")
+CHINA_DB = require("china_repo_db")
+KOREA_DB = require("korea_repo_db")
 
 
 def daterange(d0, d1):

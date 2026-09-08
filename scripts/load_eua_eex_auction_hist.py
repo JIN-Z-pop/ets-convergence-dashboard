@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """load_eua_eex_auction_hist.py — EUA一次市場オークション結果(EEX)を
-gods_eye.dbの恒久層テーブル raw_eua_auction_eex へ投入する、一回限りの投入スクリプト。
+metrics DBの恒久層テーブル raw_eua_auction_eex へ投入する、一回限りの投入スクリプト。
 
-【恒久層投入・build側が毎朝参照】このテーブルは gods_eye.db 側の恒久データ。
+【恒久層投入・build側が毎朝参照】このテーブルは metrics DB 側の恒久データ。
 ets_market_smart.db.ets_auction は build_ets_market_smart.py が毎朝DELETE→
 全再構築する揮発層 — 直接そちら側へINSERTしてはならない(2026-07-19の教訓、
 EEXデータを直接ets_dailyへ投入し翌rebuildで消滅した事故を繰り返さないこと)。
@@ -27,8 +27,10 @@ from pathlib import Path
 import xlrd
 import openpyxl
 
-GODS = r"C:\Users\jin_z\.claude\databases\gods_eye.db"
-SRC_DIR = Path(r"C:\Users\jin_z\Desktop\ets-convergence-dashboard\data\sources\eua_hist")
+from local_paths import require
+
+GODS = require("metrics_db")
+SRC_DIR = Path(__file__).resolve().parent.parent / "data" / "sources" / "eua_hist"
 
 EXPECTED_MD5 = {
     2017: "f2c6aec006feb3064361f774a873c54e",

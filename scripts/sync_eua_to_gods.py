@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""sync_eua_to_gods.py — eu_ets.db(ets-convergence-dashboard) → gods_eye.raw_eu_ets_daily 差分同期。
+"""sync_eua_to_gods.py — eu_ets.db(ets-convergence-dashboard) → metrics DB raw_eu_ets_daily 差分同期。
 
 2026-07-18鬼検証是正: raw_eu_ets_daily.price_usd の実体はEUR建て(CO2.L=SparkChange Physical Carbon
 EUA ETC)。列名price_usdは歴史的負債であり、本スクリプトはeu_ets_daily.close_price(EUR建て)を
 そのままprice_usdへ格納する(通貨変換はしない=同一通貨のミラーリング)。
 
-S1a裁定(奏 2026-07-18夜, 案B採用): raw_eu_ets_daily に2026-04-22 price_usd=NULLのplaceholder行
+S1a裁定(maintainer, 2026-07-18夜, 案B採用): raw_eu_ets_daily に2026-04-22 price_usd=NULLのplaceholder行
 が既存(fetcher一時停止時の未確定snapshot)。これは「genuine観測値」ではなく未充足欠損のため、
 唯一の例外としてUPDATE(date名指し+price_usd IS NULL の両条件ガード)で充足する。
 それ以外の全既存行(date<2026-04-22)は不可侵=INSERT OR IGNOREのみで一切UPDATEしない。
 
-S1a-2裁定(奏 2026-07-19朝): Guard 1が「初回実行専用(NULL=正確に1件)」のまま恒久日次運用に
+S1a-2裁定(maintainer, 2026-07-19朝): Guard 1が「初回実行専用(NULL=正確に1件)」のまま恒久日次運用に
 入り、stub充足済み後の毎回実行で誤abortする時制バグを発見(「修正せず報告」の判断→物的確認
 →追加裁定)。Guard 1を2状態許容の冪等ガードへ改訂:
   状態A: NULL行=0件 → stub充足済み=正常。Step A(UPDATE)をskipしStep B(差分INSERT)のみ実行。
@@ -32,9 +32,11 @@ import sqlite3
 from datetime import datetime
 from pathlib import Path
 
+from local_paths import require
+
 ROOT = Path(__file__).resolve().parent.parent
 EU_DB = ROOT / "data" / "eu_ets.db"
-GODS_DB = Path(r"C:\Users\jin_z\.claude\databases\gods_eye.db")
+GODS_DB = Path(require("metrics_db"))
 
 STUB_DATE = "2026-04-22"
 
@@ -62,7 +64,7 @@ def main():
         print(f"[guard1] NULL price_usd pre-scan: OK (only {STUB_DATE}, state=B: stub未充足)")
     else:
         print(f"[ABORT] price_usd IS NULL rows not in allowed states (0 or exactly [{STUB_DATE}]). Found: {null_rows}")
-        print("裁定条件(状態A/Bいずれか)に不一致のため停止。奏へ一覧を報告し追加裁定を仰ぐこと。")
+        print("report the list to the maintainer for a follow-up decision (state A/B mismatch).")
         gods.close(); eu.close()
         return 1
 
