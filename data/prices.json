@@ -3,44 +3,44 @@
     {
       "year": "2021",
       "avg_price": 46.61,
-      "max_price": 62.29,
+      "max_price": 58.7,
       "min_price": 41.46,
       "total_volume": 178627350.0
     },
     {
       "year": "2022",
-      "avg_price": 57.96,
-      "max_price": 60.0,
-      "min_price": 53.0,
-      "total_volume": 38093223.0
+      "avg_price": 58.07,
+      "max_price": 61.38,
+      "min_price": 55.0,
+      "total_volume": 50889493.0
     },
     {
       "year": "2023",
-      "avg_price": 69.04,
-      "max_price": 82.79,
-      "min_price": 57.0,
-      "total_volume": 206267029.0
+      "avg_price": 64.01,
+      "max_price": 81.67,
+      "min_price": 50.52,
+      "total_volume": 211943768.0
     },
     {
       "year": "2024",
-      "avg_price": 96.31,
-      "max_price": 106.02,
-      "min_price": 86.65,
-      "total_volume": 172150625.0
+      "avg_price": 91.82,
+      "max_price": 105.65,
+      "min_price": 69.67,
+      "total_volume": 188646053.0
     },
     {
       "year": "2025",
-      "avg_price": 66.87,
-      "max_price": 77.2,
-      "min_price": 50.34,
-      "total_volume": 184822127.0
+      "avg_price": 73.18,
+      "max_price": 97.01,
+      "min_price": 51.24,
+      "total_volume": 225021130.0
     },
     {
       "year": "2026",
-      "avg_price": 79.51,
-      "max_price": 84.91,
+      "avg_price": 85.23,
+      "max_price": 99.69,
       "min_price": 72.5,
-      "total_volume": 26616572.0
+      "total_volume": 120224657.0
     }
   ],
   "korea_krw": [
@@ -123,10 +123,10 @@
     },
     {
       "year": "2026",
-      "avg_price": 14395.0,
-      "max_price": 19750,
+      "avg_price": 19097.0,
+      "max_price": 30850,
       "min_price": 10250,
-      "trading_days": 91
+      "trading_days": 1079
     }
   ],
   "eu_eur": [
@@ -289,5 +289,10 @@
     "KRW_USD": 0.0007142857142857143,
     "CNY_USD": 0.1388888888888889,
     "EUR_USD": 1.1
+  },
+  "as_of": {
+    "china": "2026-09-30",
+    "korea": "2026-10-01",
+    "eu": "2026-10-01"
   }
 }

@@ -16,6 +16,8 @@ sha256[:12]=e3345225de51)。
   F fetch_eu_ets.py→sync_eua_to_gods.py (既存・WARN継続)
   G fetch_gx_ets.py --date + GX coverage自動backfill (既存・WARN継続)
   H build_ets_market_smart.py (既存・FAILでabort)
+  Y update_yearly_prices.py 公開価格(data/prices.json)の中国・韓国の年次行+as_ofを統一正本から更新
+    (2026-10-02新設。H ok直後・WARN継続・commit/pushはしない=朝の点検がcommit)
   I check_gaps/check_recent_coverage/korea_reconcile (既存smart層検査・alert集約)
   J china/korea docs/index.html再生成+鮮度自己検査 (新設)
   K 監査器 ets_db_audit.py (ERROR>0=alert)
@@ -227,6 +229,19 @@ def stage_sync():
     if rc == 1:
         line = _extract_result_line(out, "RESULT: FAIL")
         return [f"stage E(sync_smart_market): {line or 'exit=1'}"]
+    return []
+
+
+def stage_yearly_prices(extra_args=None):
+    """stage Y: update_yearly_prices.py。data/prices.jsonの中国・韓国の年次行とas_ofを統一正本から更新。
+
+    rc!=0(統一正本が無い/市場の行が0)=alert化して継続(WARN継続・他stageは止めない)。
+    更新の有無は標準出力(run_capture経由で表示)に出る。commit/pushはしない。
+    extra_args=selftest用(--prices/--eu-dbなど)。
+    """
+    rc, _ = run_capture([sys.executable, "scripts/update_yearly_prices.py"] + list(extra_args or []))
+    if rc != 0:
+        return [f"stage Y(update_yearly_prices) failed - exit={rc} - WARN継続"]
     return []
 
 
@@ -802,6 +817,8 @@ def main():
         sys.exit(1)
     stage_status["H"] = "ok"
 
+    record("Y", stage_yearly_prices())
+
     alerts = check_gaps(target_date)
     coverage_alerts = check_recent_coverage(target_date)
     korea_alerts = check_korea_monthly_reconciliation()
@@ -855,11 +872,11 @@ def main():
                         if a not in alerts and a not in coverage_alerts
                         and a not in korea_alerts and a not in gx_coverage_alerts]
     if new_stage_alerts:
-        print("[STAGE ALERTS] (A/B collector・C korea・D gap_check・E sync・P 価格異常・J html鮮度・K audit・N 公開鮮度)")
+        print("[STAGE ALERTS] (A/B collector・C korea・D gap_check・E sync・P 価格異常・Y 年次価格・J html鮮度・K audit・N 公開鮮度)")
         for a in new_stage_alerts:
             print(f"  - {a}")
     else:
-        print("stage A/B/C/D/E/P/J/K/M/N: no anomaly")
+        print("stage A/B/C/D/E/P/Y/J/K/M/N: no anomaly")
     print(f"STAGES summary: {' '.join(f'{k}={v}' for k, v in stage_status.items())}")
     print(f"[ALERT-FILE] {ALERT_PATH}")
 
