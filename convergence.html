@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ETS Convergence Map</title>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<script src="shared.js?v=10"></script>
+<script src="shared.js?v=11"></script>
 </head>
 <body>
 <script>initPage('convergence');</script>
@@ -41,6 +41,9 @@
 // === SCATTER PLOT DATA (loaded via fetch) ===
 let CURRENT = null;
 let PREDICTED_2030 = null;
+let PRICES = null;
+// 現在値の点の y(USD)と label の年は、EU・Korea・China は data/prices.json の当年平均から。Japan・2030 予測は convergence.json のまま。
+const PRICE_KEYS = { EU: 'eu_eur', Korea: 'korea_krw', China: 'china_cny' };
 
 function renderScatter() {
   if (!CURRENT || !PREDICTED_2030) return;
@@ -59,10 +62,18 @@ function renderScatter() {
     showlegend: false
   }));
 
-  const currentTraces = makeTrace(CURRENT, false);
+  // prices.json から値が取れない市場は点も矢印も描かない(古い固定値は出さない)
+  const current = CURRENT.map(c => {
+    const key = PRICE_KEYS[c.country];
+    if (!key) return c;
+    const f = formatYearlyPrice(PRICES, key);
+    return (f && f.usdValue !== null) ? Object.assign({}, c, { price: f.usdValue, label: c.country + ' ' + f.year }) : null;
+  });
+  const currentTraces = makeTrace(current.filter(Boolean), false);
   const predictTraces = makeTrace(PREDICTED_2030, true);
 
-  const arrows = CURRENT.map((c, i) => {
+  const arrows = current.map((c, i) => {
+    if (!c) return null;
     const p = PREDICTED_2030[i];
     return {
       x: p.age, y: p.price, ax: c.age, ay: c.price,
@@ -70,7 +81,7 @@ function renderScatter() {
       showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 1.5,
       arrowcolor: THEME.countries[c.country] + '88'
     };
-  });
+  }).filter(Boolean);
 
   const layout = darkLayout(t('chartScatter'), {
     xaxis: { title: 'System Age (years)', gridcolor: THEME.border, tickfont: { color: THEME.muted }, range: [0, 28] },
@@ -203,9 +214,9 @@ function renderInsights() {
 }
 
 // Load scatter data then render
-fetch('data/convergence.json')
-  .then(r => r.json())
-  .then(data => {
+Promise.all([fetch('data/convergence.json').then(r => r.json()), loadPrices()])
+  .then(([data, prices]) => {
+    PRICES = prices;
     CURRENT = data.current;
     PREDICTED_2030 = data.predicted_2030;
     renderScatter();

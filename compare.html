@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ETS System Comparison</title>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<script src="shared.js?v=10"></script>
+<script src="shared.js?v=11"></script>
 </head>
 <body>
 <script>initPage('compare');</script>
@@ -82,6 +82,18 @@ function renderRadar() {
   Plotly.newPlot('radar-chart', traces, layout, plotlyConfig);
 }
 
+// 比較表の「Current Price」の行(METRIC_LABELS の 3 番目)は EU・Korea・China を data/prices.json の当年行から出す。
+// 取れない時は「\u2014」(古い固定値は出さない)。Japan は systems.json の固定の文言のまま。
+const PRICE_ROW = 2;
+const PRICE_KEYS = { EU: 'eu_eur', Korea: 'korea_krw', China: 'china_cny' };
+let PRICES = null;
+function priceCell(country, fixed) {
+  const key = PRICE_KEYS[country];
+  if (!key) return fixed;
+  const f = formatYearlyPrice(PRICES, key);
+  return f ? f.table : '\u2014';
+}
+
 function renderTable() {
   if (!TABLE_VALUES) return;
   const lang = getLang();
@@ -100,7 +112,7 @@ function renderTable() {
   metrics.forEach((label, idx) => {
     const row = TABLE_VALUES[idx];
     html += `<tr><td style="font-weight:600;color:${THEME.accent}">${label}</td>`;
-    countries.forEach(c => { html += `<td>${row[c]}</td>`; });
+    countries.forEach(c => { html += `<td>${idx === PRICE_ROW ? priceCell(c, row[c]) : row[c]}</td>`; });
     html += '</tr>';
   });
   html += '</tbody>';
@@ -122,9 +134,9 @@ function sortTable(col) {
 }
 
 // Load data then render
-fetch('data/systems.json')
-  .then(r => r.json())
-  .then(data => {
+Promise.all([fetch('data/systems.json').then(r => r.json()), loadPrices()])
+  .then(([data, prices]) => {
+    PRICES = prices;
     RADAR_VALUES = data.radar;
     TABLE_VALUES = data.table;
     renderRadar();

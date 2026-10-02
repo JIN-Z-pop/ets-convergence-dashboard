@@ -373,12 +373,59 @@ function createFooterHTML() {
   </footer>`;
 }
 
+// data/prices.json は 1 回だけ取得し、Promise を共有する(フッター・カード・グラフ・比較表・散布図が同じ 1 回を使う)。
+// 失敗(404・不正な JSON)は reject せず null で解決する=呼び出し側は null を「取れなかった」として扱う。
+let _pricesPromise = null;
+function loadPrices() {
+  if (!_pricesPromise) {
+    _pricesPromise = fetch('data/prices.json')
+      .then(r => (r.ok ? r.json() : null))
+      .catch(() => null);
+  }
+  return _pricesPromise;
+}
+
+// 市場ごとの当年(year が最大の行)の年平均を、画面に出す文字列にする。DOM に触れない純関数(selftest が取り出して回す)。
+// 丸めを避ける: EU・中国は prices.json の小数 2 桁をそのまま(整数 cents から文字列を組む)・韓国は整数 3 桁区切り。
+// USD は Math.round(avg x fx)。取れない(配列が無い/空・avg が数値でない)時は null。fx が無い時は USD 無し。
+// <formatYearlyPrice>
+function formatYearlyPrice(prices, key) {
+  const META = {
+    eu_eur: { sym: '\u20AC', fx: 'EUR_USD', dec: 2 },
+    korea_krw: { sym: '\u20A9', fx: 'KRW_USD', dec: 0 },
+    china_cny: { sym: '\u00A5', fx: 'CNY_USD', dec: 2 }
+  }[key];
+  const rows = prices && prices[key];
+  if (!META || !Array.isArray(rows) || !rows.length) return null;
+  let row = null;
+  rows.forEach(r => { if (r && (row === null || Number(r.year) > Number(row.year))) row = r; });
+  const avg = row ? row.avg_price : null;
+  if (typeof avg !== 'number' || !isFinite(avg) || avg < 0) return null;
+  let num;
+  if (META.dec === 0) {
+    num = String(Math.round(avg)).replace(/\B(?=(\d{3})+$)/g, ',');
+  } else {
+    const cents = Math.round(avg * 100);
+    num = Math.floor(cents / 100) + '.' + String(cents % 100).padStart(2, '0');
+  }
+  const price = META.sym + num + '/t';
+  const fx = prices.fx ? prices.fx[META.fx] : null;
+  const usdValue = (typeof fx === 'number' && isFinite(fx) && fx > 0) ? Math.round(avg * fx) : null;
+  return {
+    price: price,
+    usd: usdValue === null ? null : '~$' + usdValue + '/t',
+    usdValue: usdValue,
+    year: String(row.year),
+    table: '~' + price + (usdValue === null ? '' : ' (~$' + usdValue + ')')
+  };
+}
+// </formatYearlyPrice>
+
 // 価格データの基準日(EU / 韓国 / 中国)を data/prices.json の as_of から後埋めする。
 // 在る市場だけ出す・1市場も無ければ行ごと出さない(古い日付を出さない)。
 // 日付は data-i18n を持たない要素に入れる=言語切替(textContent一括置換)で消えない。
 function fillFooterPrices() {
-  fetch('data/prices.json')
-    .then(r => (r.ok ? r.json() : null))
+  loadPrices()
     .then(d => {
       const asOf = d && d.as_of;
       const box = document.getElementById('footerPrices');

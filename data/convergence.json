@@ -3,23 +3,17 @@
     {
       "country": "EU",
       "age": 21,
-      "price": 79,
-      "coverage": 1600,
-      "label": "EU 2026"
+      "coverage": 1600
     },
     {
       "country": "Korea",
       "age": 11,
-      "price": 8,
-      "coverage": 600,
-      "label": "Korea 2026"
+      "coverage": 600
     },
     {
       "country": "China",
       "age": 5,
-      "price": 11,
-      "coverage": 5000,
-      "label": "China 2026"
+      "coverage": 5000
     },
     {
       "country": "Japan",

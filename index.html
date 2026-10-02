@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ETS Convergence Dashboard</title>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<script src="shared.js?v=10"></script>
+<script src="shared.js?v=11"></script>
 </head>
 <body>
 <script>initPage('index');</script>
@@ -62,11 +62,20 @@ let PRICES = null;
 
 // === KPI CARDS ===
 const KPI = [
-  { country: 'EU', flag: '\u{1F1EA}\u{1F1FA}', price: '\u20AC72/t', priceUsd: '~$79/t', priceYear: '2026', coverage: '40%', entities: '~11,000', since: '2005', color: THEME.countries.EU },
-  { country: 'Korea', flag: '\u{1F1F0}\u{1F1F7}', price: '\u20A913,679/t', priceUsd: '~$10/t', priceYear: '2026', coverage: '68%', entities: '~680', since: '2015', color: THEME.countries.Korea },
-  { country: 'China', flag: '\u{1F1E8}\u{1F1F3}', price: '\u00A579.4/t', priceUsd: '~$11/t', priceYear: '2026', coverage: '60%', entities: '~3,500', since: '2021', color: THEME.countries.China },
+  { country: 'EU', flag: '\u{1F1EA}\u{1F1FA}', key: 'eu_eur', coverage: '40%', entities: '~11,000', since: '2005', color: THEME.countries.EU },
+  { country: 'Korea', flag: '\u{1F1F0}\u{1F1F7}', key: 'korea_krw', coverage: '68%', entities: '~680', since: '2015', color: THEME.countries.Korea },
+  { country: 'China', flag: '\u{1F1E8}\u{1F1F3}', key: 'china_cny', coverage: '60%', entities: '~3,500', since: '2021', color: THEME.countries.China },
   { country: 'Japan', flag: '\u{1F1EF}\u{1F1F5}', price: 'GX-ETS', priceUsd: 'Phase 2 (2026-04~)', priceYear: '', coverage: '60%*', entities: '~747 / ~300-400**', since: '2023', color: THEME.countries.Japan },
 ];
+
+// 価格欄: EU・Korea・China は data/prices.json の当年行から(key を持つ市場)。取れない時は「—」で、下の行は出さない
+// (古い固定値は出さない)。Japan は固定の文言のまま。
+function priceCell(k) {
+  if (!k.key) return { value: k.price, sub: `${k.priceUsd}${k.priceYear ? ` (${k.priceYear} avg)` : ''}` };
+  const f = formatYearlyPrice(PRICES, k.key);
+  if (!f) return { value: '\u2014', sub: '' };
+  return { value: f.price, sub: f.usd ? `${f.usd} (${f.year} avg)` : '' };
+}
 
 function renderCards() {
   const lang = getLang();
@@ -75,8 +84,8 @@ function renderCards() {
     <div class="card" style="border-top: 3px solid ${k.color};">
       <div class="country-flag">${k.flag}</div>
       <div class="country-name" style="color:${k.color}">${k.country}</div>
-      <div class="value" style="color:${k.color}">${k.price}</div>
-      <div class="sub">${k.priceUsd}${k.priceYear ? ` (${k.priceYear} avg)` : ''}</div>
+      <div class="value" style="color:${k.color}">${priceCell(k).value}</div>
+      <div class="sub">${priceCell(k).sub}</div>
       <div style="display:flex;justify-content:space-around;margin-top:14px;font-size:0.82em;color:${THEME.muted};gap:8px">
         <div><div style="font-weight:600;color:${THEME.text};font-size:1.1em">${k.coverage}</div>${labels.coverage}</div>
         <div><div style="font-weight:600;color:${THEME.text};font-size:1.1em">${k.entities}</div>${labels.entities}</div>
@@ -256,14 +265,17 @@ renderCards();
 renderAbout();
 
 // Load price data from JSON, then render chart
-fetch('data/prices.json')
-  .then(r => r.json())
-  .then(data => { PRICES = data; renderPriceChart(); })
-  .catch(err => {
-    console.error('Failed to load prices:', err);
+loadPrices().then(data => {
+  if (!data) {
+    console.error('Failed to load prices');
     document.getElementById('price-chart').innerHTML =
       '<p style="color:#e53e3e;text-align:center;padding:40px;">Failed to load price data.</p>';
-  });
+    return;
+  }
+  PRICES = data;
+  renderCards();
+  renderPriceChart();
+});
 
 // Update on language change
 window.addEventListener('langchange', () => { renderCards(); renderPriceChart(); renderAbout(); });
