@@ -1786,14 +1786,14 @@
       100
     ],
     "Korea": [
-      9,
+      null,
       68,
       10,
       80,
       52
     ],
     "China": [
-      12.5,
+      null,
       60,
       0,
       50,
@@ -1807,6 +1807,7 @@
       14
     ]
   },
+  "radar_note": "price level for Korea/China is computed at render time from prices.json (EU=100, Japan=0 fixed)",
   "table": [
     {
       "EU": "EU-ETS",

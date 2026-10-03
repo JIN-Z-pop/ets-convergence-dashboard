@@ -30,6 +30,7 @@ const LANG = {
     footer: 'JIN-Z-pop and his merry AI brothers | Plotly.js',
     lastUpdated: 'System information as of',
     pricesAsOf: 'Price data as of',
+    radarNoPrice: 'Price level: annual price data not available',
     disclaimer: 'This tool is provided for research and educational purposes only. The authors make no warranties regarding accuracy, completeness, or fitness for any particular purpose, and accept no liability for any loss or damage arising from its use. Use of this tool is entirely at your own risk.',
     price: 'Price', coverage: 'Coverage', entities: 'Entities', since: 'Since',
     eu: 'EU', korea: 'Korea', china: 'China', japan: 'Japan',
@@ -102,6 +103,7 @@ const LANG = {
     footer: 'JIN-Z-pop and his merry AI brothers | Plotly.js',
     lastUpdated: '制度情報の基準日',
     pricesAsOf: '価格データの基準日',
+    radarNoPrice: '価格水準: 年次価格データ未取得',
     disclaimer: '本ツールは研究・教育目的で公開しています。内容の正確性・完全性・特定目的への適合性について一切保証せず、本ツールの利用により生じたいかなる損害についても責任を負いません。ご利用は利用者ご自身の責任において行ってください。',
     price: '\u4FA1\u683C', coverage: '\u30AB\u30D0\u30FC\u7387', entities: '\u5BFE\u8C61\u4F01\u696D', since: '\u958B\u59CB',
     eu: 'EU', korea: '\u97D3\u56FD', china: '\u4E2D\u56FD', japan: '\u65E5\u672C',
@@ -174,6 +176,7 @@ const LANG = {
     footer: 'JIN-Z-pop and his merry AI brothers | Plotly.js',
     lastUpdated: '제도 정보 기준일',
     pricesAsOf: '가격 데이터 기준일',
+    radarNoPrice: '가격 수준: 연간 가격 데이터 미확보',
     disclaimer: '본 도구는 연구·교육 목적으로 공개되었습니다. 정확성·완전성·특정 목적에 대한 적합성을 보증하지 않으며, 본 도구의 사용으로 인해 발생한 어떠한 손해에 대해서도 책임을 지지 않습니다. 이용은 전적으로 이용자 본인의 책임하에 이루어집니다.',
     price: '\uAC00\uACA9', coverage: '\uCEE4\uBC84\uC728', entities: '\uB300\uC0C1\uAE30\uC5C5', since: '\uC2DC\uC791',
     eu: 'EU', korea: '\uD55C\uAD6D', china: '\uC911\uAD6D', japan: '\uC77C\uBCF8',
@@ -246,6 +249,7 @@ const LANG = {
     footer: 'JIN-Z-pop and his merry AI brothers | Plotly.js',
     lastUpdated: '制度信息截至',
     pricesAsOf: '价格数据截至',
+    radarNoPrice: '价格水平：暂无年度价格数据',
     disclaimer: '本工具仅供研究与教育目的使用。作者不对其准确性、完整性或特定用途的适用性作任何保证，亦不对因使用本工具而产生的任何损失或损害承担责任。使用本工具的风险由用户自行承担。',
     price: '\u4EF7\u683C', coverage: '\u8986\u76D6\u7387', entities: '\u7EB3\u5165\u4F01\u4E1A', since: '\u542F\u52A8',
     eu: 'EU', korea: '\u97E9\u56FD', china: '\u4E2D\u56FD', japan: '\u65E5\u672C',
@@ -420,6 +424,121 @@ function formatYearlyPrice(prices, key) {
   };
 }
 // </formatYearlyPrice>
+
+// 解説の文章の中の価格(cbam=「二つの世界」・convergence=「2. 大きな価格差」と「5A」)と、レーダーの価格水準を、
+// formatYearlyPrice の当年平均から作る。DOM に触れない純関数(selftest が取り出して回す・formatYearlyPrice と同じ context が要る)。
+// 3 市場とも usdValue(Math.round 済みの整数)を使う=新しい換算係数は書かない。
+// 倍率: N = round(EU / 高い方)・M = round(EU / 低い方)(整数どうしの比)。N == M なら 1 つにする。
+// 取れない市場が 1 つでもあれば、その文の数字は「—」・倍率の句は出さない(古い固定値は出さない)。
+// <priceText>
+function priceUsdValue(prices, key) {
+  const f = formatYearlyPrice(prices, key);
+  return (f && f.usdValue !== null && f.usdValue > 0) ? { v: f.usdValue, year: f.year, price: f.price } : null;
+}
+
+function buildPriceTexts(prices, lang) {
+  const DASH = '—';
+  const eu = priceUsdValue(prices, 'eu_eur');
+  const kr = priceUsdValue(prices, 'korea_krw');
+  const cn = priceUsdValue(prices, 'china_cny');
+  const all = !!(eu && kr && cn);
+  const uniq = arr => arr.filter((y, i) => arr.indexOf(y) === i).join('/');
+  const o = {
+    p: eu ? eu.price : DASH,
+    e: eu ? '$' + eu.v : DASH,
+    k: kr ? '$' + kr.v : DASH,
+    c: cn ? '$' + cn.v : DASH,
+    yEu: eu ? eu.year : '',
+    yAsia: (kr && cn) ? uniq([kr.year, cn.year]) : '',
+    yAll: all ? uniq([eu.year, kr.year, cn.year]) : ''
+  };
+  let N = null, M = null, lo = null, hi = null;
+  if (all) {
+    lo = Math.min(kr.v, cn.v);
+    hi = Math.max(kr.v, cn.v);
+    N = Math.round(eu.v / hi);
+    M = Math.round(eu.v / lo);
+  }
+  const L = {
+    ja: {
+      sep: '〜', nm: s => (N === M ? N : N + s + M),
+      t1: '炭素価格 {p}（{yEu} 年平均）— 世界最高水準', t1na: '炭素価格 ' + DASH,
+      t2: '炭素価格{r}/t（{yAsia} 年平均）— EU の約 {fr} 分の 1', t2na: '炭素価格 ' + DASH,
+      t3Title: '2. 大きな価格差',
+      ap: v => '約 ' + v + '/t',
+      t3: 'EU {eP} vs 韓国 {kP} vs 中国 {cP}{meta}。この差は、異なる経済的優先順位と炭素コスト許容度を反映。',
+      meta: '（{yAll} 年平均・約 {nm} 倍）',
+      t4: '約 {nm} 倍の格差（{r4} vs {e}）', t4na: '価格の格差（' + DASH + '）'
+    },
+    en: {
+      sep: '–', nm: s => (N === M ? N : N + s + M),
+      t1: '{p} carbon price ({yEu} avg) — among the world\'s highest', t1na: 'Carbon price ' + DASH,
+      t2: '{r}/t carbon prices ({yAsia} avg) — about {fr} of EU', t2na: 'Carbon price ' + DASH,
+      t3Title: '2. Large Price Gap',
+      ap: v => '~' + v + '/t',
+      t3: 'EU {eP} vs Korea {kP} vs China {cP}{meta}. The gap reflects different economic priorities and carbon cost tolerance.',
+      meta: ' ({yAll} avg, about {nm}x)',
+      t4: 'roughly {nm}x gap ({r4} vs {e})', t4na: 'gap (' + DASH + ')'
+    },
+    ko: {
+      sep: '~', nm: s => (N === M ? N : N + s + M),
+      t1: '탄소 가격 {p}({yEu}년 평균) — 세계 최고 수준', t1na: '탄소 가격 ' + DASH,
+      t2: '탄소 가격 {r}/t({yAsia}년 평균) — EU의 약 {fr}분의 1', t2na: '탄소 가격 ' + DASH,
+      t3Title: '2. 큰 가격 격차',
+      ap: v => '약 ' + v + '/t',
+      t3: 'EU {eP} vs 한국 {kP} vs 중국 {cP}{meta}. 이 차이는 서로 다른 경제적 우선순위와 탄소 비용 수용도를 반영.',
+      meta: '({yAll}년 평균, 약 {nm}배)',
+      t4: '약 {nm}배 격차({r4} vs {e})', t4na: '가격 격차(' + DASH + ')'
+    },
+    zh: {
+      sep: '～', nm: s => (N === M ? N : N + s + M),
+      t1: '碳价{p}（{yEu}年均值）— 全球最高水平', t1na: '碳价' + DASH,
+      t2: '碳价{r}/t（{yAsia}年均值）— 约为EU的{fr}', t2na: '碳价' + DASH,
+      t3Title: '2. 显著价格差',
+      ap: v => '约' + v + '/t',
+      t3: 'EU {eP} vs 韩国 {kP} vs 中国 {cP}{meta}。这一差距反映不同的经济优先级和碳成本承受力。',
+      meta: '（{yAll}年均值，约{nm}倍）',
+      t4: '约{nm}倍差距({r4} vs {e})', t4na: '价格差距(' + DASH + ')'
+    }
+  };
+  const T = L[lang] || L.en;
+  // T3 の市場ごとの句: 取れた市場=「約 $82/t」・取れない市場=「—」だけ(/t も「約」も付けない)
+  o.eP = eu ? T.ap(o.e) : DASH;
+  o.kP = kr ? T.ap(o.k) : DASH;
+  o.cP = cn ? T.ap(o.c) : DASH;
+  const fill = (s, v) => s.replace(/\{(\w+)\}/g, (m, k) => (k in v ? String(v[k]) : m));
+  // 倍率・範囲(3 市場そろった時だけ)。en の分数は lo↔1/M・hi↔1/N の向き(1/7–1/6)
+  if (all) {
+    const dollar = x => '$' + x;
+    o.nm = T.nm(T.sep);
+    o.r = lo === hi ? dollar(lo) : dollar(lo) + T.sep + dollar(hi);
+    o.r4 = lo === hi ? dollar(lo) : dollar(lo) + T.sep + dollar(hi);
+    o.fr = lang === 'en' ? (N === M ? '1/' + N : '1/' + M + T.sep + '1/' + N)
+      : lang === 'zh' ? (N === M ? '1/' + N : '1/' + M + T.sep + '1/' + N)
+      : o.nm;
+    o.meta = fill(T.meta, o);
+  } else {
+    o.meta = '';   // 取れない市場がある時は年・倍率の括弧ごと出さない
+  }
+  return {
+    t1: eu ? fill(T.t1, o) : T.t1na,
+    t2: all ? fill(T.t2, o) : T.t2na,
+    t3Title: T.t3Title,
+    t3Desc: fill(T.t3, o),
+    t4Gap: all ? fill(T.t4, o) : T.t4na,
+    n: N, m: M
+  };
+}
+
+// レーダーの「価格水準」(EU=100)の韓国・中国。3 市場そろわなければ null(0 にしない=「価格 0」と読まれる)。
+function buildRadarPrice(prices) {
+  const eu = priceUsdValue(prices, 'eu_eur');
+  const kr = priceUsdValue(prices, 'korea_krw');
+  const cn = priceUsdValue(prices, 'china_cny');
+  if (!(eu && kr && cn)) return null;
+  return { Korea: Math.round(kr.v / eu.v * 100), China: Math.round(cn.v / eu.v * 100) };
+}
+// </priceText>
 
 // 価格データの基準日(EU / 韓国 / 中国)を data/prices.json の as_of から後埋めする。
 // 在る市場だけ出す・1市場も無ければ行ごと出さない(古い日付を出さない)。

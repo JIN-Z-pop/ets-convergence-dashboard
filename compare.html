@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ETS System Comparison</title>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<script src="shared.js?v=11"></script>
+<script src="shared.js?v=12"></script>
 </head>
 <body>
 <script>initPage('compare');</script>
@@ -15,7 +15,8 @@
   <p data-i18n="pageCompareSub"></p>
 </div>
 
-<div class="chart-wrap"><div class="chart-box" id="radar-chart"></div></div>
+<div class="chart-wrap"><div class="chart-box" id="radar-chart"></div>
+<p id="radar-note" hidden style="text-align:center;color:var(--muted);font-size:0.85em;margin-top:8px;"></p></div>
 
 <div class="chart-wrap">
   <div class="chart-box" style="padding:20px;overflow-x:auto;">
@@ -43,6 +44,7 @@ const RADAR_AXES = {
 };
 
 let RADAR_VALUES = null;
+let RADAR_PRICE_MISSING = false;
 let TABLE_VALUES = null;
 
 // === TABLE METRIC LABELS (multilingual) ===
@@ -80,6 +82,9 @@ function renderRadar() {
   });
 
   Plotly.newPlot('radar-chart', traces, layout, plotlyConfig);
+  const note = document.getElementById('radar-note');
+  note.textContent = RADAR_PRICE_MISSING ? t('radarNoPrice') : '';
+  note.hidden = !RADAR_PRICE_MISSING;
 }
 
 // 比較表の「Current Price」の行(METRIC_LABELS の 3 番目)は EU・Korea・China を data/prices.json の当年行から出す。
@@ -138,6 +143,11 @@ Promise.all([fetch('data/systems.json').then(r => r.json()), loadPrices()])
   .then(([data, prices]) => {
     PRICES = prices;
     RADAR_VALUES = data.radar;
+    // 価格水準(第 1 軸)の韓国・中国は systems.json に値を持たない(null)。当年平均の USD から EU=100 で作る。
+    // 取れない時は上書きしない=null のまま渡す(その頂点は描かれない・0 とは読ませない)＋注記を出す。
+    const rp = buildRadarPrice(prices);
+    RADAR_PRICE_MISSING = !rp;
+    if (rp) { RADAR_VALUES.Korea[0] = rp.Korea; RADAR_VALUES.China[0] = rp.China; }
     TABLE_VALUES = data.table;
     renderRadar();
     renderTable();

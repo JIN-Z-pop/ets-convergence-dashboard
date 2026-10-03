@@ -54,15 +54,15 @@ def export_systems(conn):
     # Radar chart: normalized 0-100 values for 5 axes
     radar = {
         "EU":    [100, 40, 43, 90, 100],
-        "Korea": [9,   68, 10, 80, 52],
-        "China": [12.5,60,  0, 50, 24],
+        "Korea": [None, 68, 10, 80, 52],   # 価格水準は描画時に prices.json から計算(固定値を書かない)
+        "China": [None, 60,  0, 50, 24],
         "Japan": [0,   60,  0, 20, 14]
     }
     # Comparison table: 14 metrics × 4 countries
     table = [
         {"EU": "EU-ETS",          "Korea": "K-ETS",          "China": "China-ETS",        "Japan": "GX-ETS"},
         {"EU": "2005",            "Korea": "2015",           "China": "2021",             "Japan": "2023"},
-        {"EU": "~€72/t (~$79)",   "Korea": "~₩11,823/t (~$8)","China": "~¥79/t (~$11)",  "Japan": "N/A (GX League)"},
+        {"EU": "—",              "Korea": "—",             "China": "—",                "Japan": "N/A (GX League)"},   # 価格は描画時に prices.json から
         {"EU": "~40% of GHG",     "Korea": "~68% of GHG",    "China": "~60% (power only)","Japan": "~60%*"},
         {"EU": "~11,000",         "Korea": "~680",           "China": "~3,500",           "Japan": "~747 (GX League)"},
         {"EU": "Absolute",        "Korea": "Absolute",       "China": "Intensity-based",  "Japan": "Voluntary targets"},
@@ -75,7 +75,8 @@ def export_systems(conn):
         {"EU": "EU MRR",          "Korea": "K-MRV",          "China": "CEMS + Calc.",     "Japan": "GHG Protocol"},
         {"EU": "-62% (vs 2005)",  "Korea": "-40% (vs 2018)", "China": "-65% intensity (vs 2005)","Japan": "-46% (vs 2013)"},
     ]
-    return {"metrics": metrics, "radar": radar, "table": table}
+    radar_note = "price level for Korea/China is computed at render time from prices.json (EU=100, Japan=0 fixed)"
+    return {"metrics": metrics, "radar": radar, "radar_note": radar_note, "table": table}
 
 def export_allocation(conn):
     """Allocation evolution for Allocation page."""
