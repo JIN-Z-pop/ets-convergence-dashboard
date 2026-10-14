@@ -37,10 +37,10 @@
     },
     {
       "year": "2026",
-      "avg_price": 85.41,
+      "avg_price": 85.48,
       "max_price": 99.69,
       "min_price": 72.5,
-      "total_volume": 124690796.0
+      "total_volume": 127552236.0
     }
   ],
   "korea_krw": [
@@ -123,10 +123,10 @@
     },
     {
       "year": "2026",
-      "avg_price": 19380.0,
+      "avg_price": 19426.0,
       "max_price": 30850,
       "min_price": 10250,
-      "trading_days": 1109
+      "trading_days": 1114
     }
   ],
   "eu_eur": [
@@ -279,7 +279,7 @@
     },
     {
       "year": "2026",
-      "avg_price": 75.14,
+      "avg_price": 75.18,
       "max_price": 86.63,
       "min_price": 59.97,
       "phase": "Phase 4"
@@ -291,8 +291,8 @@
     "EUR_USD": 1.1
   },
   "as_of": {
-    "china": "2026-10-12",
-    "korea": "2026-10-13",
-    "eu": "2026-10-13"
+    "china": "2026-10-14",
+    "korea": "2026-10-14",
+    "eu": "2026-10-14"
   }
 }
