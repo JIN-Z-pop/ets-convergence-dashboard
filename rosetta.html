@@ -70,11 +70,27 @@ function getCategories() {
   return [...new Set(TERMS.map(t => t.category))].sort();
 }
 
+// Category display names (sheet v0.2 §D). The key is the Japanese source value,
+// which stays the internal key for filtering/sorting. MRV is identical in all four.
+const CATEGORY_I18N = {
+  '基本制度': { en: 'Core Framework', ko: '기본 제도', zh: '基本制度' },
+  '市場取引': { en: 'Market & Trading', ko: '시장 거래', zh: '市场交易' },
+  '配額分配': { en: 'Allocation', ko: '할당', zh: '配额分配' },
+  'オフセット': { en: 'Offsets', ko: '상쇄', zh: '抵消机制' },
+  '業種': { en: 'Sectors', ko: '업종', zh: '行业' },
+  '国際制度': { en: 'International', ko: '국제 제도', zh: '国际机制' },
+  'MRV': { en: 'MRV', ko: 'MRV', zh: 'MRV' }
+};
+function catName(cat) {
+  const d = CATEGORY_I18N[cat];
+  return (getLang() !== 'ja' && d && d[getLang()]) || cat;
+}
+
 function renderCatFilters() {
   const cats = getCategories();
   document.getElementById('cat-filters').innerHTML =
     `<button class="cat-btn ${!activeCategory?'active':''}" onclick="setCategory(null)">${t('allCats')}</button>` +
-    cats.map(c => `<button class="cat-btn ${activeCategory===c?'active':''}" onclick="setCategory('${c}')">${c}</button>`).join('');
+    cats.map(c => `<button class="cat-btn ${activeCategory===c?'active':''}" onclick="setCategory('${c}')">${catName(c)}</button>`).join('');
 }
 
 function setCategory(cat) {
@@ -126,7 +142,7 @@ function renderTermTable() {
       <td>${highlight(t.term_ja, searchQuery)}</td>
       <td>${highlight(t.term_ko, searchQuery)}</td>
       <td>${highlight(t.term_zh, searchQuery)}</td>
-      <td class="cat-cell"><span class="cat-tag" style="background:${catColor}22;color:${catColor};border:1px solid ${catColor}44">${t.category}</span></td>
+      <td class="cat-cell"><span class="cat-tag" style="background:${catColor}22;color:${catColor};border:1px solid ${catColor}44">${catName(t.category)}</span></td>
     </tr>`;
   });
   html += '</tbody>';

@@ -65,14 +65,14 @@ function renderGantt() {
   const traces = PHASES.map(p => ({
     type: 'bar',
     orientation: 'h',
-    y: [p.country],
+    y: [countryName(p.country)],
     x: [p.end - p.start + 1],
     base: p.start,
-    name: p.phase,
+    name: phaseName(p.phase),
     marker: { color: p.color },
-    hovertemplate: `<b>${p.country} \u2014 ${p.phase}</b><br>${p.start}-${p.end}<br>Method: ${p.method}` +
+    hovertemplate: `<b>${countryName(p.country)} \u2014 ${phaseName(p.phase)}</b><br>${p.start}-${p.end}<br>Method: ${p.method}` +
       (p.free !== null ? `<br>Free: ${p.free}% / Auction: ${p.auction}%` : '') + '<extra></extra>',
-    text: p.phase,
+    text: phaseName(p.phase),
     textposition: 'inside',
     textfont: { color: '#fff', size: 13 },
     showlegend: false
@@ -85,7 +85,7 @@ function renderGantt() {
     margin: { l: 80, r: 30, t: 45, b: 45 },
     height: 330,
     annotations: [
-      { x: 2026, y: 1.15, yref: 'paper', text: '\u25BC CBAM Start', showarrow: false, font: { color: THEME.accent, size: 12 } }
+      { x: 2026, y: 1.15, yref: 'paper', text: t('cbamStart'), showarrow: false, font: { color: THEME.accent, size: 12 } }
     ],
     shapes: [
       { type: 'line', x0: 2026, x1: 2026, y0: 0, y1: 1, yref: 'paper', line: { color: THEME.accent, width: 1.5, dash: 'dash' } }
@@ -100,9 +100,9 @@ function renderMethodChart() {
   if (!METHOD_MIX) return;
   const periods = METHOD_MIX;
   const traces = [
-    { name: 'Grandfathering (GF)', x: periods.map(p => p.label), y: periods.map(p => p.gf), type: 'bar', marker: { color: '#3182ce' } },
-    { name: 'Benchmark (BM)', x: periods.map(p => p.label), y: periods.map(p => p.bm), type: 'bar', marker: { color: '#48bb78' } },
-    { name: 'Auction', x: periods.map(p => p.label), y: periods.map(p => p.auction), type: 'bar', marker: { color: '#ed8936' } },
+    { name: t('grandfatheringGF'), x: periods.map(p => p.label), y: periods.map(p => p.gf), type: 'bar', marker: { color: '#3182ce' } },
+    { name: t('benchmarkBM'), x: periods.map(p => p.label), y: periods.map(p => p.bm), type: 'bar', marker: { color: '#48bb78' } },
+    { name: t('auction'), x: periods.map(p => p.label), y: periods.map(p => p.auction), type: 'bar', marker: { color: '#ed8936' } },
   ];
 
   const layout = darkLayout(t('chartMethod'), {

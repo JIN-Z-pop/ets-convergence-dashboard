@@ -74,6 +74,12 @@ const LANG = {
     euWorld: 'EU World',
     asiaWorld: 'Asia World',
     phaseView: 'Phase:',
+    phase1: 'Phase 1', phase2: 'Phase 2', phase3: 'Phase 3', phase4: 'Phase 4',
+    phaseAll: 'All', phase2From2026: 'Phase 2 (2026-04~)', yearAvg: '({y} avg)', pwr: 'Pwr',
+    cbamFull: 'CBAM Full', cbamStart: '▼ CBAM Start', powerBM: 'Power BM',
+    fourSectorBM: '4-Sector BM', gxLeague: 'GX League', gxEtsP2: 'GX-ETS P2', gxEtsP3: 'GX-ETS P3',
+    auction: 'Auction', benchmarkBM: 'Benchmark (BM)', grandfatheringGF: 'Grandfathering (GF)',
+    systemAge: 'System Age (years)', carbonPriceUsd: 'Carbon Price (USD/tCO₂)', strictness: 'Strictness',
     pageBankingTitle: 'Banking Rules',
     pageBankingSub: 'How allowance carryover rules shape market behavior across 4 ETS systems',
     chartPhaseEvo: 'K-ETS Phase Evolution: Restriction vs Market Activity',
@@ -86,6 +92,7 @@ const LANG = {
     simYear1: 'Year 1',
     simYear2: 'Year 2',
     simMinGuarantee: 'Min guarantee applied',
+    simNoteNs5: 'NS × 5 = ', simNoteCn: '100K + NS × 1.5 = ',
     bankingInsights: 'Key Insights',
     volume: 'Volume (Mt)',
     priceKRW: 'Price (\u20A9/t)',
@@ -147,6 +154,12 @@ const LANG = {
     euWorld: 'EU\u306E\u4E16\u754C',
     asiaWorld: '\u30A2\u30B8\u30A2\u306E\u4E16\u754C',
     phaseView: '\u30D5\u30A7\u30FC\u30BA:',
+    phase1: 'フェーズ1', phase2: 'フェーズ2', phase3: 'フェーズ3', phase4: 'フェーズ4',
+    phaseAll: '全期間', phase2From2026: 'フェーズ2（2026年4月〜）', yearAvg: '（{y}年平均）', pwr: '電力',
+    cbamFull: 'CBAM完全施行', cbamStart: '▼ CBAM開始', powerBM: '電力BM',
+    fourSectorBM: '4業種BM', gxLeague: 'GXリーグ', gxEtsP2: 'GX-ETS 第2フェーズ', gxEtsP3: 'GX-ETS 第3フェーズ',
+    auction: 'オークション', benchmarkBM: 'ベンチマーク（BM）', grandfatheringGF: 'グランドファザリング（GF）',
+    systemAge: '制度年数（年）', carbonPriceUsd: '炭素価格（USD/tCO₂）', strictness: '厳格度',
     pageBankingTitle: '\u30D0\u30F3\u30AD\u30F3\u30B0\u30EB\u30FC\u30EB',
     pageBankingSub: '\u6392\u51FA\u67A0\u306E\u7E70\u8D8A\u898F\u5236\u304C\u5E02\u5834\u884C\u52D5\u3092\u3069\u3046\u5F62\u4F5C\u308B\u304B \u2014 4\u30AB\u56FD\u6BD4\u8F03',
     chartPhaseEvo: 'K-ETS\u30D5\u30A7\u30FC\u30BA\u5225\u9032\u5316\uFF1A\u898F\u5236 vs \u5E02\u5834\u6D3B\u52D5',
@@ -159,6 +172,7 @@ const LANG = {
     simYear1: '\u7B2C1\u5E74\u5EA6',
     simYear2: '\u7B2C2\u5E74\u5EA6',
     simMinGuarantee: '\u6700\u4F4E\u4FDD\u8A3C\u67A0\u9069\u7528',
+    simNoteNs5: '純売渡量 × 5 = ', simNoteCn: '10万 + 純売渡量 × 1.5 = ',
     bankingInsights: '\u4E3B\u8981\u306A\u77E5\u898B',
     volume: '\u53D6\u5F15\u91CF (Mt)',
     priceKRW: '\u4FA1\u683C (\u20A9/t)',
@@ -219,7 +233,13 @@ const LANG = {
     cbamNote: 'CBAM\uC740 \uC218\uB834\uC744 \uAC15\uC81C\uD558\uB294 \uB2E4\uB9AC \u2014 \uC544\uC2DC\uC544\uB294 \uD0C4\uC18C \uAC00\uACA9\uC744 \uC62C\uB9AC\uAC70\uB098 EU \uCC28\uC561\uC744 \uC9C0\uBD88',
     euWorld: 'EU\uC758 \uC138\uACC4',
     asiaWorld: '\uC544\uC2DC\uC544\uC758 \uC138\uACC4',
-    phaseView: '\uD398\uC774\uC988:',
+    phaseView: '\uB2E8\uACC4:',
+    phase1: '1단계', phase2: '2단계', phase3: '3단계', phase4: '4단계',
+    phaseAll: '전체', phase2From2026: '2단계(2026-04~)', yearAvg: '({y}년 평균)', pwr: '전력',
+    cbamFull: 'CBAM 완전 시행', cbamStart: '▼ CBAM 시작', powerBM: '전력 BM',
+    fourSectorBM: '4개 업종 BM', gxLeague: 'GX 리그', gxEtsP2: 'GX-ETS 2단계', gxEtsP3: 'GX-ETS 3단계',
+    auction: '경매', benchmarkBM: '벤치마크(BM)', grandfatheringGF: '그랜드파더링(GF)',
+    systemAge: '제도 연수(년)', carbonPriceUsd: '탄소 가격(USD/tCO₂)', strictness: '엄격도',
     pageBankingTitle: '\uBC45\uD0B9 \uADDC\uCE59',
     pageBankingSub: '\uBC30\uCD9C\uAD8C \uC774\uC6D4 \uADDC\uC81C\uAC00 \uC2DC\uC7A5 \uD589\uB3D9\uC744 \uC5B4\uB5BB\uAC8C \uD615\uC131\uD558\uB294\uAC00 \u2014 4\uAC1C\uAD6D \uBE44\uAD50',
     chartPhaseEvo: 'K-ETS \uB2E8\uACC4\uBCC4 \uC9C4\uD654: \uADDC\uC81C vs \uC2DC\uC7A5 \uD65C\uB3D9',
@@ -232,6 +252,7 @@ const LANG = {
     simYear1: '1\uCC28\uB144\uB3C4',
     simYear2: '2\uCC28\uB144\uB3C4',
     simMinGuarantee: '\uCD5C\uC18C\uBCF4\uC7A5 \uC801\uC6A9',
+    simNoteNs5: '순매도량 × 5 = ', simNoteCn: '10만 + 순매도량 × 1.5 = ',
     bankingInsights: '\uD575\uC2EC \uC778\uC0AC\uC774\uD2B8',
     volume: '\uAC70\uB798\uB7C9 (Mt)',
     priceKRW: '\uAC00\uACA9 (\u20A9/t)',
@@ -293,6 +314,12 @@ const LANG = {
     euWorld: 'EU\u4E16\u754C',
     asiaWorld: '\u4E9A\u6D32\u4E16\u754C',
     phaseView: '\u9636\u6BB5:',
+    phase1: '第一阶段', phase2: '第二阶段', phase3: '第三阶段', phase4: '第四阶段',
+    phaseAll: '全部', phase2From2026: '第二阶段（2026-04起）', yearAvg: '（{y}年均值）', pwr: '电力',
+    cbamFull: 'CBAM全面实施', cbamStart: '▼ CBAM启动', powerBM: '电力基准法',
+    fourSectorBM: '四行业基准法', gxLeague: 'GX联盟', gxEtsP2: 'GX-ETS 第二阶段', gxEtsP3: 'GX-ETS 第三阶段',
+    auction: '拍卖', benchmarkBM: '基准法（BM）', grandfatheringGF: '历史法（GF）',
+    systemAge: '制度年限（年）', carbonPriceUsd: '碳价（USD/tCO₂）', strictness: '严格度',
     pageBankingTitle: '\u7ED3\u8F6C\u89C4\u5219',
     pageBankingSub: '\u914D\u989D\u7ED3\u8F6C\u89C4\u5236\u5982\u4F55\u5851\u9020\u5E02\u573A\u884C\u4E3A \u2014 \u56DB\u56FD\u6BD4\u8F83',
     chartPhaseEvo: 'K-ETS\u9636\u6BB5\u6F14\u53D8\uFF1A\u89C4\u5236 vs \u5E02\u573A\u6D3B\u52A8',
@@ -305,6 +332,7 @@ const LANG = {
     simYear1: '\u7B2C1\u5E74',
     simYear2: '\u7B2C2\u5E74',
     simMinGuarantee: '\u6700\u4F4E\u4FDD\u969C\u9002\u7528',
+    simNoteNs5: '净卖出量 × 5 = ', simNoteCn: '10万 + 净卖出量 × 1.5 = ',
     bankingInsights: '\u5173\u952E\u53D1\u73B0',
     volume: '\u4EA4\u6613\u91CF (Mt)',
     priceKRW: '\u4EF7\u683C (\u20A9/t)',
@@ -323,6 +351,17 @@ function getLang() { return localStorage.getItem('ets-dash-lang') || 'en'; }
 function setLang(lang) { localStorage.setItem('ets-dash-lang', lang); }
 function t(key) { return (LANG[getLang()] || LANG.en)[key] || (LANG.en[key] || key); }
 
+// --- Display names for values that live in the data files (English/internal keys) ---
+const COUNTRY_KEY = { EU: 'eu', Korea: 'korea', China: 'china', Japan: 'japan' };
+function countryName(name) { return t(COUNTRY_KEY[name] || name); }
+
+const PHASE_KEY = {
+  'Phase 1': 'phase1', 'Phase 2': 'phase2', 'Phase 3': 'phase3', 'Phase 4': 'phase4',
+  'CBAM Full': 'cbamFull', 'Power BM': 'powerBM', '4-Sector BM': 'fourSectorBM',
+  'GX League': 'gxLeague', 'GX-ETS P2': 'gxEtsP2', 'GX-ETS P3': 'gxEtsP3'
+};
+function phaseName(name) { return t(PHASE_KEY[name] || name); }
+
 function switchLang(lang) {
   setLang(lang);
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -334,6 +373,10 @@ function switchLang(lang) {
   document.querySelectorAll('.nav-link').forEach(a => {
     const page = NAV_PAGES.find(p => p.id === a.dataset.pageId);
     if (page) a.textContent = page[lang] || page.en;
+  });
+  // The active language button must follow the active language (D8).
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('lang-active', b.dataset.lang === lang);
   });
   window.dispatchEvent(new CustomEvent('langchange', { detail: { lang } }));
 }
@@ -349,7 +392,7 @@ function createNavHTML(currentPageId) {
   const langOptions = ['en','ja','ko','zh'].map(l => {
     const labels = { en: 'EN', ja: 'JA', ko: 'KO', zh: 'ZH' };
     const active = lang === l ? ' lang-active' : '';
-    return `<button class="lang-btn${active}" onclick="switchLang('${l}')">${labels[l]}</button>`;
+    return `<button class="lang-btn${active}" data-lang="${l}" onclick="switchLang('${l}')">${labels[l]}</button>`;
   }).join('');
 
   return `<nav class="top-nav">

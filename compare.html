@@ -66,7 +66,7 @@ function renderRadar() {
     theta: [...axes, axes[0]],
     fill: 'toself',
     fillcolor: THEME.countries[c] + '18',
-    name: c,
+    name: countryName(c),
     line: { color: THEME.countries[c], width: 2 },
     marker: { size: 5 }
   }));
@@ -92,6 +92,47 @@ function renderRadar() {
 const PRICE_ROW = 2;
 const PRICE_KEYS = { EU: 'eu_eur', Korea: 'korea_krw', China: 'china_cny' };
 let PRICES = null;
+// Value dictionary for the compare table (sheet v0.2 §B): key = the English
+// value stored in data/systems.json. Flat on purpose: a repeated literal such as
+// Yes/No/TBD has one meaning, so one translation.
+const VALUE_I18N = {
+  'Absolute': { ja: '絶対量', ko: '절대량', zh: '绝对量' },
+  'Intensity-based': { ja: '強度基準', ko: '강도 기반', zh: '强度基准' },
+  'Voluntary targets': { ja: '自主目標', ko: '자발적 목표', zh: '自愿目标' },
+  '~40% of GHG': { ja: 'GHG の約40%', ko: 'GHG의 약 40%', zh: 'GHG的约40%' },
+  '~68% of GHG': { ja: 'GHG の約68%', ko: 'GHG의 약 68%', zh: 'GHG的约68%' },
+  '~60% (power only)': { ja: '約60%（発電のみ）', ko: '약 60%(발전만)', zh: '约60%（仅电力）' },
+  'N/A (GX League)': { ja: '該当なし（GXリーグ）', ko: '해당 없음(GX 리그)', zh: '不适用（GX联盟）' },
+  '~747 (GX League)': { ja: '約747（GXリーグ）', ko: '약 747(GX 리그)', zh: '约747（GX联盟）' },
+  '0% (100% free)': { ja: '0%（100%無償）', ko: '0%(100% 무상)', zh: '0%（100%免费）' },
+  '0% (2033~ planned)': { ja: '0%（2033年〜予定）', ko: '0%(2033년~ 예정)', zh: '0%（2033年起计划）' },
+  'BM + Auction': { ja: 'BM＋オークション', ko: 'BM+경매', zh: '基准法+拍卖' },
+  'GF + BM + Auction': { ja: 'GF＋BM＋オークション', ko: 'GF+BM+경매', zh: '历史法+基准法+拍卖' },
+  'Intensity BM': { ja: '強度BM', ko: '강도 BM', zh: '强度基准法' },
+  'Self-set targets': { ja: '自主設定目標', ko: '자체 설정 목표', zh: '自主设定目标' },
+  'No (Phase 4)': { ja: 'なし（フェーズ4）', ko: '없음(4단계)', zh: '无（第四阶段）' },
+  'Yes (KOC, 10%)': { ja: 'あり（KOC、10%）', ko: '있음(KOC, 10%)', zh: '有（KOC，10%）' },
+  'Yes (CCER, 5%)': { ja: 'あり（CCER、5%）', ko: '있음(CCER, 5%)', zh: '有（CCER，5%）' },
+  '€100/t + next year': { ja: '€100/t＋翌年義務', ko: '€100/t+차년도 의무', zh: '€100/t+次年补缴' },
+  '3x market price': { ja: '市場価格の3倍', ko: '시장가격의 3배', zh: '市场价格的3倍' },
+  '1-5x avg price': { ja: '平均価格の1〜5倍', ko: '평균가격의 1~5배', zh: '平均价格的1~5倍' },
+  'Name & shame (TBD)': { ja: '公表による制裁（未定）', ko: '공표 방식(미정)', zh: '公开通报（待定）' },
+  'Yes': { ja: 'あり', ko: '있음', zh: '有' },
+  'No': { ja: 'なし', ko: '없음', zh: '无' },
+  'TBD': { ja: '未定', ko: '미정', zh: '待定' },
+  'Limited': { ja: '限定的', ko: '제한적', zh: '有限' },
+  'CEMS + Calc.': { ja: 'CEMS＋算定', ko: 'CEMS+산정', zh: 'CEMS+核算' },
+  '-62% (vs 2005)': { ja: '-62%（2005年比）', ko: '-62%(2005년 대비)', zh: '-62%（较2005年）' },
+  '-40% (vs 2018)': { ja: '-40%（2018年比）', ko: '-40%(2018년 대비)', zh: '-40%（较2018年）' },
+  '-65% intensity (vs 2005)': { ja: '強度 -65%（2005年比）', ko: '강도 -65%(2005년 대비)', zh: '强度-65%（较2005年）' },
+  '-46% (vs 2013)': { ja: '-46%（2013年比）', ko: '-46%(2013년 대비)', zh: '-46%（较2013年）' },
+  'GHG Protocol': { ja: 'GHGプロトコル', ko: 'GHG 프로토콜', zh: 'GHG核算体系' }
+};
+function valueText(v) {
+  const d = VALUE_I18N[v];
+  return (getLang() !== 'en' && d && d[getLang()]) || v;
+}
+
 function priceCell(country, fixed) {
   const key = PRICE_KEYS[country];
   if (!key) return fixed;
@@ -110,14 +151,14 @@ function renderTable() {
 
   let html = '<thead><tr><th onclick="sortTable(0)">' + t('metric') + ' \u25B2\u25BC</th>';
   countries.forEach((c, i) => {
-    html += `<th onclick="sortTable(${i+1})"><span class="country-badge" style="background:${colors[i]}">${COUNTRY_FLAGS[c]} ${c}</span> \u25B2\u25BC</th>`;
+    html += `<th onclick="sortTable(${i+1})"><span class="country-badge" style="background:${colors[i]}">${COUNTRY_FLAGS[c]} ${countryName(c)}</span> \u25B2\u25BC</th>`;
   });
   html += '</tr></thead><tbody>';
 
   metrics.forEach((label, idx) => {
     const row = TABLE_VALUES[idx];
     html += `<tr><td style="font-weight:600;color:${THEME.accent}">${label}</td>`;
-    countries.forEach(c => { html += `<td>${idx === PRICE_ROW ? priceCell(c, row[c]) : row[c]}</td>`; });
+    countries.forEach(c => { html += `<td>${valueText(idx === PRICE_ROW ? priceCell(c, row[c]) : row[c])}</td>`; });
     html += '</tr>';
   });
   html += '</tbody>';

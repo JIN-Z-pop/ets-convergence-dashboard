@@ -19,11 +19,11 @@
 <div class="chart-wrap">
   <div id="phase-selector" style="display:flex;gap:8px;margin-bottom:4px;padding:0 8px;flex-wrap:wrap;align-items:center;">
     <span style="font-size:0.85em;color:var(--muted);margin-right:4px;" data-i18n="phaseView"></span>
-    <button class="phase-btn phase-btn-active" data-phase="all">All</button>
-    <button class="phase-btn" data-phase="EU" style="--btn-c:var(--eu)">EU</button>
-    <button class="phase-btn" data-phase="Korea" style="--btn-c:var(--korea)">Korea</button>
-    <button class="phase-btn" data-phase="China" style="--btn-c:var(--china)">China</button>
-    <button class="phase-btn" data-phase="Japan" style="--btn-c:var(--japan)">Japan</button>
+    <button class="phase-btn phase-btn-active" data-phase="all" data-i18n="phaseAll">All</button>
+    <button class="phase-btn" data-phase="EU" data-i18n="eu" style="--btn-c:var(--eu)">EU</button>
+    <button class="phase-btn" data-phase="Korea" data-i18n="korea" style="--btn-c:var(--korea)">Korea</button>
+    <button class="phase-btn" data-phase="China" data-i18n="china" style="--btn-c:var(--china)">China</button>
+    <button class="phase-btn" data-phase="Japan" data-i18n="japan" style="--btn-c:var(--japan)">Japan</button>
   </div>
   <div class="chart-box" id="price-chart"></div>
 </div>
@@ -65,16 +65,16 @@ const KPI = [
   { country: 'EU', flag: '\u{1F1EA}\u{1F1FA}', key: 'eu_eur', coverage: '40%', entities: '~11,000', since: '2005', color: THEME.countries.EU },
   { country: 'Korea', flag: '\u{1F1F0}\u{1F1F7}', key: 'korea_krw', coverage: '68%', entities: '~680', since: '2015', color: THEME.countries.Korea },
   { country: 'China', flag: '\u{1F1E8}\u{1F1F3}', key: 'china_cny', coverage: '60%', entities: '~3,500', since: '2021', color: THEME.countries.China },
-  { country: 'Japan', flag: '\u{1F1EF}\u{1F1F5}', price: 'GX-ETS', priceUsd: 'Phase 2 (2026-04~)', priceYear: '', coverage: '60%*', entities: '~747 / ~300-400**', since: '2023', color: THEME.countries.Japan },
+  { country: 'Japan', flag: '\u{1F1EF}\u{1F1F5}', price: 'GX-ETS', priceUsdKey: 'phase2From2026', priceYear: '', coverage: '60%*', entities: '~747 / ~300-400**', since: '2023', color: THEME.countries.Japan },
 ];
 
 // 価格欄: EU・Korea・China は data/prices.json の当年行から(key を持つ市場)。取れない時は「—」で、下の行は出さない
 // (古い固定値は出さない)。Japan は固定の文言のまま。
 function priceCell(k) {
-  if (!k.key) return { value: k.price, sub: `${k.priceUsd}${k.priceYear ? ` (${k.priceYear} avg)` : ''}` };
+  if (!k.key) return { value: k.price, sub: `${k.priceUsdKey ? t(k.priceUsdKey) : (k.priceUsd || '')}${k.priceYear ? ` ${t('yearAvg').replace('{y}', k.priceYear)}` : ''}` };
   const f = formatYearlyPrice(PRICES, k.key);
   if (!f) return { value: '\u2014', sub: '' };
-  return { value: f.price, sub: f.usd ? `${f.usd} (${f.year} avg)` : '' };
+  return { value: f.price, sub: f.usd ? `${f.usd} ${t('yearAvg').replace('{y}', f.year)}` : '' };
 }
 
 function renderCards() {
@@ -83,7 +83,7 @@ function renderCards() {
   document.getElementById('kpi-cards').innerHTML = KPI.map(k => `
     <div class="card" style="border-top: 3px solid ${k.color};">
       <div class="country-flag">${k.flag}</div>
-      <div class="country-name" style="color:${k.color}">${k.country}</div>
+      <div class="country-name" style="color:${k.color}">${countryName(k.country)}</div>
       <div class="value" style="color:${k.color}">${priceCell(k).value}</div>
       <div class="sub">${priceCell(k).sub}</div>
       <div style="display:flex;justify-content:space-around;margin-top:14px;font-size:0.82em;color:${THEME.muted};gap:8px">

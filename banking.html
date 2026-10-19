@@ -91,7 +91,7 @@ function renderCards() {
   document.getElementById('banking-cards').innerHTML = items.map(k => `
     <div class="card" style="border-top:3px solid ${k.color};">
       <div class="country-flag">${k.flag}</div>
-      <div class="country-name" style="color:${k.color}">${k.key}</div>
+      <div class="country-name" style="color:${k.color}">${countryName(k.key)}</div>
       <div class="value" style="color:${k.color};font-size:1.3em;">${k.rule}</div>
       <div class="sub" style="margin-top:8px;line-height:1.5;">${k.detail}</div>
     </div>
@@ -102,7 +102,7 @@ function renderCards() {
 function renderPhaseEvo() {
   if (!DATA) return;
   const phases = DATA.phases;
-  const labels = phases.map(p => p.phase + '<br>' + p.period);
+  const labels = phases.map(p => phaseName(p.phase) + '<br>' + p.period);
 
   const traces = [
     {
@@ -212,19 +212,19 @@ function updateSimulator() {
 
   document.getElementById('sim-results').innerHTML = `
     <div class="sim-card" style="border-color:${THEME.countries.Korea}33;">
-      <div class="sim-label" style="color:${THEME.countries.Korea};">\u{1F1F0}\u{1F1F7} Korea ${t('simYear1')}</div>
+      <div class="sim-label" style="color:${THEME.countries.Korea};">\u{1F1F0}\u{1F1F7} ${countryName('Korea')} ${t('simYear1')}</div>
       <div class="sim-value">${kr1.toLocaleString()}</div>
-      <div class="sim-note">${kr1_min ? '\u26A0 ' + t('simMinGuarantee') : 'NS \u00D7 5 = ' + kr1_calc.toLocaleString()}</div>
+      <div class="sim-note">${kr1_min ? '\u26A0 ' + t('simMinGuarantee') : t('simNoteNs5') + kr1_calc.toLocaleString()}</div>
     </div>
     <div class="sim-card" style="border-color:${THEME.countries.Korea}33;">
-      <div class="sim-label" style="color:${THEME.countries.Korea};">\u{1F1F0}\u{1F1F7} Korea ${t('simYear2')}</div>
+      <div class="sim-label" style="color:${THEME.countries.Korea};">\u{1F1F0}\u{1F1F7} ${countryName('Korea')} ${t('simYear2')}</div>
       <div class="sim-value">${kr2.toLocaleString()}</div>
-      <div class="sim-note">${kr2_min ? '\u26A0 ' + t('simMinGuarantee') : 'NS \u00D7 5 = ' + kr2_calc.toLocaleString()}</div>
+      <div class="sim-note">${kr2_min ? '\u26A0 ' + t('simMinGuarantee') : t('simNoteNs5') + kr2_calc.toLocaleString()}</div>
     </div>
     <div class="sim-card" style="border-color:${THEME.countries.China}33;">
-      <div class="sim-label" style="color:${THEME.countries.China};">\u{1F1E8}\u{1F1F3} China</div>
+      <div class="sim-label" style="color:${THEME.countries.China};">\u{1F1E8}\u{1F1F3} ${countryName('China')}</div>
       <div class="sim-value">${cn.toLocaleString()}</div>
-      <div class="sim-note">100K + NS \u00D7 1.5 = ${cn.toLocaleString()}</div>
+      <div class="sim-note">${t('simNoteCn')}${cn.toLocaleString()}</div>
     </div>
     <div class="sim-card" style="border-color:${THEME.countries.EU}33;">
       <div class="sim-label" style="color:${THEME.countries.EU};">\u{1F1EA}\u{1F1FA} EU</div>
@@ -244,7 +244,7 @@ function renderCountryCompare() {
   const traces = [
     {
       name: t('banking') + ' ' + t('restriction'),
-      y: countries, x: countries.map(k => c[k].strictness),
+      y: countries.map(countryName), x: countries.map(k => c[k].strictness),
       type: 'bar', orientation: 'h',
       marker: { color: colors.map(c => c + 'cc') },
       text: countries.map(k => L(c[k].banking)),
@@ -284,7 +284,7 @@ function renderTable() {
 
   let html = '<thead><tr><th>' + t('metric') + '</th>';
   countries.forEach((k, i) => {
-    html += `<th><span class="country-badge" style="background:${colors[i]}">${COUNTRY_FLAGS[k]} ${k}</span></th>`;
+    html += `<th><span class="country-badge" style="background:${colors[i]}">${COUNTRY_FLAGS[k]} ${countryName(k)}</span></th>`;
   });
   html += '</tr></thead><tbody>';
 

@@ -122,16 +122,106 @@ const TWO_WORLDS = {
   }
 };
 
+// Translations of the four fields renderTimeline actually draws (sheet v0.2 §A).
+// ja is the original data/cbam.json text and is never overridden at the display layer.
+const CBAM_I18N = {
+  1: {
+    en: { type: "EU-ETS launched", desc: "EU-ETS Phase 1 begins: the world's first large-scale ETS" },
+    ko: { type: "ETS 출범", desc: "EU-ETS 1단계 개시. 세계 최초의 대규모 ETS" },
+    zh: { type: "ETS启动", desc: "EU-ETS第一阶段启动，全球首个大规模碳市场" }
+  },
+  2: {
+    en: { type: "Phase 3 begins", desc: "Single EU-wide cap; 100% auctioning for power generation" },
+    ko: { type: "3단계 개시", desc: "EU 전체 단일 배출총량(Cap). 발전 부문 100% 유상할당" },
+    zh: { type: "第三阶段启动", desc: "欧盟统一总量上限，发电行业100%有偿分配" }
+  },
+  3: {
+    en: { type: "MSR activated", desc: "Market Stability Reserve (MSR) starts; surplus allowances absorbed automatically" },
+    ko: { type: "MSR 가동", desc: "시장안정화준비금(MSR) 가동. 잉여 배출권 자동 흡수" },
+    zh: { type: "MSR启动", desc: "市场稳定储备机制(MSR)启动，自动吸收过剩配额" }
+  },
+  4: {
+    en: { type: "Phase 4 begins", desc: "Steeper linear reduction factor (LRF), aligned with the -55% target" },
+    ko: { type: "4단계 개시", desc: "선형감축계수(LRF) 강화, -55% 목표와 정합" },
+    zh: { type: "第四阶段启动", desc: "线性减排系数(LRF)加严，与-55%目标对齐" }
+  },
+  5: {
+    en: { type: "Fit for 55", desc: "European Commission proposes the \"Fit for 55\" package, including CBAM",
+          kr: "Korea starts to take notice", cn: "Limited impact on China" },
+    ko: { type: "Fit for 55", desc: "유럽집행위원회 'Fit for 55' 패키지 제안. CBAM 포함",
+          kr: "경계 시작", cn: "영향 제한적" },
+    zh: { type: "Fit for 55", desc: "欧盟委员会提出\"Fit for 55\"一揽子方案，含CBAM",
+          kr: "开始警惕", cn: "影响有限" }
+  },
+  6: {
+    en: { type: "CBAM transitional period begins", desc: "CBAM transitional period starts: reporting obligation only (no charges)",
+          kr: "Reporting obligation; largely manageable with K-ETS methods",
+          cn: "Reporting obligation also applies to Chinese firms" },
+    ko: { type: "CBAM 전환기간 개시", desc: "CBAM 전환기간 개시. 보고 의무만 부과(비용 부담 없음)",
+          kr: "보고 의무. K-ETS 방식으로 대부분 대응 가능", cn: "중국 기업에도 보고 의무" },
+    zh: { type: "CBAM过渡期启动", desc: "CBAM过渡期开始，仅有报告义务（不收费）",
+          kr: "报告义务，K-ETS方法基本可满足", cn: "中国企业同样承担报告义务" }
+  },
+  7: {
+    en: { type: "EU calculation method becomes mandatory", desc: "Only the EU calculation method is accepted for CBAM reports (default values no longer allowed)",
+          kr: "Calculation methods need adjustment", cn: "Conversion from China's own calculation method required" },
+    ko: { type: "EU 산정방식 의무화", desc: "CBAM 보고에서 EU 산정방식만 인정(기본값 사용 불가)",
+          kr: "산정방식 조정 필요", cn: "중국 자체 산정방식에서의 변환 필요" },
+    zh: { type: "强制采用欧盟核算方法", desc: "CBAM报告仅认可欧盟核算方法（不得使用默认值）",
+          kr: "需调整核算方法", cn: "需从中国自有核算方法转换" }
+  },
+  8: {
+    en: { type: "CBAM definitive period begins", desc: "CBAM definitive period: obligation to buy CBAM certificates; free allocation phase-out begins (2.5%/yr)",
+          kr: "Steel industry: ~KRW 191 bn per year (BAU)",
+          cn: "Affects exports of steel, aluminium and cement" },
+    ko: { type: "CBAM 본격 시행", desc: "CBAM 본격 개시. CBAM 인증서 구매 의무. 무상할당 감축 개시(연 2.5%)",
+          kr: "철강업계: 연간 1,910억 원(BAU)", cn: "철강·알루미늄·시멘트 수출에 영향" },
+    zh: { type: "CBAM正式实施", desc: "CBAM正式启动，须购买CBAM证书，免费配额开始削减（每年2.5%）",
+          kr: "钢铁业：每年约1,910亿韩元（BAU）", cn: "影响钢铁、铝、水泥出口" }
+  },
+  9: {
+    en: { type: "ETS2 begins", desc: "ETS2 (buildings and road transport) begins" },
+    ko: { type: "ETS2 개시", desc: "ETS2(건물·도로교통) 개시" },
+    zh: { type: "ETS2启动", desc: "ETS2（建筑与道路交通）启动" }
+  },
+  10: {
+    en: { type: "CBAM fully phased in", desc: "Free allocation for CBAM sectors fully removed; 100% auctioning",
+          kr: "Korean steel: pays the full gap to the EU ETS price",
+          cn: "China's three sectors: pay the full EU ETS price" },
+    ko: { type: "CBAM 완전 시행", desc: "CBAM 대상 업종의 무상할당 100% 폐지. 완전 유상화",
+          kr: "한국 철강: EU-ETS 가격과의 차액 전액 부담", cn: "중국 3개 업종: EU-ETS 가격 전액 부담" },
+    zh: { type: "CBAM全面实施", desc: "CBAM覆盖行业免费配额全部取消，实现完全有偿",
+          kr: "韩国钢铁：全额承担与EU-ETS价格的差额", cn: "中国三大行业：全额承担EU-ETS价格" }
+  },
+  11: {
+    en: { type: "Climate neutrality", desc: "EU climate-neutrality target year" },
+    ko: { type: "기후중립", desc: "EU 기후중립 목표 연도" },
+    zh: { type: "气候中和", desc: "欧盟气候中和目标年" }
+  }
+};
+
 function renderTimeline() {
   const container = document.getElementById('timeline');
+  const lang = getLang();
   container.innerHTML = CBAM_EVENTS.map((ev, i) => {
+    const tr = (lang !== 'ja' && CBAM_I18N[ev.id] && CBAM_I18N[ev.id][lang]) || null;
+    const pick = (field, original) => {
+      if (!original) return { text: '', fb: '' };
+      if (lang === 'ja') return { text: original, fb: '' };
+      if (tr && tr[field]) return { text: tr[field], fb: '' };
+      return { text: original, fb: ' data-i18n-fallback="1"' };
+    };
     const impact = ev.impact_level || ev.impact;
     const dotClass = impact === 'critical' ? 'critical' : impact === 'high' ? 'high' : '';
     const date = (ev.event_date || ev.date || '').slice(0, 7);
-    const type = ev.event_type || ev.type || '';
-    const desc = ev.description || ev.desc || '';
-    const kr = ev.korea_impact || ev.kr;
-    const cn = ev.china_impact || ev.cn;
+    const pType = pick('type', ev.event_type || ev.type || '');
+    const pDesc = pick('desc', ev.description || ev.desc || '');
+    const pKr = pick('kr', ev.korea_impact || ev.kr);
+    const pCn = pick('cn', ev.china_impact || ev.cn);
+    const type = pType.text, typeFb = pType.fb;
+    const desc = pDesc.text, descFb = pDesc.fb;
+    const kr = pKr.text, cn = pCn.text;
+    const impactFb = pKr.fb || pCn.fb;
     let impacts = '';
     if (kr) impacts += `<span class="impact-badge impact-kr">\u{1F1F0}\u{1F1F7} ${kr}</span>`;
     if (cn) impacts += `<span class="impact-badge impact-cn">\u{1F1E8}\u{1F1F3} ${cn}</span>`;
@@ -140,9 +230,9 @@ function renderTimeline() {
         <div class="tl-dot ${dotClass}"></div>
         <div class="tl-content">
           <div class="tl-date">${date}</div>
-          <div class="tl-type">${type}</div>
-          <div class="tl-desc">${desc}</div>
-          ${impacts ? `<div class="tl-impact">${impacts}</div>` : ''}
+          <div class="tl-type"${typeFb}>${type}</div>
+          <div class="tl-desc"${descFb}>${desc}</div>
+          ${impacts ? `<div class="tl-impact"${impactFb}>${impacts}</div>` : ''}
         </div>
       </div>`;
   }).join('');
@@ -181,7 +271,7 @@ fetch('data/cbam.json')
 
 renderTwoWorlds();
 loadPrices().then(p => { PRICES = p; renderTwoWorlds(); });
-window.addEventListener('langchange', () => { renderTwoWorlds(); });
+window.addEventListener('langchange', () => { renderTwoWorlds(); renderTimeline(); });
 document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
 </script>
 </body>

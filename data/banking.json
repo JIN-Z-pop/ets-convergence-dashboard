@@ -181,7 +181,7 @@
       },
       "stabilization": {
         "en": "K-MSR (Phase 4)",
-        "ja": "K-MSR（Phase 4）",
+        "ja": "K-MSR（フェーズ4）",
         "ko": "K-MSR (4차 계획기간)",
         "zh": "K-MSR（第四阶段）"
       },
@@ -244,8 +244,8 @@
       "offset": {
         "en": "J-Credit / JCM",
         "ja": "J-クレジット / JCM",
-        "ko": "J-Credit / JCM",
-        "zh": "J-Credit / JCM"
+        "ko": "J-Credit / JCM(공동크레딧메커니즘)",
+        "zh": "J-Credit / JCM（联合抵免机制）"
       },
       "stabilization": {
         "en": "Price floor & ceiling (from 2026)",

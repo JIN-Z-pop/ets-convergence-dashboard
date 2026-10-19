@@ -50,8 +50,8 @@ function renderScatter() {
   const makeTrace = (data, dash) => data.map(d => ({
     x: [d.age], y: [d.price],
     mode: 'markers+text',
-    name: d.label,
-    text: [d.label],
+    name: (d.label || '').replace(d.country, countryName(d.country)),
+    text: [(d.label || '').replace(d.country, countryName(d.country))],
     textposition: d.country === 'Japan' ? 'top center' : 'top right',
     textfont: { color: THEME.countries[d.country], size: 10 },
     marker: {
@@ -67,7 +67,7 @@ function renderScatter() {
     const key = PRICE_KEYS[c.country];
     if (!key) return c;
     const f = formatYearlyPrice(PRICES, key);
-    return (f && f.usdValue !== null) ? Object.assign({}, c, { price: f.usdValue, label: c.country + ' ' + f.year }) : null;
+    return (f && f.usdValue !== null) ? Object.assign({}, c, { price: f.usdValue, label: countryName(c.country) + ' ' + f.year }) : null;
   });
   const currentTraces = makeTrace(current.filter(Boolean), false);
   const predictTraces = makeTrace(PREDICTED_2030, true);
@@ -84,8 +84,8 @@ function renderScatter() {
   }).filter(Boolean);
 
   const layout = darkLayout(t('chartScatter'), {
-    xaxis: { title: 'System Age (years)', gridcolor: THEME.border, tickfont: { color: THEME.muted }, range: [0, 28] },
-    yaxis: { title: 'Carbon Price (USD/tCO\u2082)', gridcolor: THEME.border, tickfont: { color: THEME.muted }, range: [-5, 100] },
+    xaxis: { title: t('systemAge'), gridcolor: THEME.border, tickfont: { color: THEME.muted }, range: [0, 28] },
+    yaxis: { title: t('carbonPriceUsd'), gridcolor: THEME.border, tickfont: { color: THEME.muted }, range: [-5, 100] },
     margin: { l: 60, r: 30, t: 50, b: 60 },
     annotations: [
       ...arrows,
