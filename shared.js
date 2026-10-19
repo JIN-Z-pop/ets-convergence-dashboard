@@ -18,7 +18,8 @@ const NAV_PAGES = [
   { id: 'banking', href: 'banking.html', en: 'Banking', ja: '\u7E70\u8D8A', ko: '\uC774\uC6D4', zh: '\u7ED3\u8F6C' },
   { id: 'cbam', href: 'cbam.html', en: 'CBAM', ja: 'CBAM', ko: 'CBAM', zh: 'CBAM' },
   { id: 'convergence', href: 'convergence.html', en: 'Convergence', ja: '\u7D71\u5408\u5206\u6790', ko: '\uC218\uB834\u00B7\uBD84\uAE30', zh: '\u8D8B\u540C\u00B7\u5206\u6B67' },
-  { id: 'rosetta', href: 'rosetta.html', en: 'Rosetta', ja: '\u30ED\u30BC\u30C3\u30BF', ko: '\uB85C\uC81C\uD0C0', zh: '\u7F57\u585E\u5854' }
+  { id: 'rosetta', href: 'rosetta.html', en: 'Rosetta', ja: '\u30ED\u30BC\u30C3\u30BF', ko: '\uB85C\uC81C\uD0C0', zh: '\u7F57\u585E\u5854' },
+  { id: 'map', href: 'map.html', en: 'Map', ja: '\u5730\u56F3', ko: '\uC9C0\uB3C4', zh: '\u5730\u56FE' }
 ];
 
 const LAST_UPDATED = '2026-04-21';
@@ -102,7 +103,17 @@ const LANG = {
     banking: 'Banking',
     borrowing: 'Borrowing',
     offset: 'Offset',
-    stabilization: 'Stabilization'
+    stabilization: 'Stabilization',
+    pageMapTitle: 'China ETS Facility Map',
+    pageMapSub: 'Covered entities and EU CBAM exposure by location',
+    mapTabEntities: 'Covered entities: {n} mapped ({m} listed)',
+    mapTabCbam: 'CBAM exposure: {n} mapped ({m} listed)',
+    mapCbamInfo: 'EU CBAM sectors: {n} mapped entities in {p} regions',
+    mapTop5: 'Top 5 regions (listed CBAM entities)', mapLegend: 'Legend', mapHeat: 'Heatmap density', mapLow: 'Low', mapHigh: 'High',
+    mapSector: 'Sector', mapProvince: 'Region', mapCity: 'City', mapListYear: 'List year',
+    mapCbamPct: 'CBAM share (not summable)', mapColListed: 'Listed', mapColMapped: 'Mapped', mapColNoCoord: 'No coordinates',
+    mapTotal: 'Total',
+    mapApproxNote: 'Locations are approximate: geocoded from company names and addresses, some at city level and in mixed coordinate systems; errors of several hundred metres to a few kilometres are possible.',
   },
   ja: {
     dashTitle: 'ETS\u7D71\u5408\u5206\u6790\u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9',
@@ -182,7 +193,17 @@ const LANG = {
     banking: '\u7E70\u8D8A',
     borrowing: '\u501F\u5165',
     offset: '\u30AA\u30D5\u30BB\u30C3\u30C8',
-    stabilization: '\u5E02\u5834\u5B89\u5B9A\u5316'
+    stabilization: '\u5E02\u5834\u5B89\u5B9A\u5316',
+    pageMapTitle: '中国 ETS 対象事業者マップ',
+    pageMapSub: '対象事業者の分布と EU CBAM 暴露',
+    mapTabEntities: '対象事業者 {n} 社（名簿 {m} 社）',
+    mapTabCbam: 'CBAM 暴露 {n} 社（名簿 {m} 社）',
+    mapCbamInfo: 'EU CBAM 対象業種: 地図上の点 {n} 社（{p} 地域）',
+    mapTop5: '上位 5 地域（名簿の CBAM 社数）', mapLegend: '凡例', mapHeat: 'ヒートマップ密度', mapLow: '低', mapHigh: '高',
+    mapSector: '業種', mapProvince: '地域', mapCity: '市', mapListYear: '名簿年',
+    mapCbamPct: 'CBAM 比率（合計しない）', mapColListed: '名簿', mapColMapped: '地図上の点', mapColNoCoord: '座標なし',
+    mapTotal: '合計',
+    mapApproxNote: '位置は近似です。社名・住所からのジオコーディングで、一部は市の中心で代用し、座標系の違いによるずれも含むため、数百 m〜数 km の誤差がありえます。',
   },
   ko: {
     dashTitle: 'ETS \uC218\uB834 \uB300\uC2DC\uBCF4\uB4DC',
@@ -262,7 +283,17 @@ const LANG = {
     banking: '\uC774\uC6D4',
     borrowing: '\uCC28\uC785',
     offset: '\uC624\uD504\uC14B',
-    stabilization: '\uC2DC\uC7A5\uC548\uC815\uD654'
+    stabilization: '\uC2DC\uC7A5\uC548\uC815\uD654',
+    pageMapTitle: '중국 ETS 대상 사업장 지도',
+    pageMapSub: '대상 사업장 분포와 EU CBAM 노출',
+    mapTabEntities: '대상 사업장 {n}개사(명단 {m}개사)',
+    mapTabCbam: 'CBAM 노출 {n}개사(명단 {m}개사)',
+    mapCbamInfo: 'EU CBAM 대상 업종: 지도 표시 {n}개사({p}개 지역)',
+    mapTop5: '상위 5개 지역(명단 기준 CBAM 사업장 수)', mapLegend: '범례', mapHeat: '히트맵 밀도', mapLow: '낮음', mapHigh: '높음',
+    mapSector: '업종', mapProvince: '지역', mapCity: '시', mapListYear: '명단 연도',
+    mapCbamPct: 'CBAM 비율(합산 불가)', mapColListed: '명단', mapColMapped: '지도 표시', mapColNoCoord: '좌표 없음',
+    mapTotal: '합계',
+    mapApproxNote: '위치는 근사치입니다. 회사명·주소로 지오코딩했으며 일부는 시 중심으로 대체했고 좌표계 차이에 따른 어긋남도 포함되어 수백 m~수 km의 오차가 있을 수 있습니다.',
   },
   zh: {
     dashTitle: 'ETS\u8D8B\u540C\u4EEA\u8868\u677F',
@@ -342,7 +373,17 @@ const LANG = {
     banking: '\u7ED3\u8F6C',
     borrowing: '\u501F\u5165',
     offset: '\u62B5\u6D88',
-    stabilization: '\u5E02\u573A\u7A33\u5B9A\u5316'
+    stabilization: '\u5E02\u573A\u7A33\u5B9A\u5316',
+    pageMapTitle: '中国碳市场控排企业地图',
+    pageMapSub: '控排企业分布与欧盟 CBAM 暴露',
+    mapTabEntities: '控排企业 {n}家（名单 {m}家）',
+    mapTabCbam: 'CBAM 暴露 {n}家（名单 {m}家）',
+    mapCbamInfo: '欧盟 CBAM 覆盖行业：地图点位{n}家（{p}个省份）',
+    mapTop5: '前五省份（名单口径 CBAM 企业数）', mapLegend: '图例', mapHeat: '热力密度', mapLow: '低', mapHigh: '高',
+    mapSector: '行业', mapProvince: '省份', mapCity: '城市', mapListYear: '名单年份',
+    mapCbamPct: 'CBAM 占比（不可加总）', mapColListed: '名单', mapColMapped: '地图点位', mapColNoCoord: '无坐标',
+    mapTotal: '合计',
+    mapApproxNote: '位置为近似值：根据企业名称和地址进行地理编码，部分以城市中心代替，并含坐标系差异造成的偏移，可能存在数百米至数公里的误差。',
   }
 };
 

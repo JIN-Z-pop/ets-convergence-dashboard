@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>China ETS Facility Map</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"
+      integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+      integrity="sha384-pmjIAcz2bAn0xukfxADbZIb3t8oRT9Sv0rvO+BR5Csr6Dhqq+nZs59P0pPKQJkEV" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+      integrity="sha384-wgw+aLYNQ7dlhK47ZPK7FRACiq7ROZwgFNg0m04avm4CaXS+Z9Y7nMu8yNjBKYC+" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"
+        integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"
+        integrity="sha384-eXVCORTRlv4FUUgS/xmOyr66XBVraen8ATNLMESp92FKXLAMiKkerixTiBvXriZr" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"
+        integrity="sha384-mFKkGiGvT5vo1fEyGCD3hshDdKmW3wzXW/x+fWriYJArD0R3gawT6lMvLboM22c0" crossorigin="anonymous"></script>
+<script src="shared.js?v=12"></script>
+</head>
+<body>
+<script>initPage('map');</script>
+
+<div class="page-header">
+  <h1 data-i18n="pageMapTitle"></h1>
+  <p data-i18n="pageMapSub"></p>
+</div>
+
+<div class="map-tabs" id="map-tabs">
+  <button class="map-tab active" data-face="entities" onclick="setTab('entities')"></button>
+  <button class="map-tab" data-face="cbam" onclick="setTab('cbam')"></button>
+</div>
+
+<!-- 位置の近似は常時表示（ポップアップやトグルの奥に隠さない） -->
+<div class="approx-note" id="approx-note"></div>
+
+<div class="map-info" id="cbam-info" hidden></div>
+
+<div class="map-legend" id="legend"></div>
+
+<div id="map"></div>
+
+<div class="chart-wrap" id="province-panel" hidden>
+  <div class="chart-box">
+    <h3 id="province-title"></h3>
+    <div id="province-top5"></div>
+    <div style="overflow-x:auto;">
+      <table class="province-table" id="province-table"></table>
+    </div>
+  </div>
+</div>
+
+<style>
+/* この頁だけヘッダーの余白を詰める（地図を上へ寄せる。共通の page-header と他の頁は変えない） */
+.page-header { padding:14px 32px 4px; }
+.page-header h1 { margin-bottom:4px; }
+.page-header::after { margin:10px auto 0; }
+.map-tabs { display:flex; gap:8px; margin:10px 20px 10px; flex-wrap:wrap; }
+.map-tab { background:var(--card,#1a202c); color:var(--muted,#a0aec0); border:1px solid var(--border,#2d3748);
+  border-radius:8px; padding:9px 14px; cursor:pointer; font-size:0.92em; font-family:inherit; }
+.map-tab:hover { border-color:var(--accent,#4a90d9); }
+.map-tab.active { background:var(--accent,#4a90d9); color:#fff; border-color:var(--accent,#4a90d9); }
+.approx-note { margin:0 20px 10px; padding:10px 14px; border-radius:8px; font-size:0.82em; line-height:1.5;
+  background:#ed893611; border-left:3px solid #ed8936; color:var(--muted,#a0aec0); }
+.map-info { margin:0 20px 10px; font-size:0.9em; color:var(--text,#e0e0e0); }
+.map-legend { display:flex; gap:16px; flex-wrap:wrap; margin:0 20px 10px; font-size:0.85em; color:var(--muted,#a0aec0); }
+.map-legend .item { display:flex; align-items:center; gap:6px; }
+.map-legend .dot { width:11px; height:11px; border-radius:50%; display:inline-block; }
+#map { height:560px; margin:0 20px 20px; border-radius:10px; overflow:hidden; z-index:0; }
+.province-table { width:100%; border-collapse:collapse; font-size:0.85em; }
+.province-table th, .province-table td { padding:7px 10px; text-align:right; border-bottom:1px solid var(--border,#2d3748); }
+.province-table th:first-child, .province-table td:first-child { text-align:left; }
+.province-table th { color:var(--muted,#a0aec0); font-weight:600; }
+.province-table tr.total td { font-weight:700; }
+#province-top5 { margin-bottom:10px; font-size:0.86em; color:var(--muted,#a0aec0); line-height:1.7; }
+.leaflet-popup-content { font-size:0.9em; line-height:1.5; }
+@media (max-width: 700px) { #map { height:420px; margin:0 12px 16px; } .map-tabs, .map-legend, .approx-note, .map-info { margin-left:12px; margin-right:12px; } }
+</style>
+
+<script>
+// === Display dictionaries (data files keep the source language; ja = source) ===
+const SECTOR_I18N = {
+  '発電': { en: 'Power', ko: '발전', zh: '发电' },
+  'セメント': { en: 'Cement', ko: '시멘트', zh: '水泥' },
+  '鉄鋼': { en: 'Iron & Steel', ko: '철강', zh: '钢铁' },
+  'アルミ冶金': { en: 'Aluminum', ko: '알루미늄 제련', zh: '铝冶炼' }
+};
+const PROVINCE_I18N = {
+  '山東省': { en: 'Shandong', ko: '산둥성', zh: '山东省' },
+  '河北省': { en: 'Hebei', ko: '허베이성', zh: '河北省' },
+  '江蘇省': { en: 'Jiangsu', ko: '장쑤성', zh: '江苏省' },
+  '内蒙古': { en: 'Inner Mongolia', ko: '네이멍구', zh: '内蒙古' },
+  '山西省': { en: 'Shanxi', ko: '산시성', zh: '山西省' },
+  '浙江省': { en: 'Zhejiang', ko: '저장성', zh: '浙江省' },
+  '四川省': { en: 'Sichuan', ko: '쓰촨성', zh: '四川省' },
+  '広東省': { en: 'Guangdong', ko: '광둥성', zh: '广东省' },
+  '河南省': { en: 'Henan', ko: '허난성', zh: '河南省' },
+  '安徽省': { en: 'Anhui', ko: '안후이성', zh: '安徽省' },
+  '新疆': { en: 'Xinjiang', ko: '신장', zh: '新疆' },
+  '黒龍江省': { en: 'Heilongjiang', ko: '헤이룽장성', zh: '黑龙江省' },
+  '遼寧省': { en: 'Liaoning', ko: '랴오닝성', zh: '辽宁省' },
+  '湖北省': { en: 'Hubei', ko: '후베이성', zh: '湖北省' },
+  '湖南省': { en: 'Hunan', ko: '후난성', zh: '湖南省' },
+  '江西省': { en: 'Jiangxi', ko: '장시성', zh: '江西省' },
+  '吉林省': { en: 'Jilin', ko: '지린성', zh: '吉林省' },
+  '陝西省': { en: 'Shaanxi', ko: '샨시성', zh: '陕西省' },
+  '重慶': { ja: '重慶市', en: 'Chongqing', ko: '충칭시', zh: '重庆市' },
+  '広西': { en: 'Guangxi', ko: '광시', zh: '广西' },
+  '寧夏': { en: 'Ningxia', ko: '닝샤', zh: '宁夏' },
+  '福建省': { en: 'Fujian', ko: '푸젠성', zh: '福建省' },
+  '貴州省': { en: 'Guizhou', ko: '구이저우성', zh: '贵州省' },
+  '雲南省': { en: 'Yunnan', ko: '윈난성', zh: '云南省' },
+  '天津市': { en: 'Tianjin', ko: '톈진시', zh: '天津市' },
+  '上海市': { en: 'Shanghai', ko: '상하이시', zh: '上海市' },
+  '甘粛省': { en: 'Gansu', ko: '간쑤성', zh: '甘肃省' },
+  '青海省': { en: 'Qinghai', ko: '칭하이성', zh: '青海省' },
+  '北京市': { en: 'Beijing', ko: '베이징시', zh: '北京市' },
+  '海南省': { en: 'Hainan', ko: '하이난성', zh: '海南省' },
+  '西蔵': { en: 'Xizang', ko: '시짱', zh: '西藏' }
+};
+const SECTOR_COLORS = {
+  '発電': '#4a90d9', 'セメント': '#e0b341', '鉄鋼': '#e53e3e', 'アルミ冶金': '#38b2ac'
+};
+const CBAM_SECTORS = ['セメント', '鉄鋼', 'アルミ冶金'];
+
+function sectorName(s) {
+  const d = SECTOR_I18N[s];
+  return (getLang() !== 'ja' && d && d[getLang()]) || s;
+}
+function provinceName(p) {
+  const d = PROVINCE_I18N[p];
+  // ja 欄がある地域だけ ja でも表示名を差し替える（例: 重慶→重慶市。data の province 値は変えない）
+  return (d && d[getLang()]) || p;
+}
+function num(n) { return Number(n).toLocaleString('en-US'); }
+// データ由来の文字列は HTML に差し込む前に必ず通す（& < > 二重引用符 単一引用符）
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g,
+  c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+// === State ===
+let ENTITIES = null;
+let PROVINCES = null;
+let map = null;
+let entityLayer = null;
+let cbamLayer = null;
+let heatLayer = null;
+let activeTab = 'entities';
+
+const OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+function popupHtml(e) {
+  // 企業名・市名はポップアップにだけ出す（常時表示の文には出さない）
+  return '<strong>' + esc(e.name) + '</strong><br>' +
+    esc(e.city) + ' &middot; ' + esc(provinceName(e.province)) + '<br>' +
+    esc(sectorName(e.sector)) + ' &middot; ' + esc(e.year);
+}
+
+function ensureMap() {
+  if (map) return;
+  map = L.map('map', {
+    minZoom: 3,
+    maxZoom: 10,
+    worldCopyJump: true,
+    attributionControl: true
+  }).setView([35.5, 105], 4);
+  L.tileLayer(OSM_URL, {
+    maxZoom: 10,
+    attribution: OSM_ATTR,
+    crossOrigin: true,
+    keepBuffer: 1,
+    updateWhenIdle: true
+  }).addTo(map);
+  // 帰属は常時可視（畳まない）: Leaflet の attribution は既定で表示・モバイルでも隠さない
+  map.attributionControl.setPrefix('Leaflet');
+}
+
+function clearLayers() {
+  if (entityLayer) { map.removeLayer(entityLayer); entityLayer = null; }
+  if (cbamLayer) { map.removeLayer(cbamLayer); cbamLayer = null; }
+  if (heatLayer) { map.removeLayer(heatLayer); heatLayer = null; }
+}
+
+function buildEntityLayer() {
+  const cluster = L.markerClusterGroup({ showCoverageOnHover: false, maxClusterRadius: 45 });
+  ENTITIES.forEach(e => {
+    const m = L.circleMarker([e.lat, e.lon], {
+      radius: 4, weight: 1, color: SECTOR_COLORS[e.sector] || '#888',
+      fillColor: SECTOR_COLORS[e.sector] || '#888', fillOpacity: 0.75
+    });
+    m.bindPopup(() => popupHtml(e));
+    cluster.addLayer(m);
+  });
+  return cluster;
+}
+
+function buildCbamLayer() {
+  const cbam = ENTITIES.filter(e => CBAM_SECTORS.indexOf(e.sector) >= 0);
+  heatLayer = L.heatLayer(cbam.map(e => [e.lat, e.lon, 1]), {
+    radius: 18, blur: 22, maxZoom: 10, minOpacity: 0.25
+  });
+  const pts = L.layerGroup();
+  cbam.forEach(e => {
+    const m = L.circleMarker([e.lat, e.lon], {
+      radius: 5, weight: 1.5, color: '#fff',
+      fillColor: SECTOR_COLORS[e.sector] || '#888', fillOpacity: 0.95
+    });
+    m.bindPopup(() => popupHtml(e));
+    pts.addLayer(m);
+  });
+  return L.layerGroup([heatLayer, pts]);
+}
+
+function cbamStats() {
+  const cbam = ENTITIES.filter(e => CBAM_SECTORS.indexOf(e.sector) >= 0);
+  const regions = new Set(cbam.map(e => e.province));
+  return { n: cbam.length, regions: regions.size };
+}
+
+function provinceTotals() {
+  const t0 = { total: 0, cbam_entities: 0, mapped_total: 0, no_coord_total: 0 };
+  PROVINCES.forEach(r => {
+    t0.total += r.total; t0.cbam_entities += r.cbam_entities;
+    t0.mapped_total += r.mapped_total; t0.no_coord_total += r.no_coord_total;
+  });
+  return t0;
+}
+
+function renderTabs() {
+  const total = provinceTotals();
+  document.querySelector('[data-face="entities"]').textContent =
+    t('mapTabEntities').replace('{n}', num(ENTITY_COUNT_MAPPED)).replace('{m}', num(total.total));
+  document.querySelector('[data-face="cbam"]').textContent =
+    t('mapTabCbam').replace('{n}', num(CBAM_COUNT_MAPPED)).replace('{m}', num(total.cbam_entities));
+  document.querySelector('[data-face="entities"]').classList.toggle('active', activeTab === 'entities');
+  document.querySelector('[data-face="cbam"]').classList.toggle('active', activeTab === 'cbam');
+}
+
+function renderLegend() {
+  const box = document.getElementById('legend');
+  if (activeTab === 'entities') {
+    box.innerHTML = '<span style="font-weight:600;">' + t('mapLegend') + ':</span>' +
+      Object.keys(SECTOR_I18N).map(s =>
+        '<span class="item"><span class="dot" style="background:' + SECTOR_COLORS[s] + '"></span>' +
+        sectorName(s) + '</span>').join('');
+  } else {
+    box.innerHTML = '<span style="font-weight:600;">' + t('mapHeat') + ':</span>' +
+      '<span class="item">' + t('mapLow') + '</span>' +
+      '<span class="item" style="width:90px;height:11px;border-radius:6px;background:linear-gradient(90deg,#2c7bb6,#abd9e9,#ffffbf,#fdae61,#d7191c);display:inline-block;"></span>' +
+      '<span class="item">' + t('mapHigh') + '</span>' +
+      CBAM_SECTORS.map(s =>
+        '<span class="item"><span class="dot" style="background:' + SECTOR_COLORS[s] + '"></span>' +
+        sectorName(s) + '</span>').join('');
+  }
+}
+
+function renderInfo() {
+  const info = document.getElementById('cbam-info');
+  if (activeTab === 'cbam') {
+    const st = cbamStats();
+    info.hidden = false;
+    info.textContent = t('mapCbamInfo').replace('{n}', num(st.n)).replace('{p}', num(st.regions));
+  } else {
+    info.hidden = true;
+    info.textContent = '';
+  }
+}
+
+function renderProvincePanel() {
+  const panel = document.getElementById('province-panel');
+  if (activeTab !== 'cbam') { panel.hidden = true; return; }
+  panel.hidden = false;
+  const rows = PROVINCES;
+  const total = provinceTotals();
+  document.getElementById('province-title').textContent = t('mapProvince');
+
+  const top = rows.slice().sort((a, b) => b.cbam_entities - a.cbam_entities).slice(0, 5);
+  document.getElementById('province-top5').innerHTML =
+    '<strong>' + t('mapTop5') + ':</strong> ' +
+    top.map(r => esc(provinceName(r.province)) + ' ' + num(r.cbam_entities)).join(' &middot; ');
+
+  let html = '<thead><tr>' +
+    '<th>' + t('mapProvince') + '</th>' +
+    '<th>' + t('mapColListed') + '</th>' +
+    '<th>' + t('mapColMapped') + '</th>' +
+    '<th>' + t('mapColNoCoord') + '</th>' +
+    '<th>' + t('mapCbamPct') + '</th>' +
+    '</tr></thead><tbody>';
+  rows.forEach(r => {
+    html += '<tr><td>' + esc(provinceName(r.province)) + '</td>' +
+      '<td>' + num(r.total) + '</td><td>' + num(r.mapped_total) + '</td><td>' + num(r.no_coord_total) + '</td>' +
+      '<td>' + Number(r.cbam_pct).toFixed(1) + '%</td></tr>';
+  });
+  html += '<tr class="total"><td>' + t('mapTotal') + '</td>' +
+    '<td>' + num(total.total) + '</td><td>' + num(total.mapped_total) + '</td><td>' + num(total.no_coord_total) + '</td>' +
+    '<td>&mdash;</td></tr>';
+  html += '</tbody>';
+  document.getElementById('province-table').innerHTML = html;
+}
+
+let ENTITY_COUNT_MAPPED = 0;
+let CBAM_COUNT_MAPPED = 0;
+
+function setTab(tab) {
+  activeTab = tab;
+  clearLayers();
+  if (tab === 'entities') {
+    entityLayer = buildEntityLayer();
+    map.addLayer(entityLayer);
+  } else {
+    cbamLayer = buildCbamLayer();
+    map.addLayer(cbamLayer);
+  }
+  renderTabs();
+  renderLegend();
+  renderInfo();
+  renderProvincePanel();
+}
+
+function renderAll() {
+  document.getElementById('approx-note').textContent = t('mapApproxNote');
+  renderTabs();
+  renderLegend();
+  renderInfo();
+  renderProvincePanel();
+}
+
+
+function loadData() {
+  return Promise.all([
+    fetch('data/map_entities.json').then(r => r.json()),
+    fetch('data/map_cbam_province.json').then(r => r.json())
+  ]).then(([entities, provinces]) => {
+    ENTITIES = entities;
+    PROVINCES = provinces;
+    ENTITY_COUNT_MAPPED = entities.length;
+    CBAM_COUNT_MAPPED = entities.filter(e => CBAM_SECTORS.indexOf(e.sector) >= 0).length;
+    ensureMap();
+    // Test hooks for automated page checks: rendered marker counts and a popup opener.
+    window.__mapCounts = { entities: ENTITY_COUNT_MAPPED, cbam: CBAM_COUNT_MAPPED };
+    window.__openFirstPopup = function () {
+      if (!ENTITIES || !ENTITIES.length || !map) return false;
+      const e = ENTITIES[0];
+      L.popup({ closeButton: false }).setLatLng([e.lat, e.lon]).setContent(popupHtml(e)).openOn(map);
+      return true;
+    };
+    setTab('entities');
+    renderAll();  // 近似注記は初回から常時表示
+  }).catch(err => console.error('Failed to load map data:', err));
+}
+
+window.addEventListener('langchange', () => { if (ENTITIES) renderAll(); });
+document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+loadData();
+</script>
+</body>
+</html>
