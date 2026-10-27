@@ -422,7 +422,7 @@ def create_period_views(smart):
 
 
 def main():
-    run_at = datetime.now().isoformat()
+    run_at = datetime.now().astimezone().isoformat(timespec="seconds")
     smart = sqlite3.connect(SMART)
     smart.execute("PRAGMA foreign_keys = ON")
     smart.execute(CREATE_ETS_AUCTION_SQL)

@@ -68,6 +68,34 @@ def fetch_tables() -> tuple[list[dict], list[dict]]:
     return listed_rows, block_rows
 
 
+def recompute_cumulative_from(conn, start_date: str):
+    """Recompute cum_*_derived in date order for every row with date >= start_date.
+    Base = the row just before start_date (0 if none). Needed when an older date
+    arrives later than newer ones (late arrival): the running total of the rows
+    after it would otherwise stay stale."""
+    base = conn.execute(
+        "SELECT cum_volume_derived, cum_amount_derived FROM cea_daily WHERE date < ? ORDER BY date DESC LIMIT 1",
+        (start_date,)).fetchone()
+    if base and base[0] is not None:
+        cum_vol, cum_amt = base[0], base[1]
+    else:
+        # No earlier row, or its running total is missing: seed from the full sum of earlier rows
+        # (same rule as the seed used when the latest row has no running total).
+        seed = conn.execute(
+            "SELECT COALESCE(SUM(total_volume),0), COALESCE(ROUND(SUM(total_amount),4),0.0) FROM cea_daily WHERE date < ?",
+            (start_date,)).fetchone()
+        cum_vol, cum_amt = seed[0], seed[1]
+    rows = conn.execute(
+        "SELECT date, total_volume, total_amount FROM cea_daily WHERE date >= ? ORDER BY date",
+        (start_date,)).fetchall()
+    for d, v, a in rows:
+        cum_vol += (v or 0)
+        cum_amt += (a or 0.0)   # plain float addition, same as the per-row accumulation above
+        conn.execute("UPDATE cea_daily SET cum_volume_derived=?, cum_amount_derived=? WHERE date=?",
+                     (cum_vol, cum_amt, d))
+    return len(rows)
+
+
 def merge_and_insert(listed_rows: list[dict], block_rows: list[dict]):
     """Merge listed + block data, calculate totals, insert into DB."""
     conn = sqlite3.connect(str(DB_PATH))
@@ -155,6 +183,11 @@ def merge_and_insert(listed_rows: list[dict], block_rows: list[dict]):
                   f"合計{rec['total_volume']:,}t")
         except sqlite3.IntegrityError:
             pass
+
+    # Late arrival: an older date may be inserted after newer ones. Recompute the running
+    # totals from the earliest newly inserted date so every later row stays consistent.
+    if new_records:
+        recompute_cumulative_from(conn, min(r["date"] for r in new_records))
 
     conn.commit()
 
