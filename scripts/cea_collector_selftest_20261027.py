@@ -202,7 +202,7 @@ def case_5(mod):
         before = read_rows(db)
         prev = before[-1][4]
         plain = prev + 0.1
-        valid = (plain != round(plain, 4))     # 器の自己判別: 丸めると値が変わる組でなければケース無効
+        valid = (plain != round(plain, 4))     # ケースの自己確認: 丸めると値が変わる組でなければケース無効
         if not valid:
             return False, "ケース無効: prev+0.1=%r が round4=%r と同じ＝丸めの有無を区別できない" % (plain, round(plain, 4))
         run_merge(mod, db, [(D4, 400, 0.1)])
