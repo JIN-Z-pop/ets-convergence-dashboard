@@ -123,10 +123,10 @@
     },
     {
       "year": "2026",
-      "avg_price": 20067.0,
+      "avg_price": 20106.0,
       "max_price": 30850,
       "min_price": 10250,
-      "trading_days": 1189
+      "trading_days": 1194
     }
   ],
   "eu_eur": [
@@ -279,7 +279,7 @@
     },
     {
       "year": "2026",
-      "avg_price": 75.76,
+      "avg_price": 75.81,
       "max_price": 86.63,
       "min_price": 59.97,
       "phase": "Phase 4"
@@ -292,7 +292,7 @@
   },
   "as_of": {
     "china": "2026-11-04",
-    "korea": "2026-11-04",
-    "eu": "2026-11-04"
+    "korea": "2026-11-05",
+    "eu": "2026-11-05"
   }
 }
