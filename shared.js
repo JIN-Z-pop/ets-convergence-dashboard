@@ -33,6 +33,11 @@ const LANG = {
     pricesAsOf: 'Price data as of',
     radarNoPrice: 'Price level: annual price data not available',
     disclaimer: 'This tool is provided for research and educational purposes only. The authors make no warranties regarding accuracy, completeness, or fitness for any particular purpose, and accept no liability for any loss or damage arising from its use. Use of this tool is entirely at your own risk.',
+    srcMethod: 'Annual prices for China, Korea and EU 2026 are simple averages of daily closing prices (Korea: all KAU vintages combined); 2021 for China covers 16 July to December only. The Banking Rules page uses separately compiled annual figures.',
+    srcPrices: 'Prices — China (CEA): Shanghai Environment and Energy Exchange (until December 2025) and carbonmarket.cn (from 25 December 2025). Korea (KAU): Korea Exchange (KRX) emissions market; 2015–2023 from historical data imported in bulk. EU (EUA): 2005–2025 are approximate annual figures recorded with the source note "ICE ECX EUA" and not yet re-verified against the original data (2025 is an estimate); 2026 is calculated from daily prices of an exchange-traded commodity backed by physical EUAs (listed on the London Stock Exchange; Yahoo Finance symbol CO2.L), not from EUA futures.',
+    srcFx: 'USD conversions use fixed assumed rates (1 USD = 1,400 KRW = 7.2 CNY; 1 EUR = 1.1 USD), not market exchange rates.',
+    srcSystems: 'System information is compiled by the authors mainly from public documents, including government reports and ICAP and DEHSt publications. Please check the original sources before use.',
+    srcOwn: 'Radar scores, the phase (Gantt) chart, allocation-method shares, the coverage values and the 2030 outlook on the Convergence & Divergence Map, and the strictness scores and simulator settings on the Banking Rules page are the authors\' own assessments and assumptions, not official figures.',
     price: 'Price', coverage: 'Coverage', entities: 'Entities', since: 'Since',
     eu: 'EU', korea: 'Korea', china: 'China', japan: 'Japan',
     usdPerTon: 'USD/t', approx: 'approx.',
@@ -123,6 +128,11 @@ const LANG = {
     pricesAsOf: '価格データの基準日',
     radarNoPrice: '価格水準: 年次価格データ未取得',
     disclaimer: '本ツールは研究・教育目的で公開しています。内容の正確性・完全性・特定目的への適合性について一切保証せず、本ツールの利用により生じたいかなる損害についても責任を負いません。ご利用は利用者ご自身の責任において行ってください。',
+    srcMethod: '中国・韓国と EU の2026年の年次の価格は、日次終値の単純平均（韓国は KAU の全ビンテージを合わせた値）。中国の2021年は7月16日〜12月のみ。バンキングルールのページは、別にまとめた年次の値を使っている。',
+    srcPrices: '価格 — 中国（CEA）: 上海環境能源交易所（2025年12月まで）、carbonmarket.cn（2025年12月25日から）。韓国（KAU）: 韓国取引所（KRX）排出権市場。2015〜2023年は一括で取り込んだ過去データによる。EU（EUA）: 2005〜2025年は「ICE ECX EUA」と出典注記のある年次の概数で、原データとの再照合は済んでいない（2025年は推定値）。2026年は EUA の現物を裏付けとする上場商品（ロンドン証券取引所に上場・Yahoo Finance の記号 CO2.L）の日次価格から計算した値で、EUA 先物の価格ではない。',
+    srcFx: '米ドル換算は固定の仮定レート（1米ドル＝1,400ウォン＝7.2元、1ユーロ＝1.1米ドル）によるもので、市場の為替レートではない。',
+    srcSystems: '制度の情報は、主に各国政府の報告書、ICAP・DEHSt の刊行物などの公開資料から作成者がまとめたもの。利用の際は原典を確認してください。',
+    srcOwn: 'レーダーの評点、段階の図（ガント図）、割当方法の構成比、統合分析マップのカバー率と2030年の見通し、バンキングルールのページの厳格度の点数とシミュレーターの設定値は、作成者による評価・想定であり、公式の数値ではない。',
     price: '\u4FA1\u683C', coverage: '\u30AB\u30D0\u30FC\u7387', entities: '\u5BFE\u8C61\u4F01\u696D', since: '\u958B\u59CB',
     eu: 'EU', korea: '\u97D3\u56FD', china: '\u4E2D\u56FD', japan: '\u65E5\u672C',
     usdPerTon: 'USD/t', approx: '\u7D04',
@@ -213,6 +223,11 @@ const LANG = {
     pricesAsOf: '가격 데이터 기준일',
     radarNoPrice: '가격 수준: 연간 가격 데이터 미확보',
     disclaimer: '본 도구는 연구·교육 목적으로 공개되었습니다. 정확성·완전성·특정 목적에 대한 적합성을 보증하지 않으며, 본 도구의 사용으로 인해 발생한 어떠한 손해에 대해서도 책임을 지지 않습니다. 이용은 전적으로 이용자 본인의 책임하에 이루어집니다.',
+    srcMethod: '중국·한국 및 EU 2026년의 연간 가격은 일별 종가의 단순 평균임(한국은 KAU 전체 빈티지를 합친 값). 중국의 2021년은 7월 16일~12월만 해당함. 뱅킹 규칙 페이지는 별도로 정리한 연간 값을 사용함.',
+    srcPrices: '가격 — 중국(CEA): 상하이환경에너지거래소(2025년 12월까지), carbonmarket.cn(2025년 12월 25일부터). 한국(KAU): 한국거래소(KRX) 배출권시장. 2015~2023년은 일괄 입력한 과거 데이터에 따름. EU(EUA): 2005~2025년은 "ICE ECX EUA"라는 출처 주기가 있는 연간 근삿값이며, 원자료와의 재대조는 완료되지 않았음(2025년은 추정치). 2026년은 EUA 실물로 뒷받침되는 상장지수상품(ETC, 런던증권거래소 상장·Yahoo Finance 기호 CO2.L)의 일별 가격으로 계산한 값이며, EUA 선물 가격이 아님.',
+    srcFx: '미 달러 환산은 고정 가정 환율(1달러=1,400원=7.2위안, 1유로=1.1달러)에 따른 것이며, 시장 환율이 아님.',
+    srcSystems: '제도 정보는 주로 각국 정부 보고서, ICAP·DEHSt 간행물 등 공개 자료를 바탕으로 작성자가 정리한 것임. 이용 시 원문 자료를 확인하시기 바랍니다.',
+    srcOwn: '레이더 평점, 단계 도표(간트 차트), 할당 방식 구성비, 수렴·분기 맵의 커버리지 값과 2030년 전망, 뱅킹 규칙 페이지의 엄격도 점수와 시뮬레이터 설정값은 작성자의 평가·가정이며 공식 수치가 아님.',
     price: '\uAC00\uACA9', coverage: '\uCEE4\uBC84\uC728', entities: '\uB300\uC0C1\uAE30\uC5C5', since: '\uC2DC\uC791',
     eu: 'EU', korea: '\uD55C\uAD6D', china: '\uC911\uAD6D', japan: '\uC77C\uBCF8',
     usdPerTon: 'USD/t', approx: '\uC57D',
@@ -303,6 +318,11 @@ const LANG = {
     pricesAsOf: '价格数据截至',
     radarNoPrice: '价格水平：暂无年度价格数据',
     disclaimer: '本工具仅供研究与教育目的使用。作者不对其准确性、完整性或特定用途的适用性作任何保证，亦不对因使用本工具而产生的任何损失或损害承担责任。使用本工具的风险由用户自行承担。',
+    srcMethod: '中国、韩国及欧盟2026年的年度价格为每日收盘价的简单平均值（韩国为KAU所有年份配额合并计算）。中国2021年仅涵盖7月16日至12月。结转规则页面使用另行整理的年度数值。',
+    srcPrices: '价格 — 中国（CEA）：上海环境能源交易所（至2025年12月）、carbonmarket.cn（2025年12月25日起）。韩国（KAU）：韩国交易所（KRX）排放权市场；2015–2023年采用一次性导入的历史数据。欧盟（EUA）：2005–2025年为标注来源为“ICE ECX EUA”的年度概数，尚未与原始数据重新核对（2025年为估计值）；2026年根据以EUA实物为支持的交易所交易商品（ETC，伦敦证券交易所上市，Yahoo Finance代码 CO2.L）的每日价格计算，并非EUA期货价格。',
+    srcFx: '美元换算采用固定的假定汇率（1美元＝1,400韩元＝7.2元人民币，1欧元＝1.1美元），并非市场汇率。',
+    srcSystems: '制度信息由作者主要根据各国政府报告、ICAP和DEHSt出版物等公开资料整理。使用时请核对原始资料。',
+    srcOwn: '雷达评分、阶段图（甘特图）、配额分配方式构成比、趋同·分歧地图中的覆盖率数值与2030年展望，以及结转规则页面的严格度评分和模拟器设定值，均为作者的评估与假设，并非官方数值。',
     price: '\u4EF7\u683C', coverage: '\u8986\u76D6\u7387', entities: '\u7EB3\u5165\u4F01\u4E1A', since: '\u542F\u52A8',
     eu: 'EU', korea: '\u97E9\u56FD', china: '\u4E2D\u56FD', japan: '\u65E5\u672C',
     usdPerTon: 'USD/t', approx: '\u7EA6',
@@ -451,6 +471,12 @@ function createFooterHTML() {
   return `<footer class="dash-footer">
     <div class="footer-rule"></div>
     <p class="footer-disclaimer" data-i18n="disclaimer">${t('disclaimer')}</p>
+    <p class="footer-sources footer-sources-head" data-i18n="source">${t('source')}</p>
+    <p class="footer-sources" data-i18n="srcMethod">${t('srcMethod')}</p>
+    <p class="footer-sources" data-i18n="srcPrices">${t('srcPrices')}</p>
+    <p class="footer-sources" data-i18n="srcFx">${t('srcFx')}</p>
+    <p class="footer-sources" data-i18n="srcSystems">${t('srcSystems')}</p>
+    <p class="footer-sources" data-i18n="srcOwn">${t('srcOwn')}</p>
     <span data-i18n="footer">${t('footer')}</span>
     <div class="footer-asof" style="margin-top:6px;color:var(--muted);font-size:0.85em;display:flex;flex-wrap:wrap;justify-content:center;gap:2px 14px;">
       <span class="footer-prices" id="footerPrices" hidden><span data-i18n="pricesAsOf">${t('pricesAsOf')}</span>: </span>
@@ -955,6 +981,12 @@ body::after {
   font-size: 0.75em; line-height: 1.6;
   color: var(--dimmed); opacity: 0.6;
 }
+.footer-sources {
+  max-width: 720px; margin: 0 auto 14px;
+  font-size: 0.75em; line-height: 1.6;
+  color: var(--dimmed); opacity: 1.0;
+}
+.footer-sources-head { font-weight: 700; }
 
 /* ==================== TABLE (Rosetta, Compare) ==================== */
 table { border-collapse: collapse; }
